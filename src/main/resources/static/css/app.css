@@ -1801,6 +1801,7 @@ html[data-theme="dark"] .dashboard-search input {
 html[data-theme="dark"] .dashboard-search input::placeholder,
 html[data-theme="dark"] .dashboard-title-with-link > a,
 html[data-theme="dark"] .dashboard-side-title > a,
+html[data-theme="dark"] .dashboard-tabs a,
 html[data-theme="dark"] .dashboard-row-copy p,
 html[data-theme="dark"] .dashboard-row-stats,
 html[data-theme="dark"] .dashboard-events span,
@@ -1811,6 +1812,15 @@ html[data-theme="dark"] .dashboard-footer {
 }
 
 html[data-theme="dark"] .dashboard-theme-toggle {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .dashboard-tabs a:hover {
+    color: #ff4d6d;
+}
+
+html[data-theme="dark"] .dashboard-tabs .is-active {
+    border-color: #ff4d6d;
     color: #ffffff;
 }
 
