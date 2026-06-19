@@ -1173,6 +1173,7 @@ body.dashboard-page::before {
 
 .dashboard-content {
     display: grid;
+    align-items: stretch;
     grid-template-columns: minmax(0, 2fr) minmax(320px, 0.95fr);
     gap: 60px;
     width: min(1280px, calc(100% - 80px));
@@ -1466,7 +1467,8 @@ body.dashboard-page::before {
     align-self: stretch;
     flex-direction: column;
     gap: 30px;
-    height: 100%;
+    height: auto;
+    min-height: 100%;
 }
 
 .dashboard-activity-block {
@@ -1795,15 +1797,15 @@ body.dashboard-page::before {
     position: relative;
     display: flex;
     justify-content: space-between;
-    width: min(1280px, calc(100% - 80px));
+    width: 100%;
     margin: 86px auto 0;
-    padding: 30px 34px 34px;
+    padding: 30px max(34px, calc((100vw - 1280px) / 2 + 34px)) 34px;
     overflow: hidden;
     background:
-        linear-gradient(90deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.68)),
-        url("/assets/source/someofakind-WaTX4_2fD9k-unsplash.jpg") center 48% / cover no-repeat;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 8px 8px 0 0;
+        linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.64)),
+        url("/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg") center 42% / cover no-repeat;
+    border: 0;
+    border-radius: 0;
     color: #555555;
 }
 
@@ -1918,8 +1920,8 @@ html[data-theme="dark"] .dashboard-header .subtitle {
 
 html[data-theme="dark"] .dashboard-footer {
     background:
-        linear-gradient(90deg, rgba(18, 18, 18, 0.88), rgba(18, 18, 18, 0.7)),
-        url("/assets/source/someofakind-WaTX4_2fD9k-unsplash.jpg") center 48% / cover no-repeat;
+        linear-gradient(90deg, rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.66)),
+        url("/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg") center 42% / cover no-repeat;
 }
 
 html[data-theme="dark"] .dashboard-block-title h2,
