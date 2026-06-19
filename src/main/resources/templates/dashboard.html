@@ -1,182 +1,201 @@
 <!doctype html>
-<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko" data-theme="light" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard | E.O.M</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body class="dashboard-page">
-<div th:replace="~{fragments/header :: header}"></div>
-<main class="app-shell dashboard-shell">
-    <section class="dashboard-hero dashboard-hero-card" th:if="${todayPick}">
-        <div class="dashboard-hero-media">
-            <img th:src="${todayPick.thumbnailUrl}" th:alt="${todayPick.title}">
-            <div class="dashboard-hero-badges">
-                <span th:text="${todayPick.boardType.label}">SHOW</span>
-                <span th:text="${todayPick.mediaType}">INSTAGRAM</span>
-            </div>
-        </div>
-        <div class="dashboard-hero-copy">
-            <p class="eyebrow">TODAY'S PICK</p>
-            <h1>E.O.M</h1>
-            <h2 th:text="${todayPick.title}">릴스 기반 코레오 쇼케이스</h2>
-            <p th:text="${todayPick.content}">어서 와요. 여기는 댄서들의 아지트입니다.</p>
-            <div class="dashboard-meta-row">
-                <span th:text="${todayPick.author.displayName}">SHADOW_98</span>
-                <span th:text="${todayPick.author.crewName}">Night Shift</span>
-                <span th:text="${todayPick.location}">성수</span>
-            </div>
-            <div class="dashboard-stat-row">
-                <span th:text="|조회 ${todayPick.viewCount}|">조회 1480</span>
-                <span th:text="|좋아요 ${todayPick.likeCount}|">좋아요 284</span>
-                <span th:text="|댓글 ${todayPick.commentCount}|">댓글 32</span>
-            </div>
-            <a class="media-link" th:if="${todayPick.mediaUrl}" th:href="${todayPick.mediaUrl}" target="_blank" rel="noreferrer">Open media</a>
-        </div>
-    </section>
+<header class="dashboard-header">
+    <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
+    <form class="dashboard-search" action="#" role="search">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" name="keyword" placeholder="Search" aria-label="Search">
+    </form>
+    <a class="dashboard-add-button" href="#">Add New</a>
+    <nav class="dashboard-nav" aria-label="Dashboard navigation">
+        <a th:href="@{/dashboard}">Dash</a>
+        <a href="#">Show</a>
+        <a href="#">Cast</a>
+        <a href="#">Hype</a>
+        <a href="#">Link</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin</a>
+    </nav>
+    <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+        <button class="dashboard-logout" type="submit">Logout</button>
+    </form>
+    <button class="dashboard-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">☼</button>
+</header>
 
-    <section class="board-strip dashboard-board-strip" aria-label="Boards">
-        <article th:each="board : ${boards}" th:classappend="| board-${board.name().toLowerCase()}|">
-            <span th:text="${board.label}">SHOW</span>
-            <p th:text="${board.description}">description</p>
-        </article>
-    </section>
-
-    <section class="dashboard-section">
-        <div class="section-title dashboard-section-title">
-            <div>
-                <p class="eyebrow">SHOW REELS</p>
-                <h2>Featured Media</h2>
-            </div>
-            <a href="#">SHOW</a>
-        </div>
-        <div class="featured-media-grid">
-            <article class="media-card" th:each="post, stat : ${featuredMediaPosts}" th:classappend="${stat.index == 0} ? ' media-card-large'">
-                <a class="media-card-image" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer" th:aria-label="|${post.title} media link|">
-                    <img th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                    <span th:text="${post.mediaType}">INSTAGRAM</span>
-                </a>
-                <div class="media-card-body">
-                    <div class="dashboard-meta-row">
-                        <span th:text="${post.boardType.label}">SHOW</span>
-                        <span th:text="${post.location}">성수</span>
-                    </div>
-                    <h3 th:text="${post.title}">Video post</h3>
-                    <div class="dashboard-card-author">
-                        <strong th:text="${post.author.displayName}">Dancer</strong>
-                        <span th:text="${post.author.crewName}">Crew</span>
-                    </div>
-                    <div class="dashboard-stat-row">
-                        <span th:text="|조회 ${post.viewCount}|">조회 1480</span>
-                        <span th:text="|좋아요 ${post.likeCount}|">좋아요 284</span>
-                        <span th:text="|댓글 ${post.commentCount}|">댓글 32</span>
-                    </div>
+<main>
+    <span class="dashboard-sr-only">Featured Media</span>
+    <section class="dashboard-pick" th:if="${todayPick}">
+        <div class="dashboard-pick-inner">
+            <div class="dashboard-pick-copy">
+                <p class="dashboard-script">TODAY'S PICK</p>
+                <span class="dashboard-board-badge" th:text="${todayPick.boardType.label}">SHOW</span>
+                <h1 th:text="${todayPick.title}">서울 스트릿잼 후기</h1>
+                <p class="dashboard-author-line" th:text="|${todayPick.author.displayName} · ${todayPick.location}|">SHADOW_98 · 성수</p>
+                <div class="dashboard-quick-stats">
+                    <span th:text="|♡ ${todayPick.likeCount}|">♡ 1.2K</span>
+                    <span th:text="|⌕ ${todayPick.commentCount}|">⌕ 18</span>
+                    <span th:text="|◉ ${todayPick.viewCount}|">◉ 2.6K</span>
                 </div>
-            </article>
+                <a class="dashboard-view-post" th:if="${todayPick.mediaUrl}" th:href="${todayPick.mediaUrl}" target="_blank" rel="noreferrer">VIEW POST →</a>
+            </div>
+            <div class="dashboard-pick-mark" aria-hidden="true">E.O.M</div>
         </div>
     </section>
 
-    <section class="dashboard-section">
-        <div class="section-title dashboard-section-title">
-            <div>
-                <p class="eyebrow">COMMUNITY FEED</p>
-                <h2>Recent Moves</h2>
-            </div>
-            <a href="#">Add New</a>
-        </div>
-        <div class="post-grid dashboard-post-grid">
-            <article class="post-card dashboard-post-card" th:each="post : ${recentPosts}">
-                <a class="dashboard-card-image" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">
-                    <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                    <span th:text="${post.mediaType}">INSTAGRAM</span>
-                </a>
-                <div class="dashboard-card-body">
-                    <div class="dashboard-meta-row">
-                        <span th:text="${post.boardType.label}">SHOW</span>
-                        <span th:text="${post.location}">성수</span>
-                    </div>
-                    <h3 th:text="${post.title}">서울 스트릿잼 후기</h3>
-                    <p th:text="${post.content}">content</p>
-                    <div class="dashboard-card-author">
-                        <strong th:text="${post.author.displayName}">Dancer</strong>
-                        <span th:text="${post.author.crewName}">Crew</span>
-                    </div>
-                    <div class="dashboard-stat-row">
-                        <span th:text="|조회 ${post.viewCount}|">조회 1480</span>
-                        <span th:text="|좋아요 ${post.likeCount}|">좋아요 284</span>
-                        <span th:text="|댓글 ${post.commentCount}|">댓글 32</span>
-                    </div>
+    <div class="dashboard-content">
+        <div class="dashboard-main-column">
+            <section class="dashboard-block">
+                <div class="dashboard-block-title">
+                    <span></span>
+                    <h2>POPULAR</h2>
                 </div>
-            </article>
-        </div>
-    </section>
+                <ol class="dashboard-popular-list">
+                    <li th:each="post, stat : ${popularPosts}">
+                        <strong class="dashboard-rank" th:text="${#numbers.formatInteger(stat.count, 2)}">01</strong>
+                        <div class="dashboard-row-copy">
+                            <h3 th:text="${post.title}">홍대 공연 백업댄서 모집</h3>
+                            <p>
+                                <span th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">CAST</span>
+                                <span th:text="| · ${post.author.displayName} · ${post.location}|"> · MOVINJ · 홍대</span>
+                            </p>
+                        </div>
+                        <a class="dashboard-mini-media" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">
+                            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                            <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
+                        </a>
+                        <div class="dashboard-row-stats">
+                            <span th:text="|♡ ${post.likeCount}|">♡ 892</span>
+                            <span th:text="|◉ ${post.viewCount}|">◉ 1.8K</span>
+                        </div>
+                    </li>
+                </ol>
+            </section>
 
-    <section class="dashboard-columns">
-        <article class="dashboard-panel">
-            <div class="section-title inline dashboard-section-title">
-                <div>
-                    <p class="eyebrow">HOT NOW</p>
-                    <h2>Popular</h2>
-                </div>
-            </div>
-            <ol class="text-list dashboard-rank-list">
-                <li th:each="post, stat : ${popularPosts}">
-                    <span class="rank-number" th:text="${stat.count}">1</span>
+            <section class="dashboard-block">
+                <div class="dashboard-block-title dashboard-title-with-link">
                     <div>
-                        <strong th:text="${post.title}">Popular title</strong>
-                        <span th:text="|${post.boardType.label} · ${post.mediaType} · 조회 ${post.viewCount} · 좋아요 ${post.likeCount} · 댓글 ${post.commentCount}|">SHOW · stats</span>
-                        <span th:text="|${post.author.displayName} · ${post.author.crewName}|">Dancer · Crew</span>
+                        <span></span>
+                        <h2>RECENT</h2>
                     </div>
-                </li>
-            </ol>
-        </article>
-        <article class="dashboard-panel">
-            <div class="section-title inline dashboard-section-title">
-                <div>
-                    <p class="eyebrow">NEXT STAGE</p>
-                    <h2>Upcoming Events</h2>
+                    <a href="#">ALL →</a>
                 </div>
-            </div>
-            <ol class="text-list dashboard-event-list">
-                <li th:each="post : ${upcomingEvents}">
+                <div class="dashboard-tabs" aria-label="Board filters">
+                    <button class="is-active" type="button">SHOW</button>
+                    <button type="button">CAST</button>
+                    <button type="button">HYPE</button>
+                    <button type="button">LINK</button>
+                </div>
+                <ul class="dashboard-recent-list">
+                    <li th:each="post, stat : ${recentPosts}">
+                        <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">SHOW</span>
+                        <div class="dashboard-row-copy">
+                            <h3>
+                                <span th:text="${post.title}">댄스 페스티벌 퍼포먼스 영상</span>
+                                <em th:if="${stat.index == 0}">NEW</em>
+                            </h3>
+                            <p th:text="${post.location}">성수</p>
+                        </div>
+                        <a class="dashboard-mini-media" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">
+                            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                            <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
+                        </a>
+                        <div class="dashboard-row-stats">
+                            <span th:text="|♡ ${post.likeCount}|">♡ 23</span>
+                            <span th:text="|⌕ ${post.commentCount}|">⌕ 4</span>
+                            <span th:text="|◉ ${post.viewCount}|">◉ 320</span>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+        <aside class="dashboard-side-column">
+            <section class="dashboard-side-block">
+                <div class="dashboard-side-title">
                     <div>
-                        <strong th:text="${post.title}">Event title</strong>
-                        <span th:text="|${post.boardType.label} · ${post.location} · ${post.author.displayName}|">HYPE · location</span>
+                        <span></span>
+                        <h2>TAGS</h2>
                     </div>
-                    <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="${#temporals.format(post.eventDate, 'MM.dd')}">07.02</time>
-                </li>
-            </ol>
-        </article>
-    </section>
-
-    <section class="dashboard-section">
-        <div class="section-title dashboard-section-title">
-            <div>
-                <p class="eyebrow">CREW RADAR</p>
-                <h2>Recommended Dancers</h2>
-            </div>
-        </div>
-        <div class="dancer-grid dashboard-dancer-grid">
-            <article th:each="dancer : ${recommendedDancers}">
-                <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
-                <div>
-                    <strong th:text="${dancer.displayName}">Dancer</strong>
-                    <span th:text="${dancer.crewName}">Crew</span>
-                    <p th:text="${dancer.bio}">Bio</p>
-                    <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">Instagram</a>
+                    <a href="#">ALL →</a>
                 </div>
-            </article>
-        </div>
-    </section>
+                <div class="dashboard-tags">
+                    <a th:each="tag : ${tags}" href="#" th:text="|# ${tag}|"># 힙합</a>
+                </div>
+            </section>
 
-    <section class="tag-cloud dashboard-tag-cloud" aria-label="Tags">
-        <a th:each="tag : ${tags}" th:text="|#${tag}|" href="#">#tag</a>
-    </section>
+            <section class="dashboard-side-block">
+                <div class="dashboard-side-title">
+                    <div>
+                        <span></span>
+                        <h2>EVENTS</h2>
+                    </div>
+                    <a href="#">ALL →</a>
+                </div>
+                <ol class="dashboard-events">
+                    <li th:each="post : ${upcomingEvents}">
+                        <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="${#temporals.format(post.eventDate, 'MM.dd EEE')}">06.15 SUN</time>
+                        <strong th:text="${post.title}">2026 BATTLE OF SEOUL</strong>
+                        <span th:text="|@ ${post.location}|">@ 무신사 개러지</span>
+                    </li>
+                </ol>
+            </section>
+
+            <section class="dashboard-side-block">
+                <div class="dashboard-side-title">
+                    <div>
+                        <span></span>
+                        <h2>DANCERS</h2>
+                    </div>
+                    <a href="#">ALL →</a>
+                </div>
+                <ul class="dashboard-dancers">
+                    <li th:each="dancer : ${recommendedDancers}">
+                        <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
+                        <div>
+                            <strong th:text="${dancer.displayName}">ZINWOO</strong>
+                            <span th:text="${dancer.crewName}">Hiphop · Popping</span>
+                        </div>
+                        <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">FOLLOW</a>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="dashboard-side-block">
+                <div class="dashboard-side-title">
+                    <div>
+                        <span></span>
+                        <h2>ACTIVITY</h2>
+                    </div>
+                    <a href="#">ALL →</a>
+                </div>
+                <ul class="dashboard-activity">
+                    <li th:each="post : ${recentPosts}">
+                        <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                        <p><strong th:text="${post.author.displayName}">B-BOY_HJ</strong> <span th:text="|${post.boardType.label}에 새 글|">SHOW에 새 글</span></p>
+                    </li>
+                </ul>
+            </section>
+        </aside>
+    </div>
 </main>
+
+<footer class="dashboard-footer">
+    <div>
+        <strong>Echo of Movement</strong>
+        <span>WE DON'T JUST MOVE, WE ECHO.</span>
+    </div>
+    <p>© 2025 E.O.M</p>
+</footer>
+
 <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>
