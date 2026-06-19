@@ -18,8 +18,13 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("boards", BoardType.values());
+        model.addAttribute("todayPick", dashboardService.findTodayPick());
         model.addAttribute("recentPosts", dashboardService.findRecentPosts());
+        model.addAttribute("popularPosts", dashboardService.findPopularPosts());
+        model.addAttribute("upcomingEvents", dashboardService.findUpcomingEvents());
+        model.addAttribute("recommendedDancers", dashboardService.findRecommendedDancers());
+        model.addAttribute("featuredMediaPosts", dashboardService.findFeaturedMediaPosts());
+        model.addAttribute("tags", dashboardService.findTags());
         return "dashboard";
     }
 }
-

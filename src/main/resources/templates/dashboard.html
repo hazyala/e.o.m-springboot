@@ -15,7 +15,15 @@
     <section class="dashboard-hero">
         <p class="eyebrow">TODAY'S PICK</p>
         <h1>E.O.M</h1>
-        <p>어서 와요. 여기는 댄서들의 아지트입니다.</p>
+        <div th:if="${todayPick}" class="today-pick">
+            <img th:src="${todayPick.thumbnailUrl}" th:alt="${todayPick.title}">
+            <div>
+                <span th:text="${todayPick.mediaType}">INSTAGRAM</span>
+                <h2 th:text="${todayPick.title}">릴스 기반 코레오 쇼케이스</h2>
+                <p th:text="${todayPick.content}">어서 와요. 여기는 댄서들의 아지트입니다.</p>
+                <a th:href="${todayPick.mediaUrl}" target="_blank" rel="noreferrer">Open media</a>
+            </div>
+        </div>
     </section>
     <section class="board-strip">
         <article th:each="board : ${boards}">
@@ -30,15 +38,70 @@
         </div>
         <div class="post-grid">
             <article class="post-card" th:each="post : ${recentPosts}">
+                <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
                 <span th:text="${post.boardType.label}">SHOW</span>
                 <h3 th:text="${post.title}">서울 스트릿잼 후기</h3>
                 <p th:text="${post.content}">content</p>
-                <a th:if="${post.instagramUrl}" th:href="${post.instagramUrl}" target="_blank" rel="noreferrer">Instagram</a>
+                <small th:text="|${post.location} · ${post.mediaType} · ♥ ${post.likeCount} · 댓글 ${post.commentCount}|">meta</small>
+                <a th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">Media</a>
             </article>
         </div>
+    </section>
+    <section>
+        <div class="section-title">
+            <h2>Featured Media</h2>
+            <a href="#">SHOW</a>
+        </div>
+        <div class="post-grid compact">
+            <article class="post-card" th:each="post : ${featuredMediaPosts}">
+                <img th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                <span th:text="${post.mediaType}">INSTAGRAM</span>
+                <h3 th:text="${post.title}">Video post</h3>
+                <small th:text="|조회 ${post.viewCount} · 좋아요 ${post.likeCount}|">stats</small>
+            </article>
+        </div>
+    </section>
+    <section class="dashboard-columns">
+        <article>
+            <div class="section-title inline">
+                <h2>Popular</h2>
+            </div>
+            <ol class="text-list">
+                <li th:each="post : ${popularPosts}">
+                    <strong th:text="${post.title}">Popular title</strong>
+                    <span th:text="|${post.boardType.label} · ♥ ${post.likeCount}|">SHOW · likes</span>
+                </li>
+            </ol>
+        </article>
+        <article>
+            <div class="section-title inline">
+                <h2>Events</h2>
+            </div>
+            <ol class="text-list">
+                <li th:each="post : ${upcomingEvents}">
+                    <strong th:text="${post.title}">Event title</strong>
+                    <span th:text="|${post.location} · ${post.eventDate}|">location · date</span>
+                </li>
+            </ol>
+        </article>
+    </section>
+    <section>
+        <div class="section-title">
+            <h2>Dancers</h2>
+        </div>
+        <div class="dancer-grid">
+            <article th:each="dancer : ${recommendedDancers}">
+                <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
+                <strong th:text="${dancer.displayName}">Dancer</strong>
+                <span th:text="${dancer.crewName}">Crew</span>
+                <p th:text="${dancer.bio}">Bio</p>
+            </article>
+        </div>
+    </section>
+    <section class="tag-cloud">
+        <a th:each="tag : ${tags}" th:text="|#${tag}|" href="#">#tag</a>
     </section>
 </main>
 <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>
-

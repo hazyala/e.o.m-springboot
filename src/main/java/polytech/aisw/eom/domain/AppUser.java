@@ -30,6 +30,15 @@ public class AppUser {
     @Column(length = 300)
     private String instagramUrl;
 
+    @Column(length = 300)
+    private String profileImageUrl;
+
+    @Column(length = 500)
+    private String bio;
+
+    @Column(length = 80)
+    private String crewName;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private UserRole role;
@@ -41,10 +50,26 @@ public class AppUser {
     }
 
     public AppUser(String username, String password, String displayName, String instagramUrl, UserRole role) {
+        this(username, password, displayName, instagramUrl, null, null, null, role);
+    }
+
+    public AppUser(
+            String username,
+            String password,
+            String displayName,
+            String instagramUrl,
+            String profileImageUrl,
+            String bio,
+            String crewName,
+            UserRole role
+    ) {
         this.username = username;
         this.password = password;
         this.displayName = displayName;
         this.instagramUrl = instagramUrl;
+        this.profileImageUrl = profileImageUrl;
+        this.bio = bio;
+        this.crewName = crewName;
         this.role = role;
         this.createdAt = LocalDateTime.now();
     }
@@ -69,6 +94,18 @@ public class AppUser {
         return instagramUrl;
     }
 
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public String getCrewName() {
+        return crewName;
+    }
+
     public UserRole getRole() {
         return role;
     }
@@ -77,4 +114,3 @@ public class AppUser {
         return createdAt;
     }
 }
-
