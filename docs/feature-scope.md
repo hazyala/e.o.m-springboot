@@ -32,6 +32,7 @@
 - 디자인 후보 이미지 `assets/source` 보관
 - 대시보드용 댄서/크루/행사/미디어 더미 데이터 보강
 - `MediaType` 기반 URL/임베드 확장 구조 추가
+- 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 `DataSeeder` 미디어 더미 데이터에 반영
 
 ## SHOULD
 
@@ -69,6 +70,7 @@
 - 목록은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세는 이후 `mediaType + mediaUrl` 기반으로 확장합니다.
 - 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 합니다.
 - 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고, 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 릴스/게시물 URL로 교체 예정입니다.
+- 현재 시드 데이터는 확인된 실제 URL을 우선 사용하고, 개별 URL이 없는 항목만 프로필 URL을 fallback으로 사용합니다.
 
 ## 우선순위 기준
 

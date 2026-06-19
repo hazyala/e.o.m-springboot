@@ -116,6 +116,8 @@ src/main/resources
 
 MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL을 `mediaUrl`로 저장합니다. 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세 화면은 이후 `mediaType + mediaUrl` 기준 embed 또는 링크 폴백으로 확장합니다. 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 하며, 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 URL로 교체 예정입니다.
 
+현재 `DataSeeder`는 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 게시글 `mediaUrl`에 반영합니다. Instagram 미디어 게시글은 `instagramUrl`도 해당 게시물 URL을 사용하고, 아직 개별 URL이 없는 항목만 프로필 URL을 fallback으로 둡니다.
+
 ### Comment
 
 - post

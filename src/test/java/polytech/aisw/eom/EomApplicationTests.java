@@ -61,6 +61,7 @@ class EomApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Featured Media")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("릴스 기반 코레오 쇼케이스")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("https://www.instagram.com/reel/C5frLClST0B/")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")));
     }
 }
