@@ -139,10 +139,23 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 
 접근:
 - `/`, `/login`, `/css/**`, `/js/**`, `/assets/**`: 공개
-- `/dashboard`, 보드, 마이페이지: 로그인 필요
+- `/dashboard`, `/posts`, `/posts/{id}`, `/activity`, `/events`, `/dancers`, 보드, 마이페이지: 로그인 필요
 - `/admin/**`: ADMIN 필요
 
-## 8. 배포 구조
+## 8. 화면 라우트
+
+대시보드와 커뮤니티 탐색 화면은 Spring MVC Controller -> Service -> Repository 흐름을 유지합니다.
+
+- `/dashboard`: 로그인 후 첫 화면. Today Pick, Popular, Recent, Tags, Activity, Events, Dancers 미리보기를 렌더링합니다.
+- `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
+- `/posts/{id}`: 대시보드 Today Pick, Popular, Recent의 내부 게시글 상세 목적지입니다.
+- `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록입니다.
+- `/activity`: Recent 탭과 독립적인 전체 최신글 목록입니다.
+- `/events`: 이번 달 HYPE 공식 행사 목록입니다.
+- `/dancers`: 장르별 댄서 탐색 목록입니다.
+- 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 첨부 링크에서만 새 탭으로 열며, 대시보드 썸네일은 버튼이 아닌 게시글 미리보기로 취급합니다.
+
+## 9. 배포 구조
 
 Docker 없이 Render Web Service로 배포합니다.
 

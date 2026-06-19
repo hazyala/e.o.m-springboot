@@ -43,7 +43,16 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 
 - 로그인 후 첫 화면
 - 최근글, 인기글, 다가오는 행사, 추천 피드 영역
-- SHOW, CAST, HYPE, LINK로 이동 가능한 구조
+- Today Pick, Popular, Recent, Tags, Activity, Events, Dancers 영역으로 구성
+- Today Pick의 `VIEW POST`, Popular/Recent 게시글 제목과 미리보기는 내부 게시글 상세 `/posts/{id}`로 이동
+- Recent 영역은 기본값을 SHOW로 두고 `SHOW`, `CAST`, `HYPE`, `LINK` 탭을 페이지 전체 새로고침 없이 전환
+- Recent 탭은 선택된 보드의 더미데이터 최신 글 10개만 미리보기로 노출
+- Tags는 태그 검색 결과 `/posts?tag={tag}`로 이동
+- Activity는 Recent 탭 선택과 무관한 전체 최신글 목록 `/activity`로 이동
+- Events는 이번 달 HYPE 공식 행사 목록 `/events`로 이동
+- Dancers는 장르별 댄서 탐색 페이지 `/dancers`로 이동
+- 추천 댄서의 Follow는 사용자의 인스타그램 프로필을 새 탭으로 열기
+- 인스타그램, 유튜브 등 외부 미디어 링크는 게시글 상세에서 첨부 링크 또는 미리보기로 다루고, 대시보드 썸네일 자체는 게시글 미리보기 역할만 수행
 
 ### 보드
 
