@@ -33,6 +33,10 @@
 - 대시보드용 댄서/크루/행사/미디어 더미 데이터 보강
 - `MediaType` 기반 URL/임베드 확장 구조 추가
 - 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 `DataSeeder` 미디어 더미 데이터에 반영
+- Figma 목업 기반 대시보드 UI 개선: 검색형 헤더, Today Pick 히어로, Popular/Recent 리스트, Tags/Events/Dancers/Activity 사이드 컬럼
+- 대시보드 전체 미리보기 개수 제한 및 Today Pick 히어로 배경 이미지 슬라이드 연출
+- 대시보드 `SHOW/CAST/HYPE/LINK` Recent 탭 클라이언트 전환
+- 대시보드 링크 목적지 연결: 게시글 상세, 태그 검색, 최신글 Activity, 이번 달 HYPE Events, Dancers 디렉터리
 
 ## SHOULD
 
@@ -68,6 +72,13 @@
 - MVP에서는 직접 영상 업로드를 지원하지 않습니다.
 - 게시글은 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL을 첨부하는 방식으로 처리합니다.
 - 목록은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세는 이후 `mediaType + mediaUrl` 기반으로 확장합니다.
+- 현재 대시보드의 미디어 표시는 `thumbnailUrl`을 작은 썸네일로 사용하고 `mediaType`, `mediaUrl`, boardType, 작성자/크루, 위치, 조회/좋아요/댓글 수를 리스트 메타로 노출합니다.
+- 히어로 배경 슬라이드는 현재 `assets/source` 이미지로 연출하며, 이후 게시글 미디어 기반 슬라이드로 확장 가능합니다.
+- 대시보드의 게시글 썸네일은 외부 링크 버튼이 아니라 내부 게시글 미리보기이며, 외부 미디어 링크는 상세 화면의 첨부/미리보기 확장 지점으로 둡니다.
+- Recent는 선택된 보드의 최신 글 10개를 보여주고, Tags 8개, Activity 5개, Events 4개, Dancers 4개로 대시보드 미리보기 개수를 제한합니다.
+- Activity 미리보기는 Recent 탭 선택과 무관하게 전체 최신글 기준으로 유지합니다.
+- Events는 HYPE 중 `eventDate`가 오늘부터 이번 달 말까지인 공식 행사성 글을 보여주는 목록으로 둡니다.
+- Instagram/외부 미디어 링크가 상세/프로필 영역에 노출될 경우 새 탭으로 열며, 파일 업로드나 직접 영상 저장 흐름은 제공하지 않습니다.
 - 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 합니다.
 - 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고, 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 릴스/게시물 URL로 교체 예정입니다.
 - 현재 시드 데이터는 확인된 실제 URL을 우선 사용하고, 개별 URL이 없는 항목만 프로필 URL을 fallback으로 사용합니다.

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${post.title + ' | E.O.M'}">Post | E.O.M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="dashboard-page">
+<header class="dashboard-header">
+    <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
+    <form class="dashboard-search" th:action="@{/posts}" role="search">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" name="tag" placeholder="Search" aria-label="Search">
+    </form>
+    <nav class="dashboard-nav" aria-label="Community navigation">
+        <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
+        <a th:href="@{/activity}">Activity<span class="subtitle">최신 글 목록</span></a>
+        <a th:href="@{/events}">Events<span class="subtitle">이번 달 공식 행사</span></a>
+        <a th:href="@{/dancers}">Dancers<span class="subtitle">장르별 댄서 탐색</span></a>
+    </nav>
+    <button class="dashboard-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">☼</button>
+</header>
+
+<main class="community-shell">
+    <article class="post-detail-card">
+        <div class="post-detail-media">
+            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+            <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
+        </div>
+        <div class="post-detail-copy">
+            <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">SHOW</span>
+            <h1 th:text="${post.title}">Post title</h1>
+            <p class="post-detail-meta" th:text="|${post.author.displayName} · ${post.author.crewName} · ${post.location}|">Author · Crew · Location</p>
+            <p th:text="${post.content}">Content</p>
+            <div class="dashboard-quick-stats">
+                <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">0</b></span>
+                <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${post.commentCount}">0</b></span>
+                <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">0</b></span>
+            </div>
+            <a class="dashboard-view-post" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">MEDIA LINK →</a>
+        </div>
+    </article>
+</main>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dancers | E.O.M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="dashboard-page">
+<header class="dashboard-header">
+    <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
+    <form class="dashboard-search" th:action="@{/posts}" role="search">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" name="tag" placeholder="Search" aria-label="Search">
+    </form>
+    <nav class="dashboard-nav" aria-label="Community navigation">
+        <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
+        <a th:href="@{/activity}">Activity<span class="subtitle">최신 글 목록</span></a>
+        <a th:href="@{/events}">Events<span class="subtitle">이번 달 공식 행사</span></a>
+    </nav>
+    <button class="dashboard-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">☼</button>
+</header>
+
+<main class="community-shell">
+    <section class="community-title">
+        <p>DANCERS</p>
+        <h1>Street Genre Directory</h1>
+    </section>
+    <section class="dancer-directory">
+        <article th:each="dancer : ${dancers}">
+            <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
+            <strong th:text="${dancer.displayName}">Dancer</strong>
+            <span th:text="${dancer.crewName}">Crew</span>
+            <p th:text="${dancer.bio}">Bio</p>
+            <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">INSTAGRAM →</a>
+        </article>
+    </section>
+</main>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

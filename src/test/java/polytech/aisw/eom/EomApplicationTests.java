@@ -64,4 +64,25 @@ class EomApplicationTests {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("https://www.instagram.com/reel/C5frLClST0B/")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")));
     }
+
+    @Test
+    void dashboardBoardTabsAndLinkedPagesRender() throws Exception {
+        mockMvc.perform(get("/dashboard?board=CAST").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("홍대 쇼케이스 백업댄서 모집")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("LINK에 새 글")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")));
+
+        mockMvc.perform(get("/activity").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("LATEST ACTIVITY")));
+
+        mockMvc.perform(get("/events").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("THIS MONTH EVENTS")));
+
+        mockMvc.perform(get("/dancers").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Street Genre Directory")));
+    }
 }

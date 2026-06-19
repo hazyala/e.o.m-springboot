@@ -139,14 +139,18 @@ src/main/resources/static/assets/source
 ### Dashboard
 
 - 로그인 후 댄서들의 아지트
-- TODAY'S PICK
-- FEATURED MEDIA
-- POPULAR
-- RECENT
-- TAGS
-- EVENTS
-- 추천 댄서
-- 활동 피드
+- 현재 구현은 `dashboard.html` + `app.css` 대시보드 전용 클래스로 구성합니다.
+- Figma 목업 기준의 라이트 대시보드로 구성합니다.
+- Header는 index의 로고/네비 톤을 따르되 중앙 검색창, Add New, Logout, 테마 토글을 배치합니다.
+- TODAY'S PICK은 전체 폭 이미지 히어로와 큰 E.O.M 타이포를 중심으로 보여줍니다.
+- 히어로에는 `assets/source`의 감도 높은 이미지를 우측에서 좌측으로 밀리는 슬라이드 배경 레이어로 사용하며, 이후 실제 게시글 미디어 셔플로 교체할 수 있습니다.
+- 히어로 CTA는 외부 미디어 링크가 아니라 내부 게시글 상세로 진입하는 `VIEW POST` 성격으로 둡니다.
+- 본문은 Popular/Recent 리스트와 Tags/Events/Dancers/Activity 사이드 컬럼으로 구성합니다.
+- Recent는 `SHOW/CAST/HYPE/LINK` 탭을 클라이언트에서 전환하며 선택된 보드의 최신 글 10개를 보여줍니다.
+- 모든 대시보드 리스트는 미리보기 개수를 제한해 데이터 수와 무관하게 화면 끝선이 흐트러지지 않게 합니다. 현재 기준은 Popular 5, Recent 10, Tags 8, Activity 5, Events 4, Dancers 4입니다.
+- Tags는 태그 검색 결과, Activity는 Recent 탭 선택과 독립적인 최신글 목록, Events는 이번 달 HYPE 공식 행사 목록, Dancers는 장르별 댄서 탐색 페이지로 이동합니다.
+- 미디어는 게시글의 `mediaType + mediaUrl + thumbnailUrl`을 유지하고, 대시보드에서는 작은 썸네일과 영상 표시 아이콘으로만 노출합니다.
+- Instagram/외부 미디어 링크가 상세/프로필 영역에 노출될 경우 새 탭으로 열고, 직접 영상 업로드 UI는 제공하지 않습니다.
 
 ### Board
 
