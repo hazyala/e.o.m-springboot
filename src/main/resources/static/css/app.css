@@ -1375,9 +1375,9 @@ body.dashboard-page::before {
 }
 
 .dashboard-tabs a {
+    position: relative;
     padding: 0 0 10px;
     border: 0;
-    border-bottom: 3px solid transparent;
     background: transparent;
     color: rgba(0, 0, 0, 0.48);
     font: inherit;
@@ -1390,9 +1390,49 @@ body.dashboard-page::before {
     color: #d30f46;
 }
 
+.dashboard-tabs a::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 16px;
+    height: 3px;
+    margin: 0 auto;
+    border-radius: 999px;
+    background: currentColor;
+    content: "";
+    opacity: 0;
+    transform: scaleX(0.35);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
 .dashboard-tabs .is-active {
-    border-color: #d30f46;
     color: #050505;
+}
+
+.dashboard-tabs .is-active::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.dashboard-tabs a[data-board="SHOW"].is-active,
+.dashboard-tabs a[data-board="SHOW"]:hover {
+    color: #68a063;
+}
+
+.dashboard-tabs a[data-board="CAST"].is-active,
+.dashboard-tabs a[data-board="CAST"]:hover {
+    color: #a06380;
+}
+
+.dashboard-tabs a[data-board="HYPE"].is-active,
+.dashboard-tabs a[data-board="HYPE"]:hover {
+    color: #a08263;
+}
+
+.dashboard-tabs a[data-board="LINK"].is-active,
+.dashboard-tabs a[data-board="LINK"]:hover {
+    color: #6370a0;
 }
 
 .dashboard-recent-list li {
@@ -1818,13 +1858,28 @@ html[data-theme="dark"] .dashboard-theme-toggle {
     color: #ffffff;
 }
 
-html[data-theme="dark"] .dashboard-tabs a:hover {
-    color: #ff4d6d;
+html[data-theme="dark"] .dashboard-tabs .is-active {
+    color: #ffffff;
 }
 
-html[data-theme="dark"] .dashboard-tabs .is-active {
-    border-color: #ff4d6d;
-    color: #ffffff;
+html[data-theme="dark"] .dashboard-tabs a[data-board="SHOW"].is-active,
+html[data-theme="dark"] .dashboard-tabs a[data-board="SHOW"]:hover {
+    color: #78b873;
+}
+
+html[data-theme="dark"] .dashboard-tabs a[data-board="CAST"].is-active,
+html[data-theme="dark"] .dashboard-tabs a[data-board="CAST"]:hover {
+    color: #c2799c;
+}
+
+html[data-theme="dark"] .dashboard-tabs a[data-board="HYPE"].is-active,
+html[data-theme="dark"] .dashboard-tabs a[data-board="HYPE"]:hover {
+    color: #c69b73;
+}
+
+html[data-theme="dark"] .dashboard-tabs a[data-board="LINK"].is-active,
+html[data-theme="dark"] .dashboard-tabs a[data-board="LINK"]:hover {
+    color: #7f8fd0;
 }
 
 html[data-theme="dark"] .dashboard-nav a:hover {

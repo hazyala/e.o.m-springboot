@@ -21,6 +21,10 @@ public class DashboardController {
         model.addAttribute("boards", BoardType.values());
         model.addAttribute("selectedBoard", board);
         model.addAttribute("todayPick", dashboardService.findTodayPick());
+        model.addAttribute("showRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.SHOW));
+        model.addAttribute("castRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.CAST));
+        model.addAttribute("hypeRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.HYPE));
+        model.addAttribute("linkRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.LINK));
         model.addAttribute("recentPosts", dashboardService.findRecentPostsByBoard(board));
         model.addAttribute("popularPosts", dashboardService.findPopularPosts());
         model.addAttribute("upcomingEvents", dashboardService.findUpcomingEvents());
