@@ -13,6 +13,10 @@
     --accent-cast: #a06380;
     --accent-hype: #a08263;
     --accent-link: #6370a0;
+    --accent-shadow-show: #68a063;
+    --accent-shadow-cast: #a06380;
+    --accent-shadow-hype: #a08263;
+    --accent-shadow-link: #6370a0;
 }
 
 html[data-theme="dark"] {

@@ -1,50 +1,160 @@
 <!doctype html>
-<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>E.O.M | Echo of Movement</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Irish+Grover&family=Roboto:wght@700&family=Roboto+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/marketing.css}">
 </head>
-<body>
-<div th:replace="~{fragments/header :: header}"></div>
-<main class="landing">
-    <section class="hero">
-        <p class="eyebrow">DANCERS' HIDEOUT</p>
-        <h1>" WE<br>DON'T<br>JUST<br>MOVE,<br>WE ECHO "</h1>
-        <p class="hero-copy">인스타그램에 흩어진 댄서들의 포트폴리오, 캐스팅, 행사, 네트워킹을 하나의 아지트로 모읍니다.</p>
-        <div class="hero-actions">
-            <a class="primary-action" th:href="@{/login}">Enter the hideout</a>
-            <a class="secondary-action" href="#sections">Explore sections</a>
+<body class="marketing-page">
+<header class="header">
+    <a class="logo" href="/" data-scroll-top>Echo of Movement</a>
+    <nav class="navbar">
+        <ul>
+            <li>
+                <a href="#show" data-section-link="show">Show<span class="subtitle">당신을 보여주세요</span></a>
+            </li>
+            <li>
+                <a href="#cast" data-section-link="cast">Cast<span class="subtitle">공연 기회를 만나세요</span></a>
+            </li>
+            <li>
+                <a href="#hype" data-section-link="hype">Hype<span class="subtitle">움직임에 열광을 더하세요</span></a>
+            </li>
+            <li>
+                <a href="#link" data-section-link="link">Link<span class="subtitle">세상과 연결되세요</span></a>
+            </li>
+            <li>
+                <a th:href="@{/login}">Login<span class="subtitle">가입해보세요</span></a>
+            </li>
+            <li>
+                <button class="theme-toggle-button" type="button" data-theme-toggle aria-label="Toggle theme">☀</button>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section class="hero-section">
+        <img class="hero-image" th:src="@{/assets/source/hero.jpg}" alt="Hero Background">
+        <div class="label">
+            <div class="typewriter-text" data-typewriter-text="&quot; WE&#10;DON'T&#10;JUST&#10;MOVE,&#10;WE ECHO &quot;"></div>
         </div>
     </section>
-    <section id="sections" class="section-grid">
-        <article>
-            <span>SHOW</span>
-            <h2>Show Your Profile</h2>
-            <p>공연, 연습 영상, 안무 기록을 올리고 나를 보여주세요.</p>
-        </article>
-        <article>
-            <span>CAST</span>
-            <h2>Post it. Fill the Stage.</h2>
-            <p>강사, 백업댄서, 팀원을 찾는 공고를 등록합니다.</p>
-        </article>
-        <article>
-            <span>HYPE</span>
-            <h2>Events. Battles.</h2>
-            <p>배틀, 워크숍, 행사를 씬 전체에 알립니다.</p>
-        </article>
-        <article>
-            <span>LINK</span>
-            <h2>Practice, Together</h2>
-            <p>함께 연습하고 교류할 사람을 찾습니다.</p>
-        </article>
+
+    <section id="show" class="show-section reveal-section">
+        <div class="show-container">
+            <div class="show-image-wrapper reveal-up">
+                <img th:src="@{/assets/source/show.png}" alt="Show Profile">
+            </div>
+            <div class="show-content reveal-right">
+                <h2 class="show-title">Show Your Profile</h2>
+                <p class="show-description">
+                    지금, 당신을 보여주세요.<br>
+                    누군가가 기다리고 있어요.
+                </p>
+                <a class="show-button" th:href="@{/login}">SHOW</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="cast" class="cast-section reveal-section">
+        <div class="cast-carousel-wrapper">
+            <div class="cast-track">
+                <div class="cast-card"><img th:src="@{/assets/source/cast1.jpg}" alt="Cast 1"></div>
+                <div class="cast-card"><img th:src="@{/assets/source/cast2.jpg}" alt="Cast 2"></div>
+                <div class="cast-card"><img th:src="@{/assets/source/cast3.jpg}" alt="Cast 3"></div>
+                <div class="cast-card"><img th:src="@{/assets/source/cast4.jpg}" alt="Cast 4"></div>
+                <div class="cast-card"><img th:src="@{/assets/source/cast1.jpg}" alt="Cast 1"></div>
+                <div class="cast-card"><img th:src="@{/assets/source/cast2.jpg}" alt="Cast 2"></div>
+                <div class="cast-card"><img th:src="@{/assets/source/cast3.jpg}" alt="Cast 3"></div>
+                <div class="cast-card"><img th:src="@{/assets/source/cast4.jpg}" alt="Cast 4"></div>
+            </div>
+        </div>
+        <div class="cast-content-wrapper reveal-up">
+            <h2 class="cast-title">Post it. Fill the Stage.</h2>
+            <p class="cast-desc">댄서를 찾고 계신가요?&nbsp;&nbsp;공고를 등록해 연결을 시작하세요.</p>
+            <a class="show-button" th:href="@{/login}">CAST</a>
+        </div>
+    </section>
+
+    <section id="hype" class="hype-section reveal-section">
+        <div class="hype-container">
+            <div class="hype-text reveal-left">
+                <h2 class="headline">
+                    Events. <br>
+                    Battles. <br>
+                    Everything <br>
+                    Hype.
+                </h2>
+                <p class="desc">
+                    배틀, 행사, 이벤트.<br>
+                    이 씬의 모든 하입은 여기에.
+                </p>
+                <a class="show-button" th:href="@{/login}">HYPE</a>
+            </div>
+            <div class="hype-image-wrapper reveal-right">
+                <img th:src="@{/assets/source/hype.jpg}" alt="Hype Image">
+            </div>
+        </div>
+    </section>
+
+    <section id="link" class="link-section reveal-section">
+        <div class="link-background">
+            <img th:src="@{/assets/source/link.png}" alt="Link Background Image">
+        </div>
+        <div class="link-content">
+            <div class="link-left reveal-left">
+                <div class="title">Practice,<br>Together</div>
+                <div class="desc">함께 연습할 사람, 지금 찾기.</div>
+            </div>
+            <div class="button-wrapper reveal-up">
+                <a class="show-button" th:href="@{/login}">LINK</a>
+            </div>
+            <div class="link-right reveal-right">
+                <div class="title">Drop It</div>
+                <div class="desc">당신의 말이 씬을 만듭니다.</div>
+            </div>
+        </div>
     </section>
 </main>
+
+<footer class="footer reveal-section">
+    <div class="footer-left">
+        <div class="footer-logo">Echo of Movement</div>
+        <div class="footer-slogan">We don't just move we echo</div>
+        <div class="footer-icons" aria-hidden="true">
+            <span>◎</span>
+            <span>◇</span>
+            <span>✦</span>
+        </div>
+    </div>
+    <div class="footer-columns">
+        <div class="footer-column">
+            <div class="footer-column-title">MOVE</div>
+            <a href="#show" data-section-link="show">Show</a>
+            <a href="#cast" data-section-link="cast">Cast</a>
+            <a href="#hype" data-section-link="hype">Hype</a>
+        </div>
+        <div class="footer-column">
+            <div class="footer-column-title">CONNECT</div>
+            <a href="#link" data-section-link="link">Link</a>
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/dashboard}">Dashboard</a>
+        </div>
+        <div class="footer-column">
+            <div class="footer-column-title">E.O.M</div>
+            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram</a>
+            <a href="https://github.com/hazyala/e.o.m-springboot" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="/" data-scroll-top>Back to top</a>
+        </div>
+    </div>
+</footer>
+
 <script th:src="@{/js/theme.js}"></script>
+<script th:src="@{/js/marketing.js}"></script>
 </body>
 </html>
-
