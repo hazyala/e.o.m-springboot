@@ -918,37 +918,31 @@ body.dashboard-page::before {
 .dashboard-nav a {
     position: relative;
     display: inline-block;
-    padding: 8px 12px;
+    padding: 8px 16px;
     border-radius: 20px;
-    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    color: var(--text-color);
+    transition: all 0.3s ease;
 }
 
 .dashboard-nav a:hover {
-    background: #050505;
-    color: #ffffff;
-    transform: translateY(-1px);
+    background-color: var(--text-color);
+    color: var(--bg-color);
 }
 
 .dashboard-header .subtitle {
     position: absolute;
-    top: calc(100% + 8px);
+    top: 115%;
     left: 50%;
-    z-index: 120;
+    z-index: 999;
     display: block;
-    min-width: max-content;
-    padding: 5px 9px;
-    background: rgba(255, 255, 255, 0.88);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 999px;
-    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
-    color: #555555;
+    color: var(--sub-text-color);
     font-family: Inter, sans-serif;
     font-size: 11px;
     font-weight: 400;
     opacity: 0;
     pointer-events: none;
-    transform: translateX(-50%) translateY(-8px);
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: translateX(-50%) translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
     white-space: nowrap;
 }
 
@@ -956,6 +950,15 @@ body.dashboard-page::before {
 .dashboard-logout:hover .subtitle {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+}
+
+.dashboard-nav .dashboard-add-button:hover,
+.dashboard-logout:hover {
+    background: #d30f46;
+    border-color: #d30f46;
+    color: #ffffff;
+    box-shadow: 0 12px 28px rgba(211, 15, 70, 0.2);
+    transform: translateY(-1px);
 }
 
 .dashboard-theme-toggle {
@@ -1824,14 +1827,18 @@ html[data-theme="dark"] .dashboard-tabs .is-active {
     color: #ffffff;
 }
 
-html[data-theme="dark"] .dashboard-nav a:hover,
-html[data-theme="dark"] .dashboard-add-button:hover,
+html[data-theme="dark"] .dashboard-nav a:hover {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+}
+
+html[data-theme="dark"] .dashboard-nav .dashboard-add-button:hover,
 html[data-theme="dark"] .dashboard-logout:hover {
     background: #d30f46;
+    border-color: #d30f46;
     color: #ffffff;
 }
 
-html[data-theme="dark"] .dashboard-add-button,
 html[data-theme="dark"] .dashboard-add-button {
     border-color: rgba(255, 77, 109, 0.46);
     color: #ffffff;
@@ -1843,9 +1850,7 @@ html[data-theme="dark"] .dashboard-logout {
 }
 
 html[data-theme="dark"] .dashboard-header .subtitle {
-    background: rgba(10, 10, 10, 0.88);
-    border-color: rgba(255, 255, 255, 0.14);
-    color: #dedede;
+    color: var(--sub-text-color);
 }
 
 html[data-theme="dark"] .dashboard-footer {
