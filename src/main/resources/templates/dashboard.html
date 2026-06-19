@@ -9,96 +9,171 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
-<body>
+<body class="dashboard-page">
 <div th:replace="~{fragments/header :: header}"></div>
-<main class="app-shell">
-    <section class="dashboard-hero">
-        <p class="eyebrow">TODAY'S PICK</p>
-        <h1>E.O.M</h1>
-        <div th:if="${todayPick}" class="today-pick">
+<main class="app-shell dashboard-shell">
+    <section class="dashboard-hero dashboard-hero-card" th:if="${todayPick}">
+        <div class="dashboard-hero-media">
             <img th:src="${todayPick.thumbnailUrl}" th:alt="${todayPick.title}">
-            <div>
+            <div class="dashboard-hero-badges">
+                <span th:text="${todayPick.boardType.label}">SHOW</span>
                 <span th:text="${todayPick.mediaType}">INSTAGRAM</span>
-                <h2 th:text="${todayPick.title}">릴스 기반 코레오 쇼케이스</h2>
-                <p th:text="${todayPick.content}">어서 와요. 여기는 댄서들의 아지트입니다.</p>
-                <a th:href="${todayPick.mediaUrl}" target="_blank" rel="noreferrer">Open media</a>
             </div>
         </div>
+        <div class="dashboard-hero-copy">
+            <p class="eyebrow">TODAY'S PICK</p>
+            <h1>E.O.M</h1>
+            <h2 th:text="${todayPick.title}">릴스 기반 코레오 쇼케이스</h2>
+            <p th:text="${todayPick.content}">어서 와요. 여기는 댄서들의 아지트입니다.</p>
+            <div class="dashboard-meta-row">
+                <span th:text="${todayPick.author.displayName}">SHADOW_98</span>
+                <span th:text="${todayPick.author.crewName}">Night Shift</span>
+                <span th:text="${todayPick.location}">성수</span>
+            </div>
+            <div class="dashboard-stat-row">
+                <span th:text="|조회 ${todayPick.viewCount}|">조회 1480</span>
+                <span th:text="|좋아요 ${todayPick.likeCount}|">좋아요 284</span>
+                <span th:text="|댓글 ${todayPick.commentCount}|">댓글 32</span>
+            </div>
+            <a class="media-link" th:if="${todayPick.mediaUrl}" th:href="${todayPick.mediaUrl}" target="_blank" rel="noreferrer">Open media</a>
+        </div>
     </section>
-    <section class="board-strip">
-        <article th:each="board : ${boards}">
+
+    <section class="board-strip dashboard-board-strip" aria-label="Boards">
+        <article th:each="board : ${boards}" th:classappend="| board-${board.name().toLowerCase()}|">
             <span th:text="${board.label}">SHOW</span>
             <p th:text="${board.description}">description</p>
         </article>
     </section>
-    <section>
-        <div class="section-title">
-            <h2>Recent Moves</h2>
-            <a href="#">Add New</a>
-        </div>
-        <div class="post-grid">
-            <article class="post-card" th:each="post : ${recentPosts}">
-                <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                <span th:text="${post.boardType.label}">SHOW</span>
-                <h3 th:text="${post.title}">서울 스트릿잼 후기</h3>
-                <p th:text="${post.content}">content</p>
-                <small th:text="|${post.location} · ${post.mediaType} · ♥ ${post.likeCount} · 댓글 ${post.commentCount}|">meta</small>
-                <a th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">Media</a>
-            </article>
-        </div>
-    </section>
-    <section>
-        <div class="section-title">
-            <h2>Featured Media</h2>
+
+    <section class="dashboard-section">
+        <div class="section-title dashboard-section-title">
+            <div>
+                <p class="eyebrow">SHOW REELS</p>
+                <h2>Featured Media</h2>
+            </div>
             <a href="#">SHOW</a>
         </div>
-        <div class="post-grid compact">
-            <article class="post-card" th:each="post : ${featuredMediaPosts}">
-                <img th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                <span th:text="${post.mediaType}">INSTAGRAM</span>
-                <h3 th:text="${post.title}">Video post</h3>
-                <small th:text="|조회 ${post.viewCount} · 좋아요 ${post.likeCount}|">stats</small>
+        <div class="featured-media-grid">
+            <article class="media-card" th:each="post, stat : ${featuredMediaPosts}" th:classappend="${stat.index == 0} ? ' media-card-large'">
+                <a class="media-card-image" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer" th:aria-label="|${post.title} media link|">
+                    <img th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                    <span th:text="${post.mediaType}">INSTAGRAM</span>
+                </a>
+                <div class="media-card-body">
+                    <div class="dashboard-meta-row">
+                        <span th:text="${post.boardType.label}">SHOW</span>
+                        <span th:text="${post.location}">성수</span>
+                    </div>
+                    <h3 th:text="${post.title}">Video post</h3>
+                    <div class="dashboard-card-author">
+                        <strong th:text="${post.author.displayName}">Dancer</strong>
+                        <span th:text="${post.author.crewName}">Crew</span>
+                    </div>
+                    <div class="dashboard-stat-row">
+                        <span th:text="|조회 ${post.viewCount}|">조회 1480</span>
+                        <span th:text="|좋아요 ${post.likeCount}|">좋아요 284</span>
+                        <span th:text="|댓글 ${post.commentCount}|">댓글 32</span>
+                    </div>
+                </div>
             </article>
         </div>
     </section>
-    <section class="dashboard-columns">
-        <article>
-            <div class="section-title inline">
-                <h2>Popular</h2>
+
+    <section class="dashboard-section">
+        <div class="section-title dashboard-section-title">
+            <div>
+                <p class="eyebrow">COMMUNITY FEED</p>
+                <h2>Recent Moves</h2>
             </div>
-            <ol class="text-list">
-                <li th:each="post : ${popularPosts}">
-                    <strong th:text="${post.title}">Popular title</strong>
-                    <span th:text="|${post.boardType.label} · ♥ ${post.likeCount}|">SHOW · likes</span>
+            <a href="#">Add New</a>
+        </div>
+        <div class="post-grid dashboard-post-grid">
+            <article class="post-card dashboard-post-card" th:each="post : ${recentPosts}">
+                <a class="dashboard-card-image" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">
+                    <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                    <span th:text="${post.mediaType}">INSTAGRAM</span>
+                </a>
+                <div class="dashboard-card-body">
+                    <div class="dashboard-meta-row">
+                        <span th:text="${post.boardType.label}">SHOW</span>
+                        <span th:text="${post.location}">성수</span>
+                    </div>
+                    <h3 th:text="${post.title}">서울 스트릿잼 후기</h3>
+                    <p th:text="${post.content}">content</p>
+                    <div class="dashboard-card-author">
+                        <strong th:text="${post.author.displayName}">Dancer</strong>
+                        <span th:text="${post.author.crewName}">Crew</span>
+                    </div>
+                    <div class="dashboard-stat-row">
+                        <span th:text="|조회 ${post.viewCount}|">조회 1480</span>
+                        <span th:text="|좋아요 ${post.likeCount}|">좋아요 284</span>
+                        <span th:text="|댓글 ${post.commentCount}|">댓글 32</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="dashboard-columns">
+        <article class="dashboard-panel">
+            <div class="section-title inline dashboard-section-title">
+                <div>
+                    <p class="eyebrow">HOT NOW</p>
+                    <h2>Popular</h2>
+                </div>
+            </div>
+            <ol class="text-list dashboard-rank-list">
+                <li th:each="post, stat : ${popularPosts}">
+                    <span class="rank-number" th:text="${stat.count}">1</span>
+                    <div>
+                        <strong th:text="${post.title}">Popular title</strong>
+                        <span th:text="|${post.boardType.label} · ${post.mediaType} · 조회 ${post.viewCount} · 좋아요 ${post.likeCount} · 댓글 ${post.commentCount}|">SHOW · stats</span>
+                        <span th:text="|${post.author.displayName} · ${post.author.crewName}|">Dancer · Crew</span>
+                    </div>
                 </li>
             </ol>
         </article>
-        <article>
-            <div class="section-title inline">
-                <h2>Events</h2>
+        <article class="dashboard-panel">
+            <div class="section-title inline dashboard-section-title">
+                <div>
+                    <p class="eyebrow">NEXT STAGE</p>
+                    <h2>Upcoming Events</h2>
+                </div>
             </div>
-            <ol class="text-list">
+            <ol class="text-list dashboard-event-list">
                 <li th:each="post : ${upcomingEvents}">
-                    <strong th:text="${post.title}">Event title</strong>
-                    <span th:text="|${post.location} · ${post.eventDate}|">location · date</span>
+                    <div>
+                        <strong th:text="${post.title}">Event title</strong>
+                        <span th:text="|${post.boardType.label} · ${post.location} · ${post.author.displayName}|">HYPE · location</span>
+                    </div>
+                    <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="${#temporals.format(post.eventDate, 'MM.dd')}">07.02</time>
                 </li>
             </ol>
         </article>
     </section>
-    <section>
-        <div class="section-title">
-            <h2>Dancers</h2>
+
+    <section class="dashboard-section">
+        <div class="section-title dashboard-section-title">
+            <div>
+                <p class="eyebrow">CREW RADAR</p>
+                <h2>Recommended Dancers</h2>
+            </div>
         </div>
-        <div class="dancer-grid">
+        <div class="dancer-grid dashboard-dancer-grid">
             <article th:each="dancer : ${recommendedDancers}">
                 <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
-                <strong th:text="${dancer.displayName}">Dancer</strong>
-                <span th:text="${dancer.crewName}">Crew</span>
-                <p th:text="${dancer.bio}">Bio</p>
+                <div>
+                    <strong th:text="${dancer.displayName}">Dancer</strong>
+                    <span th:text="${dancer.crewName}">Crew</span>
+                    <p th:text="${dancer.bio}">Bio</p>
+                    <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">Instagram</a>
+                </div>
             </article>
         </div>
     </section>
-    <section class="tag-cloud">
+
+    <section class="tag-cloud dashboard-tag-cloud" aria-label="Tags">
         <a th:each="tag : ${tags}" th:text="|#${tag}|" href="#">#tag</a>
     </section>
 </main>
