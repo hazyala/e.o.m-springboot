@@ -1466,8 +1466,9 @@ body.dashboard-page::before {
     display: flex;
     align-self: stretch;
     flex-direction: column;
-    gap: 30px;
-    height: auto;
+    justify-content: space-between;
+    gap: 42px;
+    height: 100%;
     min-height: 100%;
 }
 
@@ -1476,7 +1477,7 @@ body.dashboard-page::before {
 }
 
 .dashboard-dancers-block {
-    margin-top: auto;
+    margin-top: 0;
 }
 
 .dashboard-side-title {
