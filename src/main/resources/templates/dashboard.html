@@ -242,7 +242,7 @@
                     <a th:href="@{/dancers}">ALL →</a>
                 </div>
                 <ul class="dashboard-dancers">
-                    <li class="dashboard-dancer-card" th:each="dancer, stat : ${recommendedDancers}" th:if="${stat.index < 5}">
+                    <li class="dashboard-dancer-card" th:each="dancer, stat : ${recommendedDancers}" th:if="${stat.index < 4}">
                         <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
                         <div>
                             <strong th:text="${dancer.displayName}">ZINWOO</strong>

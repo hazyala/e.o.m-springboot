@@ -1523,7 +1523,7 @@ body.dashboard-page::before {
 .dashboard-events li + li,
 .dashboard-dancers li + li,
 .dashboard-activity li + li {
-    margin-top: 17px;
+    margin-top: 15px;
 }
 
 .dashboard-events time {
@@ -1557,7 +1557,7 @@ body.dashboard-page::before {
     grid-template-columns: 38px minmax(0, 1fr) auto;
     gap: 14px;
     align-items: center;
-    padding-bottom: 14px;
+    padding-bottom: 13px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
