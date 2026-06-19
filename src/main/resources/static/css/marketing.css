@@ -1,9 +1,25 @@
 body.marketing-page {
+    position: relative;
     margin: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow-x: hidden;
     transition: background-color 0.5s, color 0.5s;
+}
+
+body.marketing-page::before {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url("/assets/source/background.jpg") center center / cover no-repeat;
+    content: "";
+    opacity: 0.1;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+[data-theme="light"] body.marketing-page::before {
+    opacity: 0.03;
 }
 
 .marketing-page .header {
@@ -240,6 +256,7 @@ body.marketing-page {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: fit-content;
     min-width: 96px;
     padding: 12px 28px;
     border: 1px solid var(--text-color);
@@ -354,6 +371,12 @@ body.marketing-page {
     flex-shrink: 0;
     flex-direction: column;
     justify-content: flex-start;
+}
+
+.hype-text .show-button {
+    align-self: flex-start;
+    width: fit-content;
+    margin-top: 0;
 }
 
 .headline {
@@ -686,4 +709,3 @@ body.marketing-page {
         align-items: flex-start;
     }
 }
-
