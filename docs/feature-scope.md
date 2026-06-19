@@ -35,7 +35,7 @@
 - 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 `DataSeeder` 미디어 더미 데이터에 반영
 - Figma 목업 기반 대시보드 UI 개선: 검색형 헤더, Today Pick 히어로, Popular/Recent 리스트, Tags/Events/Dancers/Activity 사이드 컬럼
 - 대시보드 전체 미리보기 개수 제한 및 Today Pick 히어로 배경 이미지 슬라이드 연출
-- 대시보드 `SHOW/CAST/HYPE/LINK` Recent 탭 서버 렌더링 전환
+- 대시보드 `SHOW/CAST/HYPE/LINK` Recent 탭 클라이언트 전환
 - 대시보드 링크 목적지 연결: 게시글 상세, 태그 검색, 최신글 Activity, 이번 달 HYPE Events, Dancers 디렉터리
 
 ## SHOULD
