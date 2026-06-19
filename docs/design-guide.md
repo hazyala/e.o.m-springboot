@@ -143,7 +143,9 @@ src/main/resources/static/assets/source
 - Figma 목업 기준의 라이트 대시보드로 구성합니다.
 - Header는 index의 로고/네비 톤을 따르되 중앙 검색창, Add New, Logout, 테마 토글을 배치합니다.
 - TODAY'S PICK은 붉은 히어로 밴드와 큰 E.O.M 타이포를 중심으로 보여줍니다.
+- 히어로에는 `assets/source`의 감도 높은 이미지를 셔플 배경 레이어로 사용하며, 이후 실제 게시글 미디어 셔플로 교체할 수 있습니다.
 - 본문은 Popular/Recent 리스트와 Tags/Events/Dancers/Activity 사이드 컬럼으로 구성합니다.
+- Tags는 미리보기 개수를 제한해 사이드 컬럼의 Activity가 과도하게 밀리지 않게 합니다.
 - 미디어는 게시글의 `mediaType + mediaUrl + thumbnailUrl`을 유지하고, 작은 썸네일/링크로만 노출합니다.
 - Instagram/외부 미디어 링크는 새 탭으로 열고, 직접 영상 업로드 UI는 제공하지 않습니다.
 
