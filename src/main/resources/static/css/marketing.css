@@ -19,7 +19,7 @@ body.marketing-page::before {
 }
 
 [data-theme="light"] body.marketing-page::before {
-    opacity: 0.03;
+    opacity: 0.12;
 }
 
 .marketing-page .header {
