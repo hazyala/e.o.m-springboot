@@ -33,7 +33,7 @@
 - 대시보드용 댄서/크루/행사/미디어 더미 데이터 보강
 - `MediaType` 기반 URL/임베드 확장 구조 추가
 - 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 `DataSeeder` 미디어 더미 데이터에 반영
-- 대시보드 첫 화면 Today Pick, SHOW Featured Media, Recent/Popular/Event/Dancer/Tag 카드 UI 개선
+- Figma 목업 기반 대시보드 UI 개선: 검색형 헤더, Today Pick 히어로, Popular/Recent 리스트, Tags/Events/Dancers/Activity 사이드 컬럼
 
 ## SHOULD
 
@@ -69,7 +69,7 @@
 - MVP에서는 직접 영상 업로드를 지원하지 않습니다.
 - 게시글은 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL을 첨부하는 방식으로 처리합니다.
 - 목록은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세는 이후 `mediaType + mediaUrl` 기반으로 확장합니다.
-- 현재 대시보드의 미디어 카드는 `thumbnailUrl`을 대표 이미지로 사용하고 `mediaType`, `mediaUrl`, boardType, 작성자/크루, 위치, 조회/좋아요/댓글 수를 함께 노출합니다.
+- 현재 대시보드의 미디어 표시는 `thumbnailUrl`을 작은 썸네일로 사용하고 `mediaType`, `mediaUrl`, boardType, 작성자/크루, 위치, 조회/좋아요/댓글 수를 리스트 메타로 노출합니다.
 - 대시보드의 Instagram/외부 미디어 링크는 새 탭으로 열며, 파일 업로드나 직접 영상 저장 흐름은 제공하지 않습니다.
 - 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 합니다.
 - 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고, 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 릴스/게시물 URL로 교체 예정입니다.

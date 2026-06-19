@@ -140,13 +140,11 @@ src/main/resources/static/assets/source
 
 - 로그인 후 댄서들의 아지트
 - 현재 구현은 `dashboard.html` + `app.css` 대시보드 전용 클래스로 구성합니다.
-- TODAY'S PICK은 `thumbnailUrl`을 크게 보여주는 첫 화면 대표 카드로 배치합니다.
-- FEATURED MEDIA는 SHOW 게시글 중 `mediaType + mediaUrl + thumbnailUrl`이 있는 릴스/영상 링크를 썸네일 카드로 보여줍니다.
-- Recent Moves는 최신 게시글 피드로 boardType, mediaType, 작성자, crewName, location, 조회/좋아요/댓글 수를 함께 노출합니다.
-- Popular는 조회/좋아요 기준 인기 흐름을 랭킹 리스트로 보여줍니다.
-- Upcoming Events는 HYPE 게시글의 location, eventDate, 작성자를 날짜 중심으로 보여줍니다.
-- Recommended Dancers는 프로필 이미지, displayName, crewName, bio, Instagram 링크를 카드로 보여줍니다.
-- Tags는 시드 데이터의 태그 텍스트를 해시태그 클라우드로 노출합니다.
+- Figma 목업 기준의 라이트 대시보드로 구성합니다.
+- Header는 index의 로고/네비 톤을 따르되 중앙 검색창, Add New, Logout, 테마 토글을 배치합니다.
+- TODAY'S PICK은 붉은 히어로 밴드와 큰 E.O.M 타이포를 중심으로 보여줍니다.
+- 본문은 Popular/Recent 리스트와 Tags/Events/Dancers/Activity 사이드 컬럼으로 구성합니다.
+- 미디어는 게시글의 `mediaType + mediaUrl + thumbnailUrl`을 유지하고, 작은 썸네일/링크로만 노출합니다.
 - Instagram/외부 미디어 링크는 새 탭으로 열고, 직접 영상 업로드 UI는 제공하지 않습니다.
 
 ### Board
