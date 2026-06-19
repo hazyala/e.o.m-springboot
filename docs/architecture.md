@@ -80,6 +80,9 @@ src/main/resources
 - password
 - displayName
 - instagramUrl
+- profileImageUrl
+- bio
+- crewName
 - role
 - createdAt
 
@@ -90,8 +93,28 @@ src/main/resources
 - content
 - instagramUrl
 - imageUrl
+- viewCount
+- likeCount
+- commentCount
+- tags
+- location
+- eventDate
+- deadline
+- mediaType
+- mediaUrl
+- thumbnailUrl
 - author
 - createdAt
+
+### MediaType
+
+- IMAGE
+- INSTAGRAM
+- YOUTUBE
+- VIDEO_LINK
+- EXTERNAL_LINK
+
+MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL을 `mediaUrl`로 저장합니다. 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세 화면은 이후 `mediaType + mediaUrl` 기준 embed 또는 링크 폴백으로 확장합니다. 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정 내 콘텐츠를 기준으로 하며, 정확한 릴스/게시물 URL 확보 전에는 프로필 URL을 사용하고 실제 URL로 교체 예정입니다.
 
 ### Comment
 
@@ -131,4 +154,3 @@ Start Command: java -jar build/libs/eom-springboot-0.0.1-SNAPSHOT.jar
 - `SPRING_DATASOURCE_URL`
 - `SPRING_DATASOURCE_USERNAME`
 - `SPRING_DATASOURCE_PASSWORD`
-

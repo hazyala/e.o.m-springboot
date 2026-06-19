@@ -96,6 +96,11 @@ src/main/resources/static/assets/source
 - 대시보드는 썸네일, 대표 이미지, 랭킹 카드 등 이미지 비중을 높입니다.
 - 보드 목록은 텍스트 리스트보다 이미지 카드 중심으로 구성합니다.
 - 인스타그램 문화와 이어지도록 프로필/게시글에 시각적 이미지 영역을 둡니다.
+- E.O.M은 댄서 플랫폼이므로 영상, 릴스, 인스타그램 게시물 URL 기반 콘텐츠를 핵심으로 둡니다.
+- MVP에서는 직접 영상 파일 업로드를 지원하지 않고 URL/임베드 기반으로 처리합니다.
+- 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용합니다.
+- 상세 화면은 이후 `mediaType + mediaUrl`로 embed 또는 링크 폴백을 구현합니다.
+- 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정 내 콘텐츠를 기준으로 하며, 정확한 릴스/게시물 URL 확보 전에는 프로필 URL을 사용하고 실제 URL로 교체 예정입니다.
 
 현재 index/login에서 사용하는 이미지:
 - `hero.jpg`: index 첫 히어로 배경
@@ -135,6 +140,7 @@ src/main/resources/static/assets/source
 
 - 로그인 후 댄서들의 아지트
 - TODAY'S PICK
+- FEATURED MEDIA
 - POPULAR
 - RECENT
 - TAGS
