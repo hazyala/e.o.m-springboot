@@ -17,6 +17,38 @@ public class DataSeeder implements CommandLineRunner {
 
     private static final String HAZYALA_INSTAGRAM =
             "https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr";
+    private static final String REEL_CHOREO_SHOWCASE =
+            "https://www.instagram.com/reel/C5frLClST0B/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_OPEN_CLASS =
+            "https://www.instagram.com/reel/DHGjIYxSGzP/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String POST_SHOW_ARCHIVE =
+            "https://www.instagram.com/p/DEvAdpRSYHL/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_CYPHER_CUT =
+            "https://www.instagram.com/reel/C8rY8bhSQGE/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_KRUMP_LOG =
+            "https://www.instagram.com/reel/C5vUUTJSeeJ/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_TEAM_TEASER =
+            "https://www.instagram.com/reel/C5LZponSDE1/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_LOCKING_ARCHIVE =
+            "https://www.instagram.com/reel/C4sR2wfSVZK/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String POST_CAST_REFERENCE =
+            "https://www.instagram.com/p/C4XXv-iragk/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String POST_CAST_NOTICE =
+            "https://www.instagram.com/p/C0ost6-pSRf/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_POPUP_PERFORMANCE =
+            "https://www.instagram.com/reel/Cyu3bF_p0QE/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_EVENT_BATTLE =
+            "https://www.instagram.com/reel/Cyk6lnspeFr/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String POST_EVENT_NOTICE =
+            "https://www.instagram.com/p/CydU59IrR3y/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String POST_WORKSHOP_NOTICE =
+            "https://www.instagram.com/p/ClLvP9HLTC_/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_OPEN_SESSION =
+            "https://www.instagram.com/reel/Ckaufd9pKtn/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String REEL_FEEDBACK_SESSION =
+            "https://www.instagram.com/reel/CVj4eMTpjlY/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
+    private static final String POST_NETWORKING =
+            "https://www.instagram.com/p/CKwgC-KrsFL/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==";
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
@@ -67,32 +99,32 @@ public class DataSeeder implements CommandLineRunner {
 
         savePost(BoardType.SHOW, "릴스 기반 코레오 쇼케이스", "짧은 릴스로 무드와 동선을 먼저 보여주는 SHOW 포스트입니다.",
                 1480, 284, 32, "코레오,릴스,쇼케이스", "성수", null, null,
-                MediaType.INSTAGRAM, HAZYALA_INSTAGRAM, "/assets/source/show.png", dancer);
+                MediaType.INSTAGRAM, REEL_CHOREO_SHOWCASE, "/assets/source/show.png", dancer);
         savePost(BoardType.SHOW, "오픈 클래스 하이라이트", "클래스 마지막 런스루를 영상 URL로 연결해 포트폴리오처럼 보여줍니다.",
                 1210, 233, 21, "오픈클래스,힙합,영상", "홍대", null, null,
-                MediaType.INSTAGRAM, HAZYALA_INSTAGRAM, "/assets/source/hero.jpg", mina);
+                MediaType.INSTAGRAM, REEL_OPEN_CLASS, "/assets/source/hero.jpg", mina);
         savePost(BoardType.SHOW, "프리스타일 사이퍼 컷", "배틀 전 몸을 푸는 사이퍼 장면을 외부 미디어 링크로 정리했습니다.",
                 980, 190, 18, "프리스타일,사이퍼,배틀", "압구정", null, null,
-                MediaType.VIDEO_LINK, HAZYALA_INSTAGRAM, "/assets/source/background.jpg", jun);
+                MediaType.INSTAGRAM, REEL_CYPHER_CUT, "/assets/source/background.jpg", jun);
         savePost(BoardType.SHOW, "크럼프 에너지 로그", "강한 에너지와 표정이 살아있는 연습 영상을 SHOW 카드에 묶었습니다.",
                 870, 166, 14, "크럼프,연습영상,무브먼트", "이태원", null, null,
-                MediaType.INSTAGRAM, HAZYALA_INSTAGRAM, "/assets/source/dwayne-joe-_Haw_PsHa5E-unsplash.jpg", raya);
+                MediaType.INSTAGRAM, REEL_KRUMP_LOG, "/assets/source/dwayne-joe-_Haw_PsHa5E-unsplash.jpg", raya);
         savePost(BoardType.SHOW, "팀 퍼포먼스 티저", "정식 영상 공개 전 썸네일과 링크만 먼저 올리는 티저 포스트입니다.",
                 760, 142, 11, "팀퍼포먼스,티저,댄스필름", "문래", null, null,
-                MediaType.EXTERNAL_LINK, HAZYALA_INSTAGRAM, "/assets/source/jakob-owens-1ua8Ujmfez4-unsplash.jpg", admin);
+                MediaType.INSTAGRAM, REEL_TEAM_TEASER, "/assets/source/jakob-owens-1ua8Ujmfez4-unsplash.jpg", admin);
         savePost(BoardType.SHOW, "락킹 솔로 무브 아카이브", "연습실에서 찍은 솔로 루틴을 릴스 링크 기반으로 공유합니다.",
                 690, 128, 9, "락킹,솔로,아카이브", "합정", null, null,
-                MediaType.INSTAGRAM, HAZYALA_INSTAGRAM, "/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg", mina);
+                MediaType.INSTAGRAM, REEL_LOCKING_ARCHIVE, "/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg", mina);
 
         savePost(BoardType.CAST, "홍대 쇼케이스 백업댄서 모집", "이번 주말 무대에 함께 설 백업댄서를 찾습니다. 힙합/코레오 경험자 환영.",
                 520, 88, 16, "백업댄서,쇼케이스,모집", "홍대", LocalDate.now().plusDays(8), LocalDate.now().plusDays(3),
-                MediaType.IMAGE, HAZYALA_INSTAGRAM, "/assets/source/cast1.jpg", admin);
+                MediaType.INSTAGRAM, POST_CAST_REFERENCE, "/assets/source/cast1.jpg", admin);
         savePost(BoardType.CAST, "여성 코레오 팀원 2명 모집", "정기 촬영과 공연을 함께할 팀원을 찾습니다. 포트폴리오 링크를 함께 보내주세요.",
                 430, 76, 19, "팀원모집,코레오,촬영", "강남", LocalDate.now().plusDays(14), LocalDate.now().plusDays(6),
-                MediaType.IMAGE, HAZYALA_INSTAGRAM, "/assets/source/cast2.jpg", mina);
+                MediaType.INSTAGRAM, POST_CAST_NOTICE, "/assets/source/cast2.jpg", mina);
         savePost(BoardType.CAST, "팝업 브랜드 퍼포머 캐스팅", "패션 팝업 현장에서 짧은 루틴을 반복할 퍼포머를 모집합니다.",
                 390, 63, 12, "퍼포머,팝업,브랜드", "성수", LocalDate.now().plusDays(18), LocalDate.now().plusDays(9),
-                MediaType.EXTERNAL_LINK, HAZYALA_INSTAGRAM, "/assets/source/cast3.jpg", host);
+                MediaType.INSTAGRAM, REEL_POPUP_PERFORMANCE, "/assets/source/cast3.jpg", host);
         savePost(BoardType.CAST, "입문반 보조 강사 구인", "토요일 입문반 수업을 함께 운영할 보조 강사를 찾습니다.",
                 310, 45, 8, "강사,입문반,구인", "신촌", LocalDate.now().plusDays(21), LocalDate.now().plusDays(10),
                 MediaType.IMAGE, HAZYALA_INSTAGRAM, "/assets/source/cast4.jpg", admin);
@@ -102,26 +134,26 @@ public class DataSeeder implements CommandLineRunner {
                 MediaType.IMAGE, HAZYALA_INSTAGRAM, "/assets/source/hype.jpg", host);
         savePost(BoardType.HYPE, "올장르 1on1 배틀 오픈", "힙합, 팝핑, 왁킹, 크럼프까지 모두 열어두는 올장르 배틀입니다.",
                 840, 171, 28, "올장르,1on1,배틀", "마포", LocalDate.now().plusDays(19), LocalDate.now().plusDays(11),
-                MediaType.INSTAGRAM, HAZYALA_INSTAGRAM, "/assets/source/sergio-kian-BB48dwtKHBk-unsplash.jpg", host);
+                MediaType.INSTAGRAM, REEL_EVENT_BATTLE, "/assets/source/sergio-kian-BB48dwtKHBk-unsplash.jpg", host);
         savePost(BoardType.HYPE, "코레오 워크숍 위크", "평일 저녁 집중 워크숍으로 짧은 결과물 촬영까지 진행합니다.",
                 640, 132, 17, "코레오,워크숍,클래스", "강남", LocalDate.now().plusDays(25), LocalDate.now().plusDays(17),
-                MediaType.EXTERNAL_LINK, HAZYALA_INSTAGRAM, "/assets/source/anna-frizen-S0335VS9MHE-unsplash.jpg", mina);
+                MediaType.INSTAGRAM, POST_WORKSHOP_NOTICE, "/assets/source/anna-frizen-S0335VS9MHE-unsplash.jpg", mina);
         savePost(BoardType.HYPE, "루키 쇼케이스 관객 모집", "첫 무대를 준비하는 루키 댄서들의 쇼케이스에 놀러오세요.",
                 580, 104, 13, "루키,쇼케이스,관객모집", "연남", LocalDate.now().plusDays(31), LocalDate.now().plusDays(24),
-                MediaType.IMAGE, HAZYALA_INSTAGRAM, "/assets/source/yeremia-krisnamurti-G4pK0cQAfU8-unsplash.jpg", admin);
+                MediaType.INSTAGRAM, POST_EVENT_NOTICE, "/assets/source/yeremia-krisnamurti-G4pK0cQAfU8-unsplash.jpg", admin);
 
         savePost(BoardType.LINK, "왁킹 연습 파트너 구해요", "성수 근처에서 주 2회 같이 연습할 파트너를 찾습니다.",
                 360, 54, 15, "왁킹,연습파트너,성수", "성수", null, null,
-                MediaType.IMAGE, HAZYALA_INSTAGRAM, "/assets/source/link.png", dancer);
+                MediaType.INSTAGRAM, POST_NETWORKING, "/assets/source/link.png", dancer);
         savePost(BoardType.LINK, "촬영 가능한 연습실 공유", "야간 촬영 가능한 공간을 같이 예약할 팀을 찾습니다.",
                 280, 41, 9, "연습실,촬영,공유", "을지로", null, null,
-                MediaType.EXTERNAL_LINK, HAZYALA_INSTAGRAM, "/assets/source/frankie-cordoba-Y1kZT7S2aPI-unsplash.jpg", jun);
+                MediaType.INSTAGRAM, POST_SHOW_ARCHIVE, "/assets/source/frankie-cordoba-Y1kZT7S2aPI-unsplash.jpg", jun);
         savePost(BoardType.LINK, "배틀 영상 피드백 모임", "서로의 배틀 영상을 보고 루틴과 무브를 피드백하는 작은 모임입니다.",
                 240, 38, 10, "피드백,배틀영상,네트워킹", "합정", null, null,
-                MediaType.VIDEO_LINK, HAZYALA_INSTAGRAM, "/assets/source/link.png", raya);
+                MediaType.INSTAGRAM, REEL_FEEDBACK_SESSION, "/assets/source/link.png", raya);
         savePost(BoardType.LINK, "토요일 오픈 세션 같이 갈 분", "혼자 가기 어색한 오픈 세션, 같이 움직이고 네트워킹해요.",
                 220, 31, 7, "오픈세션,네트워킹,토요일", "홍대", LocalDate.now().plusDays(6), null,
-                MediaType.IMAGE, HAZYALA_INSTAGRAM, "/assets/source/samuel-regan-asante-jRM3E-MG9sg-unsplash.jpg", dancer);
+                MediaType.INSTAGRAM, REEL_OPEN_SESSION, "/assets/source/samuel-regan-asante-jRM3E-MG9sg-unsplash.jpg", dancer);
     }
 
     private AppUser saveUser(String username, String displayName, String profileImageUrl, String bio, String crewName) {
@@ -157,7 +189,7 @@ public class DataSeeder implements CommandLineRunner {
                 boardType,
                 title,
                 content,
-                HAZYALA_INSTAGRAM,
+                mediaType == MediaType.INSTAGRAM ? mediaUrl : HAZYALA_INSTAGRAM,
                 thumbnailUrl,
                 viewCount,
                 likeCount,
