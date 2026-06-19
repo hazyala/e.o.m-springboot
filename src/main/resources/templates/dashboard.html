@@ -103,7 +103,7 @@
                 </div>
                 <ul class="dashboard-recent-list" data-dashboard-recent-list>
                     <th:block th:each="post, stat : ${showRecentPosts}">
-                    <li class="dashboard-feed-item" data-board="SHOW" th:hidden="${selectedBoard.name() != 'SHOW'}" th:if="${stat.index < 10}">
+                    <li class="dashboard-feed-item" data-board="SHOW" th:classappend="${selectedBoard.name() == 'SHOW'} ? ' is-visible'" th:if="${stat.index < 10}">
                         <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">SHOW</span>
                         <div class="dashboard-row-copy">
                             <h3>
@@ -123,7 +123,7 @@
                     </li>
                     </th:block>
                     <th:block th:each="post, stat : ${castRecentPosts}">
-                    <li class="dashboard-feed-item" data-board="CAST" th:hidden="${selectedBoard.name() != 'CAST'}" th:if="${stat.index < 10}">
+                    <li class="dashboard-feed-item" data-board="CAST" th:classappend="${selectedBoard.name() == 'CAST'} ? ' is-visible'" th:if="${stat.index < 10}">
                         <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">CAST</span>
                         <div class="dashboard-row-copy">
                             <h3>
@@ -143,7 +143,7 @@
                     </li>
                     </th:block>
                     <th:block th:each="post, stat : ${hypeRecentPosts}">
-                    <li class="dashboard-feed-item" data-board="HYPE" th:hidden="${selectedBoard.name() != 'HYPE'}" th:if="${stat.index < 10}">
+                    <li class="dashboard-feed-item" data-board="HYPE" th:classappend="${selectedBoard.name() == 'HYPE'} ? ' is-visible'" th:if="${stat.index < 10}">
                         <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">HYPE</span>
                         <div class="dashboard-row-copy">
                             <h3>
@@ -163,7 +163,7 @@
                     </li>
                     </th:block>
                     <th:block th:each="post, stat : ${linkRecentPosts}">
-                    <li class="dashboard-feed-item" data-board="LINK" th:hidden="${selectedBoard.name() != 'LINK'}" th:if="${stat.index < 10}">
+                    <li class="dashboard-feed-item" data-board="LINK" th:classappend="${selectedBoard.name() == 'LINK'} ? ' is-visible'" th:if="${stat.index < 10}">
                         <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">LINK</span>
                         <div class="dashboard-row-copy">
                             <h3>
@@ -277,7 +277,7 @@
                 const board = tab.dataset.board;
                 tabs.forEach((item) => item.classList.toggle("is-active", item === tab));
                 rows.forEach((row) => {
-                    row.hidden = row.dataset.board !== board;
+                    row.classList.toggle("is-visible", row.dataset.board === board);
                 });
                 if (allLink) {
                     allLink.href = `/dashboard?board=${board}`;

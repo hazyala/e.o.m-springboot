@@ -1267,6 +1267,14 @@ body.dashboard-page::before {
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+.dashboard-recent-list .dashboard-feed-item {
+    display: none;
+}
+
+.dashboard-recent-list .dashboard-feed-item.is-visible {
+    display: grid;
+}
+
 .dashboard-rank {
     color: #d30f46;
     font-family: "Irish Grover", cursive;
