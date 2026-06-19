@@ -100,7 +100,7 @@ src/main/resources/static/assets/source
 - MVP에서는 직접 영상 파일 업로드를 지원하지 않고 URL/임베드 기반으로 처리합니다.
 - 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용합니다.
 - 상세 화면은 이후 `mediaType + mediaUrl`로 embed 또는 링크 폴백을 구현합니다.
-- 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정 내 콘텐츠를 기준으로 하며, 정확한 릴스/게시물 URL 확보 전에는 프로필 URL을 사용하고 실제 URL로 교체 예정입니다.
+- 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 하며, 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 URL로 교체 예정입니다.
 
 현재 index/login에서 사용하는 이미지:
 - `hero.jpg`: index 첫 히어로 배경

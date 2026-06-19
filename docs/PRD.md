@@ -68,8 +68,8 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - MVP에서는 직접 영상 파일 업로드를 지원하지 않음
 - 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용
 - 상세 화면은 이후 `mediaType + mediaUrl` 기반 embed 또는 링크 폴백으로 확장
-- 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정 내 콘텐츠를 기준으로 함
-- 정확한 릴스/게시물 URL 확보 전에는 위 프로필 URL을 사용하고, 실제 릴스/게시물 URL로 교체 예정
+- 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 함
+- 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고, 확인 전에는 위 프로필 URL을 fallback으로 사용한 뒤 실제 릴스/게시물 URL로 교체 예정
 
 ### 관리자
 
