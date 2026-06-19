@@ -790,10 +790,22 @@ body.dashboard-page {
     background: #ffffff;
     color: #050505;
     overflow-x: hidden;
+    transition: background-color 0.5s, color 0.5s;
 }
 
 .dashboard-page a {
     color: inherit;
+}
+
+body.dashboard-page::before {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.93)),
+        url("/assets/source/background.jpg") center / cover no-repeat;
+    content: "";
+    pointer-events: none;
 }
 
 .dashboard-sr-only {
@@ -811,13 +823,15 @@ body.dashboard-page {
     z-index: 100;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
     width: 100%;
     height: 72px;
-    padding: 0 40px;
-    background: rgba(255, 255, 255, 0.94);
+    padding: 0 32px;
+    background: rgba(255, 255, 255, 0.72);
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .dashboard-logo {
@@ -825,6 +839,11 @@ body.dashboard-page {
     font-family: "Irish Grover", cursive;
     font-size: 32px;
     line-height: 1;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.dashboard-logo:hover {
+    transform: scale(1.05);
 }
 
 .dashboard-search {
@@ -836,9 +855,15 @@ body.dashboard-page {
     height: 36px;
     margin-left: auto;
     padding: 0 18px;
-    background: #f0f0f4;
+    background: rgba(240, 240, 245, 0.86);
     border-radius: 999px;
     color: #555555;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-search:focus-within {
+    background: #ffffff;
+    box-shadow: 0 0 0 1px rgba(211, 15, 70, 0.18), 0 12px 32px rgba(211, 15, 70, 0.12);
 }
 
 .dashboard-search input {
@@ -870,13 +895,37 @@ body.dashboard-page {
     font-weight: 800;
     white-space: nowrap;
     cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-add-button:hover,
+.dashboard-logout:hover {
+    background: #050505;
+    color: #ffffff;
+    box-shadow: 0 12px 28px rgba(211, 15, 70, 0.2);
+    transform: translateY(-1px);
 }
 
 .dashboard-nav {
     display: flex;
     align-items: center;
-    gap: 26px;
-    font-weight: 800;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.dashboard-nav a {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 20px;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.dashboard-nav a:hover {
+    background: #050505;
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 
 .dashboard-theme-toggle {
@@ -889,19 +938,68 @@ body.dashboard-page {
     background: transparent;
     color: #111111;
     cursor: pointer;
-    font-size: 30px;
+    font-size: 22px;
     line-height: 1;
+    transition: transform 0.25s ease;
+}
+
+.dashboard-theme-toggle:hover {
+    transform: scale(1.22) rotate(12deg);
 }
 
 .dashboard-pick {
+    position: relative;
+    overflow: hidden;
     min-height: 520px;
     background:
-        linear-gradient(90deg, rgba(214, 9, 68, 0.98), rgba(214, 9, 68, 0.98)),
-        url("/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg") center / cover;
+        linear-gradient(90deg, rgba(214, 9, 68, 0.96), rgba(214, 9, 68, 0.9));
     color: #ffffff;
 }
 
+.dashboard-pick::after {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        radial-gradient(circle at 54% 46%, transparent 0 18%, rgba(211, 15, 70, 0.42) 44%),
+        linear-gradient(90deg, rgba(211, 15, 70, 0.98) 0%, rgba(211, 15, 70, 0.82) 56%, rgba(211, 15, 70, 0.9) 100%);
+    content: "";
+}
+
+.dashboard-hero-shuffle {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.42;
+}
+
+.dashboard-hero-shuffle img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    filter: grayscale(0.18) contrast(1.08) saturate(1.05);
+    animation: dashboardHeroShuffle 15s infinite;
+}
+
+.dashboard-hero-shuffle img:nth-child(2) {
+    animation-delay: 5s;
+}
+
+.dashboard-hero-shuffle img:nth-child(3) {
+    animation-delay: 10s;
+}
+
+@keyframes dashboardHeroShuffle {
+    0%, 26% { opacity: 1; transform: scale(1); }
+    34%, 100% { opacity: 0; transform: scale(1.04); }
+}
+
 .dashboard-pick-inner {
+    position: relative;
+    z-index: 2;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(420px, 0.95fr);
     align-items: center;
@@ -959,6 +1057,56 @@ body.dashboard-page {
     font-size: 13px;
 }
 
+.dashboard-quick-stats span,
+.dashboard-row-stats span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dashboard-quick-stats b,
+.dashboard-row-stats b {
+    font-weight: 400;
+}
+
+.dashboard-stat-like i::before,
+.dashboard-stat-comment i::before {
+    display: inline-block;
+    width: 14px;
+    text-align: center;
+    font-style: normal;
+    line-height: 1;
+}
+
+.dashboard-stat-like i::before {
+    content: "♡";
+}
+
+.dashboard-stat-comment i::before {
+    content: "↗";
+    transform: rotate(-45deg);
+}
+
+.dashboard-stat-view i {
+    position: relative;
+    width: 15px;
+    height: 10px;
+    border: 1.5px solid currentColor;
+    border-radius: 999px / 720px;
+}
+
+.dashboard-stat-view i::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+    transform: translate(-50%, -50%);
+}
+
 .dashboard-view-post {
     display: inline-flex;
     align-items: center;
@@ -970,6 +1118,14 @@ body.dashboard-page {
     border-radius: 999px;
     color: #ffffff;
     font-weight: 800;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-view-post:hover {
+    background: #ffffff;
+    color: #d30f46;
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.16);
+    transform: translateY(-2px);
 }
 
 .dashboard-pick-mark {
@@ -1044,13 +1200,23 @@ body.dashboard-page {
     color: #020202;
     font-size: 44px;
     line-height: 1;
-    text-shadow: 0 8px 18px rgba(211, 15, 70, 0.14);
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9),
+        0 8px 18px rgba(211, 15, 70, 0.24),
+        2px 2px 0 rgba(211, 15, 70, 0.08);
 }
 
 .dashboard-title-with-link > a,
 .dashboard-side-title > a {
     color: #555555;
     font-size: 14px;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.dashboard-title-with-link > a:hover,
+.dashboard-side-title > a:hover {
+    color: #d30f46;
+    transform: translateX(4px);
 }
 
 .dashboard-popular-list,
@@ -1097,7 +1263,7 @@ body.dashboard-page {
 .dashboard-row-copy p span:first-child,
 .dashboard-type {
     font-weight: 800;
-    text-shadow: 0 4px 12px currentColor;
+    text-shadow: 0 2px 7px color-mix(in srgb, currentColor 32%, transparent);
 }
 
 .type-show {
@@ -1125,6 +1291,13 @@ body.dashboard-page {
     background: #d8d8de;
     border: 1px solid #d0d0d7;
     border-radius: 6px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.dashboard-mini-media:hover {
+    border-color: rgba(211, 15, 70, 0.5);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14);
+    transform: translateY(-2px);
 }
 
 .dashboard-mini-media img {
@@ -1169,6 +1342,11 @@ body.dashboard-page {
     font: inherit;
     font-weight: 800;
     cursor: pointer;
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.dashboard-tabs button:hover {
+    color: #d30f46;
 }
 
 .dashboard-tabs .is-active {
@@ -1195,7 +1373,11 @@ body.dashboard-page {
 }
 
 .dashboard-side-column {
-    gap: 45px;
+    gap: 34px;
+}
+
+.dashboard-activity-block {
+    margin-top: 480px;
 }
 
 .dashboard-side-title {
@@ -1209,7 +1391,9 @@ body.dashboard-page {
 .dashboard-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
+    max-height: 72px;
+    overflow: hidden;
 }
 
 .dashboard-tags a {
@@ -1222,6 +1406,14 @@ body.dashboard-page {
     color: #d30f46;
     font-size: 13px;
     font-weight: 800;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-tags a:hover {
+    background: #d30f46;
+    color: #ffffff;
+    box-shadow: 0 10px 22px rgba(211, 15, 70, 0.18);
+    transform: translateY(-1px);
 }
 
 .dashboard-events li {
@@ -1291,6 +1483,13 @@ body.dashboard-page {
     color: #d30f46;
     font-size: 13px;
     font-weight: 800;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.dashboard-dancers a:hover {
+    background: #d30f46;
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 
 .dashboard-activity li {
@@ -1328,6 +1527,89 @@ body.dashboard-page {
     font-size: 13px;
     font-weight: 800;
     letter-spacing: 0.08em;
+}
+
+html[data-theme="dark"] body.dashboard-page {
+    background: #121212;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] body.dashboard-page::before {
+    background:
+        linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.94)),
+        url("/assets/source/background.jpg") center / cover no-repeat;
+}
+
+html[data-theme="dark"] .dashboard-header {
+    background: rgba(0, 0, 0, 0.34);
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+html[data-theme="dark"] .dashboard-search {
+    background: rgba(255, 255, 255, 0.1);
+    color: #d8d8d8;
+}
+
+html[data-theme="dark"] .dashboard-search:focus-within {
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 0 0 1px rgba(255, 77, 109, 0.28), 0 12px 32px rgba(255, 77, 109, 0.14);
+}
+
+html[data-theme="dark"] .dashboard-search input {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .dashboard-search input::placeholder,
+html[data-theme="dark"] .dashboard-title-with-link > a,
+html[data-theme="dark"] .dashboard-side-title > a,
+html[data-theme="dark"] .dashboard-row-copy p,
+html[data-theme="dark"] .dashboard-row-stats,
+html[data-theme="dark"] .dashboard-events span,
+html[data-theme="dark"] .dashboard-dancers span,
+html[data-theme="dark"] .dashboard-activity span,
+html[data-theme="dark"] .dashboard-footer {
+    color: #c7c7c7;
+}
+
+html[data-theme="dark"] .dashboard-theme-toggle {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .dashboard-nav a:hover,
+html[data-theme="dark"] .dashboard-add-button:hover,
+html[data-theme="dark"] .dashboard-logout:hover {
+    background: #ffffff;
+    color: #121212;
+}
+
+html[data-theme="dark"] .dashboard-block-title h2,
+html[data-theme="dark"] .dashboard-side-title h2,
+html[data-theme="dark"] .dashboard-row-copy h3,
+html[data-theme="dark"] .dashboard-events strong,
+html[data-theme="dark"] .dashboard-dancers strong,
+html[data-theme="dark"] .dashboard-activity strong,
+html[data-theme="dark"] .dashboard-footer strong {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .dashboard-block-title h2,
+html[data-theme="dark"] .dashboard-side-title h2 {
+    text-shadow:
+        0 8px 20px rgba(255, 77, 109, 0.28),
+        2px 2px 0 rgba(255, 77, 109, 0.12);
+}
+
+html[data-theme="dark"] .dashboard-popular-list li,
+html[data-theme="dark"] .dashboard-recent-list li,
+html[data-theme="dark"] .dashboard-events li,
+html[data-theme="dark"] .dashboard-dancers li,
+html[data-theme="dark"] .dashboard-footer {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .dashboard-mini-media {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .admin-grid {
@@ -1438,6 +1720,10 @@ th {
     .dashboard-pick-inner,
     .dashboard-content {
         grid-template-columns: 1fr;
+    }
+
+    .dashboard-activity-block {
+        margin-top: 0;
     }
 
     .dashboard-pick-mark {

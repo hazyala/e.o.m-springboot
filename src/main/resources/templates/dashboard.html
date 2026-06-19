@@ -34,6 +34,11 @@
 <main>
     <span class="dashboard-sr-only">Featured Media</span>
     <section class="dashboard-pick" th:if="${todayPick}">
+        <div class="dashboard-hero-shuffle" aria-hidden="true">
+            <img th:src="@{/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg}" alt="">
+            <img th:src="@{/assets/source/dan-duffey-7NaBBaRzfZ4-unsplash.jpg}" alt="">
+            <img th:src="@{/assets/source/someofakind-WaTX4_2fD9k-unsplash.jpg}" alt="">
+        </div>
         <div class="dashboard-pick-inner">
             <div class="dashboard-pick-copy">
                 <p class="dashboard-script">TODAY'S PICK</p>
@@ -41,9 +46,9 @@
                 <h1 th:text="${todayPick.title}">서울 스트릿잼 후기</h1>
                 <p class="dashboard-author-line" th:text="|${todayPick.author.displayName} · ${todayPick.location}|">SHADOW_98 · 성수</p>
                 <div class="dashboard-quick-stats">
-                    <span th:text="|♡ ${todayPick.likeCount}|">♡ 1.2K</span>
-                    <span th:text="|⌕ ${todayPick.commentCount}|">⌕ 18</span>
-                    <span th:text="|◉ ${todayPick.viewCount}|">◉ 2.6K</span>
+                    <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${todayPick.likeCount}">284</b></span>
+                    <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${todayPick.commentCount}">32</b></span>
+                    <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${todayPick.viewCount}">1480</b></span>
                 </div>
                 <a class="dashboard-view-post" th:if="${todayPick.mediaUrl}" th:href="${todayPick.mediaUrl}" target="_blank" rel="noreferrer">VIEW POST →</a>
             </div>
@@ -73,8 +78,8 @@
                             <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
                         </a>
                         <div class="dashboard-row-stats">
-                            <span th:text="|♡ ${post.likeCount}|">♡ 892</span>
-                            <span th:text="|◉ ${post.viewCount}|">◉ 1.8K</span>
+                            <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">892</b></span>
+                            <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">1800</b></span>
                         </div>
                     </li>
                 </ol>
@@ -109,9 +114,9 @@
                             <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
                         </a>
                         <div class="dashboard-row-stats">
-                            <span th:text="|♡ ${post.likeCount}|">♡ 23</span>
-                            <span th:text="|⌕ ${post.commentCount}|">⌕ 4</span>
-                            <span th:text="|◉ ${post.viewCount}|">◉ 320</span>
+                            <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">23</b></span>
+                            <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${post.commentCount}">4</b></span>
+                            <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">320</b></span>
                         </div>
                     </li>
                 </ul>
@@ -128,8 +133,24 @@
                     <a href="#">ALL →</a>
                 </div>
                 <div class="dashboard-tags">
-                    <a th:each="tag : ${tags}" href="#" th:text="|# ${tag}|"># 힙합</a>
+                    <a th:each="tag, stat : ${tags}" th:if="${stat.index < 8}" href="#" th:text="|# ${tag}|"># 힙합</a>
                 </div>
+            </section>
+
+            <section class="dashboard-side-block dashboard-activity-block">
+                <div class="dashboard-side-title">
+                    <div>
+                        <span></span>
+                        <h2>ACTIVITY</h2>
+                    </div>
+                    <a href="#">ALL →</a>
+                </div>
+                <ul class="dashboard-activity">
+                    <li th:each="post, stat : ${recentPosts}" th:if="${stat.index < 4}">
+                        <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                        <p><strong th:text="${post.author.displayName}">B-BOY_HJ</strong> <span th:text="|${post.boardType.label}에 새 글|">SHOW에 새 글</span></p>
+                    </li>
+                </ul>
             </section>
 
             <section class="dashboard-side-block">
@@ -165,22 +186,6 @@
                             <span th:text="${dancer.crewName}">Hiphop · Popping</span>
                         </div>
                         <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">FOLLOW</a>
-                    </li>
-                </ul>
-            </section>
-
-            <section class="dashboard-side-block">
-                <div class="dashboard-side-title">
-                    <div>
-                        <span></span>
-                        <h2>ACTIVITY</h2>
-                    </div>
-                    <a href="#">ALL →</a>
-                </div>
-                <ul class="dashboard-activity">
-                    <li th:each="post : ${recentPosts}">
-                        <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                        <p><strong th:text="${post.author.displayName}">B-BOY_HJ</strong> <span th:text="|${post.boardType.label}에 새 글|">SHOW에 새 글</span></p>
                     </li>
                 </ul>
             </section>
