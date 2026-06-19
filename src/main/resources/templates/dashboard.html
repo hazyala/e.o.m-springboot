@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard | E.O.M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="app-shell">
+    <section class="dashboard-hero">
+        <p class="eyebrow">TODAY'S PICK</p>
+        <h1>E.O.M</h1>
+        <p>어서 와요. 여기는 댄서들의 아지트입니다.</p>
+    </section>
+    <section class="board-strip">
+        <article th:each="board : ${boards}">
+            <span th:text="${board.label}">SHOW</span>
+            <p th:text="${board.description}">description</p>
+        </article>
+    </section>
+    <section>
+        <div class="section-title">
+            <h2>Recent Moves</h2>
+            <a href="#">Add New</a>
+        </div>
+        <div class="post-grid">
+            <article class="post-card" th:each="post : ${recentPosts}">
+                <span th:text="${post.boardType.label}">SHOW</span>
+                <h3 th:text="${post.title}">서울 스트릿잼 후기</h3>
+                <p th:text="${post.content}">content</p>
+                <a th:if="${post.instagramUrl}" th:href="${post.instagramUrl}" target="_blank" rel="noreferrer">Instagram</a>
+            </article>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>
+

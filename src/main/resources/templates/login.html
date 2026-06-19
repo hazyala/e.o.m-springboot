@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login | E.O.M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="auth-page">
+    <section class="auth-brand">
+        <a class="brand" th:href="@{/}">Echo of Movement</a>
+        <h1>We don't just move, we echo.</h1>
+        <p>로그인하면 댄서들의 아지트가 열립니다.</p>
+    </section>
+    <section class="auth-panel">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">Mode</button>
+        <h2>LOGIN</h2>
+        <p th:if="${param.error}" class="form-alert">아이디 또는 비밀번호를 확인해주세요.</p>
+        <p th:if="${param.logout}" class="form-alert">로그아웃되었습니다.</p>
+        <form th:action="@{/login}" method="post">
+            <label for="username">아이디</label>
+            <input id="username" name="username" type="text" autocomplete="username" required>
+            <label for="password">비밀번호</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <button class="primary-action full" type="submit">로그인</button>
+        </form>
+        <div class="demo-account">
+            <span>admin/admin</span>
+            <span>dancer1/1234</span>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>
+

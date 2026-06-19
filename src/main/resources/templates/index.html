@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>E.O.M | Echo of Movement</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="landing">
+    <section class="hero">
+        <p class="eyebrow">DANCERS' HIDEOUT</p>
+        <h1>" WE<br>DON'T<br>JUST<br>MOVE,<br>WE ECHO "</h1>
+        <p class="hero-copy">인스타그램에 흩어진 댄서들의 포트폴리오, 캐스팅, 행사, 네트워킹을 하나의 아지트로 모읍니다.</p>
+        <div class="hero-actions">
+            <a class="primary-action" th:href="@{/login}">Enter the hideout</a>
+            <a class="secondary-action" href="#sections">Explore sections</a>
+        </div>
+    </section>
+    <section id="sections" class="section-grid">
+        <article>
+            <span>SHOW</span>
+            <h2>Show Your Profile</h2>
+            <p>공연, 연습 영상, 안무 기록을 올리고 나를 보여주세요.</p>
+        </article>
+        <article>
+            <span>CAST</span>
+            <h2>Post it. Fill the Stage.</h2>
+            <p>강사, 백업댄서, 팀원을 찾는 공고를 등록합니다.</p>
+        </article>
+        <article>
+            <span>HYPE</span>
+            <h2>Events. Battles.</h2>
+            <p>배틀, 워크숍, 행사를 씬 전체에 알립니다.</p>
+        </article>
+        <article>
+            <span>LINK</span>
+            <h2>Practice, Together</h2>
+            <p>함께 연습하고 교류할 사람을 찾습니다.</p>
+        </article>
+    </section>
+</main>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>
+

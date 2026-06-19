@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin | E.O.M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="app-shell admin-page">
+    <section class="section-title">
+        <div>
+            <p class="eyebrow">ADMIN</p>
+            <h1>Moderation Room</h1>
+        </div>
+    </section>
+    <section class="admin-grid">
+        <article>
+            <h2>Users</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}">1</td>
+                    <td th:text="${user.username}">admin</td>
+                    <td th:text="${user.displayName}">Admin</td>
+                    <td th:text="${user.role}">ADMIN</td>
+                </tr>
+                </tbody>
+            </table>
+        </article>
+        <article>
+            <h2>Posts</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Board</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="post : ${posts}">
+                    <td th:text="${post.id}">1</td>
+                    <td th:text="${post.boardType.label}">SHOW</td>
+                    <td th:text="${post.title}">Title</td>
+                    <td th:text="${post.author.displayName}">Dancer</td>
+                </tr>
+                </tbody>
+            </table>
+        </article>
+    </section>
+</main>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>
+

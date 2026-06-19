@@ -1,0 +1,18 @@
+<header class="site-header" th:fragment="header" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <a class="brand" th:href="@{/}">Echo of Movement</a>
+    <nav class="site-nav">
+        <a th:href="@{/dashboard}">Dash</a>
+        <a href="#">Show</a>
+        <a href="#">Cast</a>
+        <a href="#">Hype</a>
+        <a href="#">Link</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin</a>
+    </nav>
+    <div class="header-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">Mode</button>
+        <a sec:authorize="isAnonymous()" class="login-link" th:href="@{/login}">Login</a>
+        <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+            <button class="logout-button" type="submit">Logout</button>
+        </form>
+    </div>
+</header>
