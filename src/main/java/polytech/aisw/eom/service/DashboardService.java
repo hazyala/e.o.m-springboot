@@ -1,5 +1,6 @@
 package polytech.aisw.eom.service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -46,7 +47,13 @@ public class DashboardService {
     }
 
     public List<Post> findUpcomingEvents() {
-        return postRepository.findTop6ByBoardTypeOrderByEventDateAscCreatedAtDesc(BoardType.HYPE);
+        LocalDate today = LocalDate.now();
+        LocalDate monthEnd = today.withDayOfMonth(today.lengthOfMonth());
+        return postRepository.findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+                BoardType.HYPE,
+                today,
+                monthEnd
+        );
     }
 
     public List<AppUser> findRecommendedDancers() {
@@ -72,6 +79,6 @@ public class DashboardService {
     }
 
     public List<Post> findRecentPostsByBoard(BoardType boardType) {
-        return postRepository.findTop6ByBoardTypeOrderByCreatedAtDesc(boardType);
+        return postRepository.findTop10ByBoardTypeOrderByCreatedAtDesc(boardType);
     }
 }

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title + ' | E.O.M'}">Posts | E.O.M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="dashboard-page">
+<header class="dashboard-header">
+    <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
+    <form class="dashboard-search" th:action="@{/posts}" role="search">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" name="tag" placeholder="Search" aria-label="Search">
+    </form>
+    <nav class="dashboard-nav" aria-label="Community navigation">
+        <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
+        <a th:href="@{/activity}">Activity<span class="subtitle">최신 글 목록</span></a>
+        <a th:href="@{/events}">Events<span class="subtitle">이번 달 공식 행사</span></a>
+        <a th:href="@{/dancers}">Dancers<span class="subtitle">장르별 댄서 탐색</span></a>
+    </nav>
+    <button class="dashboard-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">☼</button>
+</header>
+
+<main class="community-shell">
+    <section class="community-title">
+        <p>COMMUNITY</p>
+        <h1 th:text="${title}">LATEST POSTS</h1>
+    </section>
+    <section class="community-list">
+        <article th:each="post : ${posts}">
+            <a class="community-card-media" th:href="@{/posts/{id}(id=${post.id})}">
+                <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
+            </a>
+            <div>
+                <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">SHOW</span>
+                <h2><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a></h2>
+                <p th:text="${post.content}">Post content</p>
+                <div class="dashboard-row-stats">
+                    <span th:text="${post.author.displayName}">Author</span>
+                    <span th:text="${post.location}">Location</span>
+                    <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">0</b></span>
+                    <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">0</b></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>
