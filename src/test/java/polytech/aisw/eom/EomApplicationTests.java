@@ -70,6 +70,7 @@ class EomApplicationTests {
         mockMvc.perform(get("/dashboard?board=CAST").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("홍대 쇼케이스 백업댄서 모집")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("LINK에 새 글")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")));
 
         mockMvc.perform(get("/activity").with(user("dancer1").roles("USER")))
