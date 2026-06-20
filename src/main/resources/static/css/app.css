@@ -3827,16 +3827,7 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .dancer-hero {
-    width: 100vw;
     margin-bottom: 58px;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-}
-
-.dancer-hero > div {
-    width: min(1240px, calc(100% - 80px));
-    margin: 0 auto;
-    box-sizing: border-box;
 }
 
 .dancer-explorer-head {
@@ -5299,10 +5290,6 @@ th {
     .dancer-hero > div {
         min-height: 430px;
         padding: 28px;
-    }
-
-    .dancer-hero > div {
-        width: calc(100% - 44px);
     }
 
     .community-board-hero {
