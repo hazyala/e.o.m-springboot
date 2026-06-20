@@ -21,7 +21,7 @@
         </div>
     </section>
 
-    <section class="dancer-explorer-head" aria-label="장르 필터">
+    <section class="dancer-explorer-head" aria-label="Genre filter">
         <div class="dancer-section-title">
             <div>
                 <span aria-hidden="true"></span>
@@ -29,12 +29,12 @@
             </div>
             <p th:text="|${#lists.size(dancers)} profiles|">0 profiles</p>
         </div>
-        <nav class="dancer-genre-filter" aria-label="댄서 장르 선택">
-            <a th:href="@{/dancers}" th:classappend="${#lists.isEmpty(selectedGenres)} ? ' is-active'">전체보기</a>
+        <nav class="dancer-genre-filter" aria-label="Dancer genre filter">
+            <a th:href="@{/dancers}" th:classappend="${#lists.isEmpty(selectedGenres)} ? ' is-active'">All</a>
             <a th:each="genre : ${dancerGenres}"
                th:href="${genreLinks.get(genre)}"
                th:classappend="${#lists.contains(selectedGenres, genre)} ? ' is-active'"
-               th:text="${genre}">힙합</a>
+               th:text="${genre}">Hip-hop</a>
         </nav>
     </section>
 
@@ -64,9 +64,9 @@
             </div>
         </article>
         <article class="dancer-empty-state" th:if="${#lists.isEmpty(dancers)}">
-            <strong>조건에 맞는 댄서가 없습니다.</strong>
-            <p>다른 장르를 추가하거나 전체보기로 다시 탐색해보세요.</p>
-            <a th:href="@{/dancers}">전체보기</a>
+            <strong>No dancers match these filters.</strong>
+            <p>Try another genre or return to the full directory.</p>
+            <a th:href="@{/dancers}">All</a>
         </article>
     </section>
 </main>

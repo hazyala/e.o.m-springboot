@@ -90,7 +90,7 @@ class EomApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Street Genre Directory")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Dancers")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("전체보기")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("All")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/dancers?genres=")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Instagram")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("visit profile")));
@@ -99,8 +99,8 @@ class EomApplicationTests {
     @Test
     void dancerDirectorySupportsMultiGenreFiltersAndProfileLinks() throws Exception {
         mockMvc.perform(get("/dancers")
-                        .param("genres", "힙합")
-                        .param("genres", "크럼프")
+                        .param("genres", "Hip-hop")
+                        .param("genres", "Krump")
                         .with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")))
@@ -108,9 +108,9 @@ class EomApplicationTests {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/dancers/")));
 
         mockMvc.perform(get("/dancers")
-                        .param("genres", "보깅")
+                        .param("genres", "Voguing")
                         .with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("조건에 맞는 댄서가 없습니다.")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("No dancers match these filters.")));
     }
 }

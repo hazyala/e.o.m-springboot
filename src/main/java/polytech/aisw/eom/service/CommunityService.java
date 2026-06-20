@@ -19,27 +19,27 @@ import polytech.aisw.eom.repository.UserRepository;
 public class CommunityService {
 
     private static final List<String> DANCER_GENRES = List.of(
-            "힙합",
-            "하우스",
-            "크럼프",
-            "팝핑",
-            "락킹",
-            "브레이킹",
-            "왁킹",
-            "보깅",
-            "댄스홀"
+            "Hip-hop",
+            "House",
+            "Krump",
+            "Popping",
+            "Locking",
+            "Breaking",
+            "Waacking",
+            "Voguing",
+            "Dancehall"
     );
 
     private static final Map<String, List<String>> DANCER_GENRE_KEYWORDS = Map.of(
-            "힙합", List.of("힙합", "hiphop", "hip-hop", "hip hop", "choreo", "코레오"),
-            "하우스", List.of("하우스", "house"),
-            "크럼프", List.of("크럼프", "krump"),
-            "팝핑", List.of("팝핑", "popping"),
-            "락킹", List.of("락킹", "locking"),
-            "브레이킹", List.of("브레이킹", "breaking", "bboy", "b-boy", "bgirl", "b-girl"),
-            "왁킹", List.of("왁킹", "waacking", "whacking"),
-            "보깅", List.of("보깅", "voguing", "vogue"),
-            "댄스홀", List.of("댄스홀", "dancehall")
+            "Hip-hop", List.of("힙합", "hiphop", "hip-hop", "hip hop", "choreo", "코레오"),
+            "House", List.of("하우스", "house"),
+            "Krump", List.of("크럼프", "krump"),
+            "Popping", List.of("팝핑", "popping"),
+            "Locking", List.of("락킹", "locking"),
+            "Breaking", List.of("브레이킹", "breaking", "bboy", "b-boy", "bgirl", "b-girl"),
+            "Waacking", List.of("왁킹", "waacking", "whacking"),
+            "Voguing", List.of("보깅", "voguing", "vogue"),
+            "Dancehall", List.of("댄스홀", "dancehall")
     );
 
     private final PostRepository postRepository;

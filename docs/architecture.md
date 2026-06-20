@@ -162,10 +162,10 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 ### Dancer Genre Filter
 
 - 장르 목록은 Service 계층의 고정 정책으로 관리합니다.
-- 현재 버튼은 `힙합`, `하우스`, `크럼프`, `팝핑`, `락킹`, `브레이킹`, `왁킹`, `보깅`, `댄스홀`입니다.
+- 현재 버튼은 `Hip-hop`, `House`, `Krump`, `Popping`, `Locking`, `Breaking`, `Waacking`, `Voguing`, `Dancehall`입니다.
 - `/dancers` Controller는 `genres` 다중 쿼리 파라미터를 수집하고, Service는 `AppUser.primaryGenre`를 기준으로 USER 역할 댄서를 필터링합니다.
-- `primaryGenre`가 기존 시드처럼 영문으로 저장된 경우도 한국어 버튼과 매칭되도록 장르별 키워드 호환을 Service에서 처리합니다.
-- `전체보기`는 쿼리 파라미터 없는 `/dancers`로 이동해 필터를 초기화합니다.
+- `primaryGenre`가 기존 시드처럼 영문으로 저장되거나 한국어 장르 텍스트를 포함하는 경우도 매칭되도록 장르별 키워드 호환을 Service에서 처리합니다.
+- `All`은 쿼리 파라미터 없는 `/dancers`로 이동해 필터를 초기화합니다.
 
 ## 7. 인증/권한
 
