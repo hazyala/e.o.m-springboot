@@ -81,8 +81,10 @@ src/main/resources
 - displayName
 - instagramUrl
 - profileImageUrl
+- headerImageUrl
 - bio
 - crewName
+- primaryGenre
 - role
 - createdAt
 
@@ -103,6 +105,8 @@ src/main/resources
 - mediaType
 - mediaUrl
 - thumbnailUrl
+- portfolioSelected
+- portfolioPinned
 - author
 - createdAt
 
@@ -125,6 +129,14 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - content
 - createdAt
 
+### JoinedEvent
+
+- user
+- eventDate
+- eventName
+- result
+- createdAt
+
 ### PostLike
 
 - post
@@ -139,7 +151,7 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 
 접근:
 - `/`, `/login`, `/css/**`, `/js/**`, `/assets/**`: 공개
-- `/dashboard`, `/posts`, `/posts/{id}`, `/posts?tag={tag}`, `/boards/all`, `/boards/{board}`, `/events`, `/dancers`, 마이페이지: 로그인 필요
+- `/dashboard`, `/posts`, `/posts/{id}`, `/posts?tag={tag}`, `/boards/all`, `/boards/{board}`, `/events`, `/dancers`, `/my-page`, `/me`: 로그인 필요
 - `/admin/**`: ADMIN 필요
 
 ## 8. 화면 라우트
@@ -155,6 +167,11 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록입니다.
 - `/events`: 이번 달 HYPE 공식 행사 목록입니다.
 - `/dancers`: 장르별 댄서 탐색 목록입니다.
+- `/my-page`, `/me`: 로그인한 사용자의 프로필, 포트폴리오, 작성 게시글, 작성 댓글, 자동 활동 이력, 직접 기입한 참여 이벤트를 렌더링합니다. admin도 본인 마이페이지에 접근할 수 있습니다.
+- `/my-page/profile`: 프로필 히어로에 쓰는 이름, 크루, 주 장르, 소개, 인스타그램 URL, 프로필 이미지 URL, 헤더 이미지 URL을 저장합니다.
+- `/my-page/portfolio/select`: 내가 쓴 게시글을 포트폴리오 탭에 포함하거나 제외합니다.
+- `/my-page/portfolio/pin`: 선택된 포트폴리오 중 상단 고정 상태를 저장하며 최대 3개로 제한합니다.
+- `/my-page/joined-events`: 날짜, 행사명, 결과로 구성된 참여 이벤트 이력을 사용자가 직접 추가합니다.
 - 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 `OPEN MEDIA`/`INSTAGRAM` 링크에서만 새 탭으로 열며, 대시보드와 목록 썸네일은 내부 게시글 미리보기로 취급합니다.
 - 직접 영상 업로드와 실제 embed는 현재 MVC 범위에 포함하지 않습니다. 기존 `mediaType + mediaUrl + thumbnailUrl` 필드를 유지합니다.
 

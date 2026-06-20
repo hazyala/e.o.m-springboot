@@ -141,7 +141,8 @@ src/main/resources/static/assets/source
 - 로그인 후 댄서들의 아지트
 - 현재 구현은 `dashboard.html` + `app.css` 대시보드 전용 클래스로 구성합니다.
 - Figma 목업 기준의 라이트 대시보드로 구성합니다.
-- Header는 index의 로고/네비 톤을 따르되 중앙 검색창, Add New, Logout, 테마 토글을 배치합니다.
+- Header는 index의 로고/네비 톤을 따르되 중앙 검색창, Add New, My Page, 테마 토글을 배치합니다.
+- 마이페이지에서는 Header의 My Page 위치가 붉은 Logout 버튼으로 전환됩니다.
 - TODAY'S PICK은 전체 폭 이미지 히어로와 큰 E.O.M 타이포를 중심으로 보여줍니다.
 - 히어로에는 `assets/source`의 감도 높은 이미지를 우측에서 좌측으로 밀리는 슬라이드 배경 레이어로 사용하며, 이후 실제 게시글 미디어 셔플로 교체할 수 있습니다.
 - 히어로 CTA는 외부 미디어 링크가 아니라 내부 게시글 상세로 진입하는 `VIEW POST` 성격으로 둡니다.
@@ -163,11 +164,15 @@ src/main/resources/static/assets/source
 
 ### My Page
 
-- 프로필 헤더
-- 인스타그램 링크
-- 활동 통계
-- 내가 쓴 글
-- 포트폴리오 그리드
+- `/my-page`와 `/me`는 대시보드 헤더/푸터 톤을 유지합니다.
+- 프로필 히어로는 기존 `assets/source` 이미지 URL을 배경으로 사용하고, displayName, username, crewName, bio, instagramUrl, profileImageUrl, 주 장르를 우선 노출합니다.
+- 팔로워/팔로잉 숫자는 표시하지 않고, 게시글 수, 포트폴리오 수, 참여 이벤트 수를 보여줍니다.
+- Portfolio 탭은 내가 쓴 게시글 중 사용자가 선택한 게시글을 카드 그리드로 보여주며, 상단 고정은 최대 3개입니다.
+- Posts 탭은 내가 쓴 전체 게시글과 포트폴리오 추가 동작을 제공합니다.
+- Comments 탭은 Event 탭을 대체하며 내가 작성한 댓글을 보여줍니다.
+- Activity는 내가 작성한 게시글과 댓글을 기준으로 최근 활동을 자동 표시합니다.
+- Joined Events는 사용자가 날짜, 행사명, 결과를 직접 기입하는 사이드 목록입니다.
+- 프로필 편집은 헤더 이미지 URL, 프로필 이미지 URL, 인스타그램 URL, 이름, 크루, 주 장르, 소개를 수정합니다. 새 이미지 원본 추가나 직접 업로드 UI는 제공하지 않습니다.
 
 ### Post Detail
 
