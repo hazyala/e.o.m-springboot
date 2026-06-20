@@ -77,17 +77,17 @@
         <strong class="my-profile-watermark" th:text="${myPage.user.displayName}">E.O.M</strong>
     </section>
 
-    <nav class="my-page-tabs" aria-label="My page sections" data-my-tabs>
-        <a href="#portfolio" data-tab-link="portfolio">Portfolio</a>
-        <a href="#posts" data-tab-link="posts">Posts</a>
-        <a href="#joined-events" data-tab-link="joined-events">Events</a>
-        <a href="#likes" data-tab-link="likes">Likes</a>
-        <a href="#comments" data-tab-link="comments">Comments</a>
+    <nav class="my-page-tabs" aria-label="My page sections" data-my-page-tabs>
+        <a class="is-active" href="#portfolio" data-my-tab="portfolio">Portfolio</a>
+        <a href="#posts" data-my-tab="posts">Posts</a>
+        <a href="#joined-events" data-my-tab="joined-events">Events</a>
+        <a href="#likes" data-my-tab="likes">Likes</a>
+        <a href="#comments" data-my-tab="comments">Comments</a>
     </nav>
 
     <div class="my-page-layout">
         <div class="my-page-main">
-            <section id="portfolio" class="my-page-section my-tab-panel" data-tab-panel="portfolio">
+            <section id="portfolio" class="my-page-section my-tab-panel is-visible" data-my-panel="portfolio">
                 <div class="my-section-heading">
                     <h2>Portfolio</h2>
                     <span th:text="|${myPage.portfolioPosts.size()} works|">0 works</span>
@@ -111,17 +111,19 @@
                         </a>
                         <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Portfolio title</a></h3>
                         <div class="my-post-actions">
-                            <form th:action="@{/my-page/portfolio/pin}" method="post">
+                            <form class="my-pin-form" th:action="@{/my-page/portfolio/pin}" method="post">
                                 <input type="hidden" name="postId" th:value="${post.id}">
                                 <input type="hidden" name="pinned" th:value="${!post.portfolioPinned}">
                                 <input type="hidden" name="returnTab" value="portfolio">
-                                <button class="my-icon-action" type="submit" th:title="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}" th:text="${post.portfolioPinned ? '핀 해제' : '핀 고정'}">Pin</button>
+                                <button class="my-pin-button" type="submit" th:classappend="${post.portfolioPinned} ? ' is-pinned'" th:title="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}">
+                                    <span th:text="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}">대표 고정</span>
+                                </button>
                             </form>
                             <form th:action="@{/my-page/portfolio/select}" method="post">
                                 <input type="hidden" name="postId" th:value="${post.id}">
                                 <input type="hidden" name="selected" value="false">
                                 <input type="hidden" name="returnTab" value="portfolio">
-                                <button class="my-icon-action" type="submit" title="포트폴리오에서 제외">포폴 제외</button>
+                                <button class="my-icon-action" type="submit" title="포트폴리오에서 제외">제외</button>
                             </form>
                         </div>
                     </article>
@@ -129,7 +131,7 @@
                 <p class="my-empty-state" th:if="${myPage.portfolioPosts.isEmpty()}">아직 포트폴리오에 선택한 게시물이 없습니다.</p>
             </section>
 
-            <section id="posts" class="my-page-section my-tab-panel" data-tab-panel="posts">
+            <section id="posts" class="my-page-section my-tab-panel" data-my-panel="posts">
                 <div class="my-section-heading">
                     <h2>Posts</h2>
                     <span th:text="|${myPage.posts.size()} posts|">0 posts</span>
@@ -161,7 +163,7 @@
                 <p class="my-empty-state" th:if="${myPage.posts.isEmpty()}">아직 작성한 게시물이 없습니다.</p>
             </section>
 
-            <section id="joined-events" class="my-page-section my-tab-panel" data-tab-panel="joined-events">
+            <section id="joined-events" class="my-page-section my-tab-panel" data-my-panel="joined-events">
                 <div class="my-section-heading">
                     <h2>Joined Events</h2>
                     <span th:text="|${myPage.joinedEvents.size()} events|">0 events</span>
@@ -182,7 +184,7 @@
                 <p class="my-empty-state" th:if="${myPage.joinedEvents.isEmpty()}">직접 기입한 참여 행사가 없습니다.</p>
             </section>
 
-            <section id="likes" class="my-page-section my-tab-panel" data-tab-panel="likes">
+            <section id="likes" class="my-page-section my-tab-panel" data-my-panel="likes">
                 <div class="my-section-heading">
                     <h2>Likes</h2>
                     <span th:text="|${myPage.likedPosts.size()} likes|">0 likes</span>
@@ -196,7 +198,7 @@
                 <p class="my-empty-state" th:if="${myPage.likedPosts.isEmpty()}">아직 좋아요한 게시물이 없습니다.</p>
             </section>
 
-            <section id="comments" class="my-page-section my-tab-panel" data-tab-panel="comments">
+            <section id="comments" class="my-page-section my-tab-panel" data-my-panel="comments">
                 <div class="my-section-heading">
                     <h2>Comments</h2>
                     <span th:text="|${myPage.comments.size()} comments|">0 comments</span>
@@ -255,15 +257,21 @@
 <script th:src="@{/js/theme.js}"></script>
 <script>
     (() => {
-        const tabs = [...document.querySelectorAll("[data-tab-link]")];
-        const panels = [...document.querySelectorAll("[data-tab-panel]")];
+        const tabs = [...document.querySelectorAll("[data-my-page-tabs] a[data-my-tab]")];
+        const panels = [...document.querySelectorAll("[data-my-panel]")];
         const showTab = (tabId) => {
-            const nextTab = panels.some((panel) => panel.dataset.tabPanel === tabId) ? tabId : "portfolio";
-            tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.tabLink === nextTab));
-            panels.forEach((panel) => panel.hidden = panel.dataset.tabPanel !== nextTab);
+            const nextTab = panels.some((panel) => panel.dataset.myPanel === tabId) ? tabId : "portfolio";
+            tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.myTab === nextTab));
+            panels.forEach((panel) => panel.classList.toggle("is-visible", panel.dataset.myPanel === nextTab));
         };
 
-        tabs.forEach((tab) => tab.addEventListener("click", () => showTab(tab.dataset.tabLink)));
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", (event) => {
+                event.preventDefault();
+                showTab(tab.dataset.myTab);
+                history.replaceState(null, "", tab.getAttribute("href"));
+            });
+        });
         window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
         showTab(location.hash.slice(1));
     })();

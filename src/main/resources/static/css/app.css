@@ -2859,8 +2859,12 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     scroll-margin-top: 110px;
 }
 
-.my-tab-panel[hidden] {
+.my-tab-panel {
     display: none;
+}
+
+.my-tab-panel.is-visible {
+    display: block;
 }
 
 .my-section-heading {
@@ -2903,6 +2907,7 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .my-pinned-strip article,
 .my-work-grid article {
+    position: relative;
     min-width: 0;
 }
 
@@ -2963,6 +2968,57 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+}
+
+.my-pin-form {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+}
+
+.my-pin-button {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(17, 17, 17, 0.72);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.my-pin-button span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.my-pin-button::before {
+    width: 10px;
+    height: 14px;
+    border-radius: 7px 7px 7px 0;
+    background: currentColor;
+    content: "";
+    transform: rotate(-45deg);
+}
+
+.my-pin-button::after {
+    width: 2px;
+    height: 9px;
+    margin-top: -4px;
+    background: currentColor;
+    content: "";
+    transform: rotate(45deg);
+}
+
+.my-pin-button.is-pinned {
+    background: #d30f46;
 }
 
 .my-post-actions button,
