@@ -30,5 +30,20 @@ public class PostLike {
 
     protected PostLike() {
     }
-}
 
+    public Long getId() {
+        return id;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public AppUser getUser() {
+        return user;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+}

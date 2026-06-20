@@ -77,16 +77,17 @@
         <strong class="my-profile-watermark" th:text="${myPage.user.displayName}">E.O.M</strong>
     </section>
 
-    <nav class="my-page-tabs" aria-label="My page sections">
-        <a href="#portfolio">Portfolio</a>
-        <a href="#posts">Posts</a>
-        <a href="#comments">Comments</a>
-        <a href="#joined-events">Joined Events</a>
+    <nav class="my-page-tabs" aria-label="My page sections" data-my-tabs>
+        <a href="#portfolio" data-tab-link="portfolio">Portfolio</a>
+        <a href="#posts" data-tab-link="posts">Posts</a>
+        <a href="#joined-events" data-tab-link="joined-events">Events</a>
+        <a href="#likes" data-tab-link="likes">Likes</a>
+        <a href="#comments" data-tab-link="comments">Comments</a>
     </nav>
 
     <div class="my-page-layout">
         <div class="my-page-main">
-            <section id="portfolio" class="my-page-section">
+            <section id="portfolio" class="my-page-section my-tab-panel" data-tab-panel="portfolio">
                 <div class="my-section-heading">
                     <h2>Portfolio</h2>
                     <span th:text="|${myPage.portfolioPosts.size()} works|">0 works</span>
@@ -106,19 +107,21 @@
                         <a class="my-work-media" th:href="@{/posts/{id}(id=${post.id})}">
                             <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
                             <span th:unless="${post.thumbnailUrl}" th:text="${post.boardType.label}">SHOW</span>
-                            <i th:if="${post.portfolioPinned}">Pinned</i>
+                            <i th:if="${post.portfolioPinned}">PIN</i>
                         </a>
                         <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Portfolio title</a></h3>
                         <div class="my-post-actions">
                             <form th:action="@{/my-page/portfolio/pin}" method="post">
                                 <input type="hidden" name="postId" th:value="${post.id}">
                                 <input type="hidden" name="pinned" th:value="${!post.portfolioPinned}">
-                                <button type="submit" th:text="${post.portfolioPinned ? '고정 해제' : '상단 고정'}">Pin</button>
+                                <input type="hidden" name="returnTab" value="portfolio">
+                                <button class="my-icon-action" type="submit" th:title="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}" th:text="${post.portfolioPinned ? '핀 해제' : '핀 고정'}">Pin</button>
                             </form>
                             <form th:action="@{/my-page/portfolio/select}" method="post">
                                 <input type="hidden" name="postId" th:value="${post.id}">
                                 <input type="hidden" name="selected" value="false">
-                                <button type="submit">포트폴리오 제외</button>
+                                <input type="hidden" name="returnTab" value="portfolio">
+                                <button class="my-icon-action" type="submit" title="포트폴리오에서 제외">포폴 제외</button>
                             </form>
                         </div>
                     </article>
@@ -126,31 +129,74 @@
                 <p class="my-empty-state" th:if="${myPage.portfolioPosts.isEmpty()}">아직 포트폴리오에 선택한 게시물이 없습니다.</p>
             </section>
 
-            <section id="posts" class="my-page-section">
+            <section id="posts" class="my-page-section my-tab-panel" data-tab-panel="posts">
                 <div class="my-section-heading">
                     <h2>Posts</h2>
                     <span th:text="|${myPage.posts.size()} posts|">0 posts</span>
                 </div>
-                <div class="my-post-list">
+                <div class="my-post-card-grid">
                     <article th:each="post : ${myPage.posts}">
-                        <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a>
-                        <p th:text="${#strings.abbreviate(post.content, 96)}">Preview</p>
-                        <div>
-                            <span th:text="${post.boardType.label}">SHOW</span>
-                            <span th:text="|조회 ${post.viewCount}|">조회 0</span>
-                            <span th:text="|댓글 ${post.commentCount}|">댓글 0</span>
+                        <a class="my-work-media" th:href="@{/posts/{id}(id=${post.id})}">
+                            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                            <span th:unless="${post.thumbnailUrl}" th:text="${post.boardType.label}">SHOW</span>
+                        </a>
+                        <div class="my-post-card-copy">
+                            <strong th:text="${post.boardType.label}">SHOW</strong>
+                            <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a></h3>
+                            <p th:text="${#strings.abbreviate(post.content, 86)}">Preview</p>
+                            <div>
+                                <span th:text="|조회 ${post.viewCount}|">조회 0</span>
+                                <span th:text="|댓글 ${post.commentCount}|">댓글 0</span>
+                                <span th:text="|좋아요 ${post.likeCount}|">좋아요 0</span>
+                            </div>
                         </div>
-                        <form th:if="${!post.portfolioSelected}" th:action="@{/my-page/portfolio/select}" method="post">
+                        <form class="my-star-form" th:action="@{/my-page/portfolio/select}" method="post">
                             <input type="hidden" name="postId" th:value="${post.id}">
-                            <input type="hidden" name="selected" value="true">
-                            <button type="submit">포트폴리오에 추가</button>
+                            <input type="hidden" name="selected" th:value="${!post.portfolioSelected}">
+                            <input type="hidden" name="returnTab" value="posts">
+                            <button type="submit" th:title="${post.portfolioSelected ? '포트폴리오에서 제외' : '포트폴리오에 추가'}" th:text="${post.portfolioSelected ? '★' : '☆'}">☆</button>
                         </form>
                     </article>
                 </div>
                 <p class="my-empty-state" th:if="${myPage.posts.isEmpty()}">아직 작성한 게시물이 없습니다.</p>
             </section>
 
-            <section id="comments" class="my-page-section">
+            <section id="joined-events" class="my-page-section my-tab-panel" data-tab-panel="joined-events">
+                <div class="my-section-heading">
+                    <h2>Joined Events</h2>
+                    <span th:text="|${myPage.joinedEvents.size()} events|">0 events</span>
+                </div>
+                <form class="my-event-form my-event-form-panel" th:action="@{/my-page/joined-events}" method="post">
+                    <input type="date" name="eventDate" required>
+                    <input type="text" name="eventName" placeholder="행사명" required>
+                    <input type="text" name="result" placeholder="결과" required>
+                    <button type="submit">기입</button>
+                </form>
+                <div class="my-event-card-grid" th:if="${!myPage.joinedEvents.isEmpty()}">
+                    <article th:each="event : ${myPage.joinedEvents}">
+                        <time th:datetime="${event.eventDate}" th:text="${#temporals.format(event.eventDate, 'MM.dd EEE')}">06.15 SUN</time>
+                        <strong th:text="${event.eventName}">Event</strong>
+                        <span th:text="${event.result}">Result</span>
+                    </article>
+                </div>
+                <p class="my-empty-state" th:if="${myPage.joinedEvents.isEmpty()}">직접 기입한 참여 행사가 없습니다.</p>
+            </section>
+
+            <section id="likes" class="my-page-section my-tab-panel" data-tab-panel="likes">
+                <div class="my-section-heading">
+                    <h2>Likes</h2>
+                    <span th:text="|${myPage.likedPosts.size()} likes|">0 likes</span>
+                </div>
+                <div class="my-comment-list" th:if="${!myPage.likedPosts.isEmpty()}">
+                    <article th:each="post : ${myPage.likedPosts}">
+                        <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Liked post</a>
+                        <p th:text="|${post.boardType.label} · ${post.author.displayName} · 좋아요 ${post.likeCount}|">Meta</p>
+                    </article>
+                </div>
+                <p class="my-empty-state" th:if="${myPage.likedPosts.isEmpty()}">아직 좋아요한 게시물이 없습니다.</p>
+            </section>
+
+            <section id="comments" class="my-page-section my-tab-panel" data-tab-panel="comments">
                 <div class="my-section-heading">
                     <h2>Comments</h2>
                     <span th:text="|${myPage.comments.size()} comments|">0 comments</span>
@@ -181,24 +227,18 @@
                 <p class="my-empty-state" th:if="${myPage.activityItems.isEmpty()}">최근 활동이 없습니다.</p>
             </section>
 
-            <section id="joined-events">
+            <section>
                 <div class="my-section-heading">
                     <h2>Joined Events</h2>
                 </div>
-                <form class="my-event-form" th:action="@{/my-page/joined-events}" method="post">
-                    <input type="date" name="eventDate" required>
-                    <input type="text" name="eventName" placeholder="행사명" required>
-                    <input type="text" name="result" placeholder="결과" required>
-                    <button type="submit">기입</button>
-                </form>
                 <ol class="my-joined-list">
-                    <li th:each="event : ${myPage.joinedEvents}">
+                    <li th:each="event, stat : ${myPage.joinedEvents}" th:if="${stat.index < 3}">
                         <time th:datetime="${event.eventDate}" th:text="${#temporals.format(event.eventDate, 'MM.dd EEE')}">06.15 SUN</time>
                         <strong th:text="${event.eventName}">Event</strong>
                         <span th:text="${event.result}">Result</span>
                     </li>
                 </ol>
-                <p class="my-empty-state" th:if="${myPage.joinedEvents.isEmpty()}">직접 기입한 참여 행사가 없습니다.</p>
+                <p class="my-empty-state" th:if="${myPage.joinedEvents.isEmpty()}">최근 참여 행사가 없습니다.</p>
             </section>
         </aside>
     </div>
@@ -213,5 +253,20 @@
 </footer>
 
 <script th:src="@{/js/theme.js}"></script>
+<script>
+    (() => {
+        const tabs = [...document.querySelectorAll("[data-tab-link]")];
+        const panels = [...document.querySelectorAll("[data-tab-panel]")];
+        const showTab = (tabId) => {
+            const nextTab = panels.some((panel) => panel.dataset.tabPanel === tabId) ? tabId : "portfolio";
+            tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.tabLink === nextTab));
+            panels.forEach((panel) => panel.hidden = panel.dataset.tabPanel !== nextTab);
+        };
+
+        tabs.forEach((tab) => tab.addEventListener("click", () => showTab(tab.dataset.tabLink)));
+        window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
+        showTab(location.hash.slice(1));
+    })();
+</script>
 </body>
 </html>

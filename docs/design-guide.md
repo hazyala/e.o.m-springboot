@@ -165,13 +165,17 @@ src/main/resources/static/assets/source
 ### My Page
 
 - `/my-page`와 `/me`는 대시보드 헤더/푸터 톤을 유지합니다.
+- Header의 My Page/Logout 영역은 같은 폭과 같은 네비게이션 폰트를 사용해 버튼 전환 시 주변 라벨이 흔들리지 않게 합니다. My Page는 외곽선 없는 네비 버튼, Logout은 같은 크기의 붉은 상태 버튼입니다.
 - 프로필 히어로는 기존 `assets/source` 이미지 URL을 배경으로 사용하고, displayName, username, crewName, bio, instagramUrl, profileImageUrl, 주 장르를 우선 노출합니다.
 - 팔로워/팔로잉 숫자는 표시하지 않고, 게시글 수, 포트폴리오 수, 참여 이벤트 수를 보여줍니다.
-- Portfolio 탭은 내가 쓴 게시글 중 사용자가 선택한 게시글을 카드 그리드로 보여주며, 상단 고정은 최대 3개입니다.
-- Posts 탭은 내가 쓴 전체 게시글과 포트폴리오 추가 동작을 제공합니다.
-- Comments 탭은 Event 탭을 대체하며 내가 작성한 댓글을 보여줍니다.
+- 탭 순서는 Portfolio, Posts, Events, Likes, Comments입니다.
+- Portfolio 탭은 내가 쓴 게시글 중 사용자가 선택한 게시글만 카드 그리드로 보여주며, 핀 버튼으로 대표 3개까지 상단 고정합니다.
+- Posts 탭은 내가 쓴 전체 게시글을 카드형으로 보여주고, 별 버튼으로 포트폴리오 포함 여부를 바꿉니다.
+- Events 탭은 Joined Events 전체 목록과 날짜, 행사명, 결과 입력 폼을 카드형으로 제공합니다.
+- Likes 탭은 내가 좋아요한 게시글을 목록형으로 보여줍니다.
+- Comments 탭은 내가 작성한 댓글을 목록형으로 보여줍니다.
 - Activity는 내가 작성한 게시글과 댓글을 기준으로 최근 활동을 자동 표시합니다.
-- Joined Events는 사용자가 날짜, 행사명, 결과를 직접 기입하는 사이드 목록입니다.
+- 사이드바 Joined Events는 최신 참여 행사 일부만 보여주는 프리뷰입니다.
 - 프로필 편집은 헤더 이미지 URL, 프로필 이미지 URL, 인스타그램 URL, 이름, 크루, 주 장르, 소개를 수정합니다. 새 이미지 원본 추가나 직접 업로드 UI는 제공하지 않습니다.
 
 ### Post Detail

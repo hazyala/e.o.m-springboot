@@ -12,6 +12,7 @@ import polytech.aisw.eom.domain.JoinedEvent;
 import polytech.aisw.eom.domain.Post;
 import polytech.aisw.eom.repository.CommentRepository;
 import polytech.aisw.eom.repository.JoinedEventRepository;
+import polytech.aisw.eom.repository.PostLikeRepository;
 import polytech.aisw.eom.repository.PostRepository;
 import polytech.aisw.eom.repository.UserRepository;
 
@@ -22,17 +23,20 @@ public class MyPageService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final JoinedEventRepository joinedEventRepository;
 
     public MyPageService(
             UserRepository userRepository,
             PostRepository postRepository,
+            PostLikeRepository postLikeRepository,
             CommentRepository commentRepository,
             JoinedEventRepository joinedEventRepository
     ) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
         this.joinedEventRepository = joinedEventRepository;
     }
@@ -47,11 +51,23 @@ public class MyPageService {
                 .filter(Post::isPortfolioPinned)
                 .limit(MAX_PINNED_PORTFOLIO)
                 .toList();
+        List<Post> likedPosts = postLikeRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
+                .map(like -> like.getPost())
+                .toList();
         List<Comment> comments = commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
         List<JoinedEvent> joinedEvents = joinedEventRepository.findByUserUsernameOrderByEventDateDescCreatedAtDesc(username);
         List<ActivityItem> activityItems = buildActivity(posts, comments);
 
-        return new MyPageView(user, posts, portfolioPosts, pinnedPortfolioPosts, comments, joinedEvents, activityItems);
+        return new MyPageView(
+                user,
+                posts,
+                portfolioPosts,
+                pinnedPortfolioPosts,
+                likedPosts,
+                comments,
+                joinedEvents,
+                activityItems
+        );
     }
 
     @Transactional
@@ -144,6 +160,7 @@ public class MyPageService {
             List<Post> posts,
             List<Post> portfolioPosts,
             List<Post> pinnedPortfolioPosts,
+            List<Post> likedPosts,
             List<Comment> comments,
             List<JoinedEvent> joinedEvents,
             List<ActivityItem> activityItems

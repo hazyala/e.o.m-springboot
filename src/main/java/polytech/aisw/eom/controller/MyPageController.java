@@ -57,10 +57,11 @@ public class MyPageController {
     public String updatePortfolioSelection(
             Principal principal,
             @RequestParam Long postId,
-            @RequestParam boolean selected
+            @RequestParam boolean selected,
+            @RequestParam(defaultValue = "posts") String returnTab
     ) {
         myPageService.updatePortfolioSelection(principal.getName(), postId, selected);
-        return "redirect:/my-page#posts";
+        return "redirect:/my-page#" + returnTab;
     }
 
     @PostMapping("/my-page/portfolio/pin")
@@ -68,6 +69,7 @@ public class MyPageController {
             Principal principal,
             @RequestParam Long postId,
             @RequestParam boolean pinned,
+            @RequestParam(defaultValue = "portfolio") String returnTab,
             RedirectAttributes redirectAttributes
     ) {
         try {
@@ -75,7 +77,7 @@ public class MyPageController {
         } catch (IllegalStateException exception) {
             redirectAttributes.addFlashAttribute("portfolioMessage", "상단 고정은 최대 3개까지 가능합니다.");
         }
-        return "redirect:/my-page#portfolio";
+        return "redirect:/my-page#" + returnTab;
     }
 
     @PostMapping("/my-page/joined-events")

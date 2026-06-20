@@ -81,11 +81,14 @@
 - Activity 미리보기는 Recent 탭 선택과 무관하게 전체 최신글 기준으로 유지하고, `ALL`은 `/boards/all`로 이동합니다.
 - Events는 HYPE 중 `eventDate`가 오늘부터 이번 달 말까지인 공식 행사성 글을 보여주는 목록으로 둡니다.
 - 마이페이지 기본 URL은 `/my-page`이며 `/me`도 같은 화면으로 연결합니다.
-- 공통 헤더는 index 제외 화면에서 대시보드 톤을 유지하고, 인증 사용자의 버튼은 일반 화면에서 `My Page`, 마이페이지에서 붉은 `Logout`으로 전환합니다.
+- 공통 헤더는 index 제외 화면에서 대시보드 톤을 유지하고, 인증 사용자의 버튼은 일반 화면에서 외곽선 없는 `My Page`, 마이페이지에서 같은 크기의 붉은 `Logout`으로 전환합니다.
 - 마이페이지는 displayName, crewName, bio, instagramUrl, profileImageUrl, headerImageUrl, 주 장르를 보여주고 admin도 본인 마이페이지에 접근할 수 있습니다.
 - 포트폴리오는 내가 쓴 게시글 중 선택된 항목으로 구성하며, 상단 고정은 최대 3개입니다.
-- Event 탭 대신 내가 작성한 댓글 목록을 제공하고, Activity는 게시글/댓글 기반 최근 활동을 자동 표시합니다.
-- Joined Events는 날짜, 행사명, 결과를 사용자가 직접 기입하는 참여 이력입니다.
+- 탭 순서는 Portfolio, Posts, Events, Likes, Comments입니다.
+- Posts 탭은 내가 쓴 전체 게시글을 카드형으로 보여주고 별 버튼으로 포트폴리오 포함 여부를 바꿉니다.
+- Events 탭은 Joined Events 전체 목록과 입력 폼을 카드형으로 제공하고, 사이드바 Joined Events는 최신 참여 행사 일부만 보여줍니다.
+- Likes와 Comments 탭은 각각 좋아요한 게시글과 내가 작성한 댓글을 목록형으로 제공합니다.
+- Activity는 게시글/댓글 기반 최근 활동을 자동 표시합니다.
 - 마이페이지 편집은 URL 기반 프로필/헤더 이미지 갱신만 제공하며 새 이미지 원본 추가, 직접 이미지 업로드, 직접 영상 업로드는 제외합니다.
 - Instagram/외부 미디어 링크가 상세/프로필 영역에 노출될 경우 새 탭으로 열며, 파일 업로드나 직접 영상 저장 흐름은 제공하지 않습니다.
 - 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 합니다.
