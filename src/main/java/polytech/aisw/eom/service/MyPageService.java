@@ -106,6 +106,22 @@ public class MyPageService {
         ));
     }
 
+    @Transactional
+    public void updateJoinedEvent(String username, Long eventId, LocalDate eventDate, String eventName, String result) {
+        JoinedEvent joinedEvent = findOwnedJoinedEvent(username, eventId);
+        joinedEvent.update(
+                eventDate,
+                cleanRequired(eventName, "Untitled event"),
+                cleanRequired(result, "참여")
+        );
+    }
+
+    @Transactional
+    public void deleteJoinedEvent(String username, Long eventId) {
+        JoinedEvent joinedEvent = findOwnedJoinedEvent(username, eventId);
+        joinedEventRepository.delete(joinedEvent);
+    }
+
     private AppUser findUser(String username) {
         return userRepository.findByUsername(username).orElseThrow();
     }
@@ -116,6 +132,14 @@ public class MyPageService {
             throw new IllegalArgumentException("Cannot edit another user's portfolio");
         }
         return post;
+    }
+
+    private JoinedEvent findOwnedJoinedEvent(String username, Long eventId) {
+        JoinedEvent joinedEvent = joinedEventRepository.findById(eventId).orElseThrow();
+        if (!joinedEvent.isOwnedBy(username)) {
+            throw new IllegalArgumentException("Cannot edit another user's joined event");
+        }
+        return joinedEvent;
     }
 
     private List<ActivityItem> buildActivity(List<Post> posts, List<Comment> comments) {

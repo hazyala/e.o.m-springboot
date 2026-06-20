@@ -25,6 +25,7 @@ public class MyPageController {
     public String myPage(Principal principal, Model model) {
         model.addAttribute("boards", BoardType.values());
         model.addAttribute("myPage", myPageService.findMyPage(principal.getName()));
+        model.addAttribute("isOwner", true);
         return "my-page";
     }
 
@@ -88,6 +89,27 @@ public class MyPageController {
             @RequestParam String result
     ) {
         myPageService.addJoinedEvent(principal.getName(), eventDate, eventName, result);
+        return "redirect:/my-page#joined-events";
+    }
+
+    @PostMapping("/my-page/joined-events/update")
+    public String updateJoinedEvent(
+            Principal principal,
+            @RequestParam Long eventId,
+            @RequestParam LocalDate eventDate,
+            @RequestParam String eventName,
+            @RequestParam String result
+    ) {
+        myPageService.updateJoinedEvent(principal.getName(), eventId, eventDate, eventName, result);
+        return "redirect:/my-page#joined-events";
+    }
+
+    @PostMapping("/my-page/joined-events/delete")
+    public String deleteJoinedEvent(
+            Principal principal,
+            @RequestParam Long eventId
+    ) {
+        myPageService.deleteJoinedEvent(principal.getName(), eventId);
         return "redirect:/my-page#joined-events";
     }
 }

@@ -68,4 +68,14 @@ public class JoinedEvent {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    public boolean isOwnedBy(String username) {
+        return user.getUsername().equals(username);
+    }
+
+    public void update(LocalDate eventDate, String eventName, String result) {
+        this.eventDate = eventDate;
+        this.eventName = eventName;
+        this.result = result;
+    }
 }

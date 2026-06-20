@@ -38,7 +38,7 @@
                 </div>
                 <a th:if="${myPage.user.instagramUrl}" th:href="${myPage.user.instagramUrl}" target="_blank" rel="noopener">Instagram</a>
             </div>
-            <details class="my-profile-editor">
+            <details class="my-profile-editor" th:if="${isOwner}">
                 <summary>프로필 편집</summary>
                 <form th:action="@{/my-page/profile}" method="post">
                     <label>
@@ -107,7 +107,7 @@
                                 <span th:text="|조회 ${post.viewCount}|">조회 0</span>
                                 <span th:text="|댓글 ${post.commentCount}|">댓글 0</span>
                                 <span th:text="|좋아요 ${post.likeCount}|">좋아요 0</span>
-                                <details class="my-card-menu">
+                                <details class="my-card-menu" th:if="${isOwner}">
                                     <summary aria-label="게시물 메뉴"><span></span></summary>
                                     <div>
                                         <form th:action="@{/my-page/portfolio/pin}" method="post">
@@ -150,7 +150,7 @@
                                 <span th:text="|조회 ${post.viewCount}|">조회 0</span>
                                 <span th:text="|댓글 ${post.commentCount}|">댓글 0</span>
                                 <span th:text="|좋아요 ${post.likeCount}|">좋아요 0</span>
-                                <details class="my-card-menu">
+                                <details class="my-card-menu" th:if="${isOwner}">
                                     <summary aria-label="게시물 메뉴"><span></span></summary>
                                     <div>
                                         <form th:action="@{/my-page/portfolio/select}" method="post">
@@ -173,14 +173,39 @@
                     <h2>Joined Events</h2>
                     <span th:text="|${myPage.joinedEvents.size()} events|">0 events</span>
                 </div>
-                <form class="my-event-form my-event-form-panel" th:action="@{/my-page/joined-events}" method="post">
+                <form class="my-event-form my-event-form-panel" th:if="${isOwner}" th:action="@{/my-page/joined-events}" method="post">
                     <input type="date" name="eventDate" required>
                     <input type="text" name="eventName" placeholder="행사명" required>
                     <input type="text" name="result" placeholder="결과" required>
-                    <button type="submit">기입</button>
+                    <button type="submit">Add</button>
                 </form>
                 <div class="my-event-card-grid" th:if="${!myPage.joinedEvents.isEmpty()}">
                     <article th:each="event : ${myPage.joinedEvents}">
+                        <details class="my-card-menu my-card-menu-event" th:if="${isOwner}">
+                            <summary aria-label="참여 행사 메뉴"><span></span></summary>
+                            <div class="my-event-menu-panel">
+                                <form th:action="@{/my-page/joined-events/update}" method="post">
+                                    <input type="hidden" name="eventId" th:value="${event.id}">
+                                    <label>
+                                        <span>날짜</span>
+                                        <input type="date" name="eventDate" th:value="${event.eventDate}" required>
+                                    </label>
+                                    <label>
+                                        <span>행사명</span>
+                                        <input type="text" name="eventName" th:value="${event.eventName}" required>
+                                    </label>
+                                    <label>
+                                        <span>결과</span>
+                                        <input type="text" name="result" th:value="${event.result}" required>
+                                    </label>
+                                    <button type="submit">수정</button>
+                                </form>
+                                <form th:action="@{/my-page/joined-events/delete}" method="post">
+                                    <input type="hidden" name="eventId" th:value="${event.id}">
+                                    <button class="my-danger-action" type="submit">삭제</button>
+                                </form>
+                            </div>
+                        </details>
                         <time th:datetime="${event.eventDate}" th:text="${#temporals.format(event.eventDate, 'MM.dd EEE')}">06.15 SUN</time>
                         <strong th:text="${event.eventName}">Event</strong>
                         <span th:text="${event.result}">Result</span>
