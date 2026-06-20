@@ -157,6 +157,7 @@ src/main/resources/static/assets/source
 
 - `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK`는 대시보드 헤더/푸터 톤을 유지합니다.
 - 상단 비주얼은 단색 카드 대신 `assets/source` 기존 이미지를 사용합니다.
+- `/posts`와 보드별 목록은 ALL/SHOW/CAST/HYPE/LINK 보드 전환, 최신순/조회순/댓글순/좋아요순 정렬 탭, 3열 카드 그리드로 구성합니다.
 - 목록 카드는 `thumbnailUrl`, `mediaType`, boardType, 제목, 본문 미리보기, 작성자, 크루, 위치, 행사일, 좋아요/댓글/조회수를 함께 보여줍니다.
 - 보드별 액센트 컬러는 텍스트 배지와 필터 상태에만 절제해 사용합니다.
 

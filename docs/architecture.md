@@ -148,8 +148,8 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 
 - `/dashboard`: 로그인 후 첫 화면. Today Pick, Popular, Recent, Tags, Activity, Events, Dancers 미리보기를 렌더링합니다.
 - `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
-- `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지입니다.
-- `/posts`: SHOW, CAST, HYPE, LINK 전체 최신글 목록입니다.
+- `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
+- `/posts`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 기본은 최신순이고 `sort=latest|views|comments|likes`로 정렬할 수 있습니다.
 - `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다.
 - `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록입니다.
 - `/activity`: Recent 탭과 독립적인 전체 최신글 목록입니다.

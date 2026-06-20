@@ -62,7 +62,7 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - HYPE: 배틀, 워크숍, 행사 홍보
 - LINK: 연습 파트너, 네트워킹, 정보 공유
 
-각 보드는 `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK` 목록과 `/posts/{id}` 상세 흐름을 가진다. 작성 흐름은 후속 범위로 둔다.
+각 보드는 `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK` 목록과 `/posts/{id}` 상세 흐름을 가진다. 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원한다. 작성 흐름은 후속 범위로 둔다.
 
 ### 마이페이지
 
