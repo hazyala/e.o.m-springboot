@@ -45,6 +45,7 @@
 - 검색 화면 목록형 결과와 추천 태그 사이드 컬럼
 - `/events` 이번 달 HYPE 행사성 글 탐색 화면
 - `/dancers`와 `/dancers/{id}` 작성자/댄서 프로필 이동
+- `/dancers` 다중 선택 장르 필터와 인재 카드형 댄서 비교 UI
 - `/my-page`, `/me` 마이페이지
 - 프로필 편집, 계정 아이디/비밀번호 변경, 로그아웃 후 재로그인 흐름
 - 포트폴리오 선택과 최대 3개 상단 고정
@@ -102,6 +103,8 @@
 - Recent는 선택된 보드의 최신 글 10개를 보여주고, Tags 8개, Activity 5개, Events 4개, Dancers 4개로 대시보드 미리보기 개수를 제한합니다.
 - Activity 미리보기는 Recent 탭 선택과 무관하게 전체 최신글 기준으로 유지하고, `ALL`은 `/boards/all`로 이동합니다.
 - Events는 HYPE 중 `eventDate`가 오늘부터 이번 달 말까지인 공식 행사성 글을 보여주는 목록으로 둡니다. 목록에는 `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, `author.displayName`을 노출합니다.
+- Dancers는 USER 역할 사용자를 댄서 카드로 보여주는 탐색 화면으로 둡니다. `전체보기`, `힙합`, `하우스`, `크럼프`, `팝핑`, `락킹`, `브레이킹`, `왁킹`, `보깅`, `댄스홀` 필터를 제공하고, 여러 장르를 선택하면 선택 장르 중 하나라도 `primaryGenre`에 매칭되는 댄서를 보여줍니다.
+- Dancers 카드에는 동일 비율 프로필 이미지, displayName, username, primaryGenre, crewName, bio, Instagram 새 탭 링크, 기존 `/dancers/{id}` 프로필 보기 링크를 노출합니다.
 - 마이페이지 기본 URL은 `/my-page`이며 `/me`도 같은 화면으로 연결합니다.
 - 공통 헤더는 index 제외 화면에서 대시보드 톤을 유지하고, 인증 사용자의 버튼은 일반 화면에서 외곽선 없는 `My Page`, 마이페이지에서 같은 크기의 붉은 `Logout`으로 전환합니다.
 - 로그인 상태 유지는 기본 체크 상태이며 remember-me 쿠키로 유지하고, 로그아웃 시 세션 쿠키와 remember-me 쿠키를 함께 삭제합니다.
