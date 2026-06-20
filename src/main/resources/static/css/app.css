@@ -4235,7 +4235,12 @@ html[data-theme="dark"] .community-event-meta strong {
 }
 
 html[data-theme="dark"] .post-create-shell {
+    background: #101012;
     border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"] .post-create-editor {
+    background: #101012;
 }
 
 html[data-theme="dark"] .post-create-preview {
@@ -4277,8 +4282,41 @@ html[data-theme="dark"] .post-live-preview > p {
     color: #eeeeee;
 }
 
+html[data-theme="dark"] .post-create-fields input,
+html[data-theme="dark"] .post-create-fields textarea {
+    color-scheme: dark;
+    background: rgba(255, 255, 255, 0.015);
+}
+
+html[data-theme="dark"] .post-create-fields input::placeholder,
+html[data-theme="dark"] .post-create-fields textarea::placeholder {
+    color: #8f8f99;
+}
+
+html[data-theme="dark"] .post-create-fields input:focus,
+html[data-theme="dark"] .post-create-fields textarea:focus {
+    border-color: rgba(255, 77, 109, 0.78);
+    box-shadow: 0 12px 30px rgba(211, 15, 70, 0.08);
+}
+
+html[data-theme="dark"] .post-create-fields input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.72;
+}
+
 html[data-theme="dark"] .post-board-tabs label {
     color: #70707a;
+}
+
+html[data-theme="dark"] .post-create-publish {
+    border: 1px solid rgba(255, 77, 109, 0.42);
+    background: #d30f46;
+    box-shadow: 0 20px 42px rgba(211, 15, 70, 0.22);
+}
+
+html[data-theme="dark"] .post-create-publish:hover {
+    background: #f02a5c;
+    box-shadow: 0 24px 54px rgba(211, 15, 70, 0.34);
 }
 
 html[data-theme="dark"] .post-preview-author > span,
