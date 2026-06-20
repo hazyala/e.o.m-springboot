@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create Post | E.O.M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="dashboard-page post-create-page">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="post-create-shell" th:attr="data-author=${currentUser.displayName}">
+    <section class="post-create-editor" aria-labelledby="post-create-title">
+        <div class="post-create-kicker"><span></span>CREATE POST</div>
+        <h1 id="post-create-title">TELL US WHAT MOVES YOU.</h1>
+
+        <form class="post-create-form" th:action="@{/posts/new}" th:object="${postCreateRequest}" method="post" novalidate>
+            <section class="post-create-section">
+                <p class="post-create-label">CHOOSE BOARD</p>
+                <div class="post-board-tabs" role="radiogroup" aria-label="Choose board">
+                    <label th:each="board : ${boards}" th:classappend="${postCreateRequest.boardType == board} ? ' is-active'">
+                        <input type="radio" th:field="*{boardType}" th:value="${board.name()}" th:attr="data-board=${board.name()}">
+                        <span th:text="${board.label}">SHOW</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="post-create-section post-create-fields">
+                <label>
+                    <span>HEADLINE</span>
+                    <input type="text" th:field="*{title}" maxlength="120" placeholder="제목을 입력하세요" data-preview-title autofocus>
+                    <small th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title error</small>
+                </label>
+
+                <label>
+                    <span>STORY</span>
+                    <textarea th:field="*{content}" maxlength="5000" rows="9" placeholder="당신의 이야기를 자유롭게 작성해주세요." data-preview-content></textarea>
+                    <em><b data-content-count>0</b> / 5,000</em>
+                    <small th:if="${#fields.hasErrors('content')}" th:errors="*{content}">Content error</small>
+                </label>
+
+                <div class="post-create-inline">
+                    <label>
+                        <span>TAGS</span>
+                        <input type="text" th:field="*{tags}" placeholder="# 스트릿잼, # 배틀, # 서울" data-preview-tags>
+                    </label>
+                    <label>
+                        <span>LOCATION</span>
+                        <input type="text" th:field="*{location}" placeholder="서울, 홍대, 성수..." data-preview-location>
+                    </label>
+                </div>
+
+                <label>
+                    <span>ADD INSTAGRAM POST LINK OR EXTERNAL MEDIA URL</span>
+                    <input type="url" th:field="*{mediaUrl}" placeholder="https://www.instagram.com/p/..." data-preview-media>
+                    <small th:if="${#fields.hasErrors('mediaUrl')}" th:errors="*{mediaUrl}">Media error</small>
+                </label>
+
+                <label>
+                    <span>THUMBNAIL URL</span>
+                    <input type="url" th:field="*{thumbnailUrl}" placeholder="https://... 또는 /assets/source/..." data-preview-thumbnail>
+                    <small th:if="${#fields.hasErrors('thumbnailUrl')}" th:errors="*{thumbnailUrl}">Thumbnail error</small>
+                </label>
+
+                <div class="post-create-inline post-create-dates" data-date-fields>
+                    <label>
+                        <span>EVENT DATE</span>
+                        <input type="date" th:field="*{eventDate}" data-preview-event-date>
+                    </label>
+                    <label>
+                        <span>DEADLINE</span>
+                        <input type="date" th:field="*{deadline}" data-preview-deadline>
+                    </label>
+                </div>
+
+                <label class="post-create-check" th:if="${canApproveOfficialEvent}">
+                    <input type="checkbox" th:field="*{adminApprovedEvent}" data-official-check>
+                    <span>HYPE 게시글을 관리자 승인 행사로 표시</span>
+                </label>
+            </section>
+
+            <button class="post-create-publish" type="submit">PUBLISH <span aria-hidden="true">→</span></button>
+            <p class="post-create-footnote">WE DON’T JUST MOVE, WE ECHO.</p>
+        </form>
+    </section>
+
+    <aside class="post-create-preview" aria-label="Live preview">
+        <div class="post-preview-sticky">
+            <div class="post-create-kicker post-preview-kicker">LIVE PREVIEW <span></span></div>
+            <p>작성 중인 글이 게시판에 올라갔을 때 보이는 모습을 실시간으로 보여줍니다</p>
+
+            <article class="post-live-preview">
+                <span class="post-board-pill type-show" data-preview-board>SHOW</span>
+                <h2 data-preview-title-output hidden></h2>
+
+                <div class="post-preview-author">
+                    <span aria-hidden="true"></span>
+                    <strong th:text="${currentUser.displayName}">DANCER</strong>
+                    <small>방금 전 · 조회 0</small>
+                </div>
+
+                <div class="post-preview-media" data-preview-media-frame hidden>
+                    <img alt="" data-preview-thumbnail-output hidden>
+                    <span class="post-preview-play" aria-hidden="true" hidden>▶</span>
+                    <b data-preview-media-badge hidden></b>
+                </div>
+
+                <div class="post-preview-meta">
+                    <span data-preview-location-output hidden>서울</span>
+                    <time data-preview-event-output hidden>EVENT</time>
+                    <time data-preview-deadline-output hidden>DUE</time>
+                </div>
+
+                <p data-preview-content-output hidden></p>
+
+                <a class="instagram-preview-card post-preview-link-card" data-preview-link-card href="#" target="_blank" rel="noreferrer" hidden>
+                    <img alt="" data-preview-link-thumbnail hidden>
+                    <div>
+                        <span data-preview-link-label>Instagram Preview</span>
+                        <strong data-preview-link-title></strong>
+                        <p data-preview-link-url></p>
+                    </div>
+                    <em>OPEN</em>
+                </a>
+
+                <div class="post-preview-tags" data-preview-tags-output hidden></div>
+            </article>
+        </div>
+    </aside>
+</main>
+
+<script th:src="@{/js/theme.js}"></script>
+<script th:src="@{/js/post-create.js}"></script>
+</body>
+</html>

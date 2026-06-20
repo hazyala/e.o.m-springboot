@@ -32,13 +32,17 @@
         </div>
     </section>
 
-    <section class="community-board-filter community-board-switcher" th:unless="${isSearchPage == true}" aria-label="Board filters">
-        <a th:href="@{/boards/all}" th:classappend="${selectedBoard == null and selectedTag == null and isSearchPage != true} ? ' is-active'">ALL</a>
-        <a th:each="board : ${boards}"
-           th:href="@{/boards/{board}(board=${board.name()})}"
-           th:attr="data-board=${board.name()}"
-           th:classappend="${selectedBoard == board} ? ' is-active'"
-           th:text="${board.label}">SHOW</a>
+    <section class="community-board-toolbar" th:unless="${isSearchPage == true}" aria-label="Board actions">
+        <nav class="community-board-filter community-board-switcher" aria-label="Board filters">
+            <a th:href="@{/boards/all}" th:classappend="${selectedBoard == null and selectedTag == null and isSearchPage != true} ? ' is-active'">ALL</a>
+            <a th:each="board : ${boards}"
+               th:href="@{/boards/{board}(board=${board.name()})}"
+               th:attr="data-board=${board.name()}"
+               th:classappend="${selectedBoard == board} ? ' is-active'"
+               th:text="${board.label}">SHOW</a>
+        </nav>
+        <a class="community-new-post"
+           th:href="${selectedBoard != null} ? @{/posts/new(board=${selectedBoard.name()})} : @{/posts/new}">New Post</a>
     </section>
 
     <section class="community-search-panel" th:if="${isSearchPage == true}">

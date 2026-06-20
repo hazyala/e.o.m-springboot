@@ -18,14 +18,17 @@ E.O.M은 인스타그램, DM, 오픈채팅, 지인 추천에 흩어진 댄서들
 - 관리자 페이지
 - 대시보드 Today Pick, Popular, Recent, Tags, Events, Dancers 미리보기
 - 보드별 게시글 목록과 상세
+- 로그인 사용자 게시글 작성 폼 `/posts/new`
 - `/posts?q=` 통합 검색과 `/posts?tag=` 태그 검색
 - HYPE 관리자 승인 행사 탐색 `/boards/HYPE?officialEvents=true` (`/events`는 호환 리다이렉트)
+- 보드 목록 우측 `New Post`에서 현재 보드를 유지한 글쓰기 진입
 - 마이페이지 프로필/계정 수정, 포트폴리오 선택, 참여 행사 기록
 - 인스타그램 프로필 링크와 게시물 URL 기반 외부 미디어 연결
+- URL 기반 썸네일/외부 미디어 링크 입력과 작성 중 상세형 Live Preview
 - 라이트/다크 모드
 - Render 무료 티어 배포 대응
 
-현재 MVP는 직접 영상 업로드, 직접 이미지 업로드, 게시글 작성 폼, 외부 미디어 embed를 제외합니다. 게시글/미디어 데이터는 로컬 시드와 URL 기반 필드로 관리합니다.
+현재 MVP는 직접 영상 업로드, 직접 이미지 업로드, 외부 미디어 embed를 제외합니다. 게시글/미디어 데이터는 로컬 시드와 URL 기반 필드로 관리하며, 작성 폼에서도 Instagram/외부 미디어 URL과 `thumbnailUrl`만 입력합니다. Live Preview는 입력 전 가짜 미디어를 보여주지 않고, `thumbnailUrl` 입력 시 큰 미디어 프레임, `mediaUrl` 입력 시 새 탭 링크 카드만 표시합니다.
 
 ## 기술 스택
 

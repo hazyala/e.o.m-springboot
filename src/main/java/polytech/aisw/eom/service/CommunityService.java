@@ -7,10 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import polytech.aisw.eom.domain.AppUser;
 import polytech.aisw.eom.domain.BoardType;
+import polytech.aisw.eom.domain.MediaType;
 import polytech.aisw.eom.domain.Post;
 import polytech.aisw.eom.domain.UserRole;
+import polytech.aisw.eom.dto.PostCreateRequest;
 import polytech.aisw.eom.repository.PostRepository;
 import polytech.aisw.eom.repository.UserRepository;
 
@@ -51,6 +54,42 @@ public class CommunityService {
 
     public Post findPost(Long id) {
         return postRepository.findById(id).orElseThrow();
+    }
+
+    public AppUser findUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow();
+    }
+
+    @Transactional
+    public Post createPost(PostCreateRequest request, String username) {
+        AppUser author = findUser(username);
+        String mediaUrl = normalizeText(request.getMediaUrl());
+        String thumbnailUrl = normalizeText(request.getThumbnailUrl());
+        MediaType mediaType = resolveMediaType(mediaUrl);
+        Post post = new Post(
+                request.getBoardType(),
+                request.getTitle().trim(),
+                request.getContent().trim(),
+                mediaType == MediaType.INSTAGRAM ? mediaUrl : "",
+                thumbnailUrl,
+                0,
+                0,
+                0,
+                normalizeTags(request.getTags()),
+                normalizeText(request.getLocation()),
+                request.getEventDate(),
+                request.getDeadline(),
+                mediaType,
+                mediaUrl,
+                thumbnailUrl,
+                author
+        );
+
+        if (request.isAdminApprovedEvent() && author.getRole() == UserRole.ADMIN) {
+            post.approveAsOfficialEvent();
+        }
+
+        return postRepository.save(post);
     }
 
     public List<Post> findPosts(PostSortOption sortOption) {
@@ -139,6 +178,44 @@ public class CommunityService {
                 .map(String::trim)
                 .filter(tag -> !tag.isBlank())
                 .toList();
+    }
+
+    private MediaType resolveMediaType(String mediaUrl) {
+        if (mediaUrl.isBlank()) {
+            return MediaType.IMAGE;
+        }
+
+        String lowerUrl = mediaUrl.toLowerCase();
+        if (lowerUrl.contains("instagram.com/")) {
+            return MediaType.INSTAGRAM;
+        }
+        if (lowerUrl.contains("youtube.com/") || lowerUrl.contains("youtu.be/")) {
+            return MediaType.YOUTUBE;
+        }
+        if (lowerUrl.endsWith(".mp4") || lowerUrl.endsWith(".mov") || lowerUrl.endsWith(".webm")) {
+            return MediaType.VIDEO_LINK;
+        }
+        return MediaType.EXTERNAL_LINK;
+    }
+
+    private String normalizeTags(String tagText) {
+        if (tagText == null || tagText.isBlank()) {
+            return "";
+        }
+
+        return Arrays.stream(tagText.split("[,#]"))
+                .map(String::trim)
+                .filter(tag -> !tag.isBlank())
+                .distinct()
+                .reduce((left, right) -> left + "," + right)
+                .orElse("");
+    }
+
+    private String normalizeText(String text) {
+        if (text == null || text.isBlank()) {
+            return "";
+        }
+        return text.trim();
     }
 
     private List<String> normalizeDancerGenres(List<String> genres) {

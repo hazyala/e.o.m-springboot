@@ -219,10 +219,18 @@ src/main/resources/static/assets/source
 
 ### Write Post
 
-- 보드 선택
-- 제목/본문/인스타그램 URL
-- 대표 이미지 URL
-- 우측 라이브 프리뷰
+- `/posts/new`는 index/login이 아니라 dashboard 이후 화면 톤을 사용합니다.
+- 헤더 `Add New`에서 진입하며 로그인 사용자만 접근합니다. 보드 목록 우측 `New Post`는 현재 보드를 쿼리로 넘겨 SHOW/CAST/HYPE/LINK 작성 탭을 자동 선택합니다.
+- 레이아웃은 좌측 작성 폼, 우측 Live Preview 2컬럼입니다.
+- 좌측은 `CREATE POST`, 핑크 그림자가 있는 `TELL US WHAT MOVES YOU.` 큰 타이포, 보드 언더라인 탭, 선 중심 입력 필드, 넓은 `PUBLISH` 버튼으로 구성합니다.
+- 입력 필드는 보드, 제목, 본문, 태그, 위치, Instagram 게시물 링크 또는 외부 미디어 URL, `thumbnailUrl`, `eventDate`, `deadline`입니다.
+- 직접 이미지 업로드와 직접 영상 업로드 UI는 만들지 않고 URL 입력만 제공합니다.
+- SHOW 외 보드에서는 일정 입력 영역을 보여주며, HYPE 관리자 승인 행사 체크박스는 admin에게만 보여줍니다.
+- 우측 Live Preview는 밝은 회색 배경에 실제 상세/카드 톤과 연결되는 게시글 미리보기로 구성하며, `LIVE PREVIEW` 타이틀에도 대시보드 계열 핑크 그림자를 적용합니다.
+- Preview는 보드 배지, 제목, 작성자, 본문, 위치/일정, 태그를 실시간 반영합니다.
+- 입력 전에는 가짜 제목/본문/태그/미디어를 보여주지 않습니다. `thumbnailUrl`이 있을 때만 큰 미디어 프레임을 표시하고, Instagram/외부 `mediaUrl`이 있을 때는 하단 새 탭 링크 카드로 표시합니다.
+- 실제 Instagram embed나 외부 미디어 iframe은 사용하지 않습니다.
+- 다크 모드에서는 같은 구조를 유지하되 우측 패널, 입력 라인, 날짜 입력 아이콘, `PUBLISH` 버튼 대비를 보강합니다.
 
 ### Admin
 

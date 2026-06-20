@@ -54,6 +54,7 @@ src/main/resources
 │  ├─ login.html
 │  ├─ dashboard.html
 │  ├─ post-list.html
+│  ├─ post-create.html
 │  ├─ post-detail.html
 │  ├─ my-page.html
 │  ├─ dancers.html
@@ -114,6 +115,7 @@ src/main/resources
 - thumbnailUrl
 - portfolioSelected
 - portfolioPinned
+- adminApprovedEvent
 - author
 - createdAt
 
@@ -191,6 +193,7 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다. HYPE는 `officialEvents=true` 쿼리로 관리자 승인 행사만 최신순 고정 필터링할 수 있습니다.
 - `/posts`: 헤더 검색과 대시보드 Tags `ALL` 목적지입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
 - `/posts` 검색어 정규화: `q`가 `#왁킹`처럼 들어오면 앞의 `#`를 제거합니다. 태그 클릭은 `/posts?tag={tag}`를 사용하고 `findByTagsContainingIgnoreCase`로 조회합니다.
+- `/posts/new`: 로그인 사용자 게시글 작성 폼입니다. `PostCreateRequest`를 받아 Service에서 작성자를 조회하고 `PostRepository.save`로 저장한 뒤 생성된 `/posts/{id}`로 이동합니다. `board=SHOW|CAST|HYPE|LINK` 쿼리를 받으면 작성 탭 기본값으로 사용합니다. 보드/제목/본문/태그/위치/Instagram 또는 외부 미디어 URL/`thumbnailUrl`/일정 필드를 받으며 파일 업로드와 embed는 제공하지 않습니다. HYPE 관리자 승인 행사는 ADMIN 작성자에게만 저장됩니다.
 - `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다.
 - `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록이며, 검색 결과 화면의 목록형 UI를 공유합니다.
 - `/events`: 기존 링크 호환 경로이며 `/boards/HYPE?officialEvents=true`로 리다이렉트합니다.

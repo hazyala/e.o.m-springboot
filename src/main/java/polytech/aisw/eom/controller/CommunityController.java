@@ -1,19 +1,26 @@
 package polytech.aisw.eom.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import org.springframework.validation.BindingResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import polytech.aisw.eom.domain.BoardType;
+import polytech.aisw.eom.domain.UserRole;
+import polytech.aisw.eom.dto.PostCreateRequest;
 import polytech.aisw.eom.service.CommunityService;
 import polytech.aisw.eom.service.MyPageService;
 import polytech.aisw.eom.service.PostSortOption;
@@ -27,6 +34,37 @@ public class CommunityController {
     public CommunityController(CommunityService communityService, MyPageService myPageService) {
         this.communityService = communityService;
         this.myPageService = myPageService;
+    }
+
+    @GetMapping("/posts/new")
+    public String newPost(
+            @RequestParam(required = false) String board,
+            Model model,
+            Principal principal
+    ) {
+        if (!model.containsAttribute("postCreateRequest")) {
+            PostCreateRequest postCreateRequest = new PostCreateRequest();
+            resolveBoardType(board).ifPresent(postCreateRequest::setBoardType);
+            model.addAttribute("postCreateRequest", postCreateRequest);
+        }
+        populatePostCreateModel(model, principal);
+        return "post-create";
+    }
+
+    @PostMapping("/posts/new")
+    public String createPost(
+            @Valid @ModelAttribute PostCreateRequest postCreateRequest,
+            BindingResult bindingResult,
+            Model model,
+            Principal principal
+    ) {
+        if (bindingResult.hasErrors()) {
+            populatePostCreateModel(model, principal);
+            return "post-create";
+        }
+
+        var post = communityService.createPost(postCreateRequest, principal.getName());
+        return "redirect:/posts/" + post.getId();
     }
 
     @GetMapping("/posts/{id}")
@@ -129,6 +167,13 @@ public class CommunityController {
         model.addAttribute("selectedSort", sortOption);
     }
 
+    private void populatePostCreateModel(Model model, Principal principal) {
+        model.addAttribute("boards", BoardType.values());
+        var user = communityService.findUser(principal.getName());
+        model.addAttribute("currentUser", user);
+        model.addAttribute("canApproveOfficialEvent", user.getRole() == UserRole.ADMIN);
+    }
+
     private Map<PostSortOption, String> buildSortLinks(String basePath, String tag) {
         return buildSortLinks(basePath, tag, false);
     }
@@ -165,6 +210,17 @@ public class CommunityController {
             normalized = normalized.substring(1).trim();
         }
         return normalized;
+    }
+
+    private Optional<BoardType> resolveBoardType(String board) {
+        if (board == null || board.isBlank()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(BoardType.valueOf(board.trim().toUpperCase()));
+        } catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
     }
 
     private Map<PostSortOption, String> buildSearchSortLinks(String query, String tag) {
