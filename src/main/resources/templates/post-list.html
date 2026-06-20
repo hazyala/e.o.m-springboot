@@ -33,7 +33,7 @@
     </section>
 
     <section class="community-board-filter community-board-switcher" aria-label="Board filters">
-        <a th:href="@{/posts}" th:classappend="${selectedBoard == null and selectedTag == null} ? ' is-active'">ALL</a>
+        <a th:href="@{/boards/all}" th:classappend="${selectedBoard == null and selectedTag == null} ? ' is-active'">ALL</a>
         <a th:each="board : ${boards}"
            th:href="@{/boards/{board}(board=${board.name()})}"
            th:attr="data-board=${board.name()}"

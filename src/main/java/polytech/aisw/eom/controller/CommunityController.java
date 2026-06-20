@@ -43,6 +43,10 @@ public class CommunityController {
     ) {
         boolean hasTag = tag != null && !tag.isBlank();
         PostSortOption sortOption = PostSortOption.from(sort);
+        if (!hasTag) {
+            return "redirect:/boards/all?sort=" + sortOption.getKey();
+        }
+
         model.addAttribute("title", hasTag ? "# " + tag : "ALL");
         model.addAttribute("eyebrow", hasTag ? "TAG SEARCH" : "COMMUNITY");
         model.addAttribute("summary", hasTag
@@ -60,17 +64,9 @@ public class CommunityController {
     }
 
     @GetMapping("/activity")
-    public String activity(@RequestParam(defaultValue = "latest") String sort, Model model) {
+    public String activity(@RequestParam(defaultValue = "latest") String sort) {
         PostSortOption sortOption = PostSortOption.from(sort);
-        model.addAttribute("title", "LATEST ACTIVITY");
-        model.addAttribute("eyebrow", "ACTIVITY");
-        model.addAttribute("summary", "보드 선택과 무관하게 커뮤니티 전체 글을 원하는 기준으로 확인합니다.");
-        populatePostListModel(model, sortOption);
-        var posts = communityService.findPosts(sortOption);
-        model.addAttribute("posts", posts);
-        model.addAttribute("postCount", posts.size());
-        model.addAttribute("sortLinks", buildSortLinks("/activity", null));
-        return "post-list";
+        return "redirect:/boards/all?sort=" + sortOption.getKey();
     }
 
     @GetMapping("/events")
@@ -94,8 +90,20 @@ public class CommunityController {
             @RequestParam(defaultValue = "latest") String sort,
             Model model
     ) {
-        BoardType boardType = BoardType.valueOf(board.toUpperCase());
         PostSortOption sortOption = PostSortOption.from(sort);
+        if ("all".equalsIgnoreCase(board)) {
+            model.addAttribute("title", "ALL");
+            model.addAttribute("eyebrow", "COMMUNITY");
+            model.addAttribute("summary", "SHOW, CAST, HYPE, LINK 전체 게시글을 한 화면에서 탐색하고 원하는 기준으로 정렬합니다.");
+            populatePostListModel(model, sortOption);
+            var posts = communityService.findPosts(sortOption);
+            model.addAttribute("posts", posts);
+            model.addAttribute("postCount", posts.size());
+            model.addAttribute("sortLinks", buildSortLinks("/boards/all", null));
+            return "post-list";
+        }
+
+        BoardType boardType = BoardType.valueOf(board.toUpperCase());
         model.addAttribute("title", boardType.getLabel());
         model.addAttribute("eyebrow", "BOARD");
         model.addAttribute("summary", boardType.getDescription());

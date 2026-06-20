@@ -2251,37 +2251,37 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .community-board-hero::after {
     background:
-        linear-gradient(90deg, rgba(20, 20, 20, 0.82), rgba(20, 20, 20, 0.52) 48%, rgba(20, 20, 20, 0.18)),
-        linear-gradient(0deg, rgba(20, 20, 20, 0.34), transparent 58%);
+        linear-gradient(90deg, rgba(20, 20, 20, 0.64), rgba(20, 20, 20, 0.34) 48%, rgba(20, 20, 20, 0.12)),
+        linear-gradient(0deg, rgba(20, 20, 20, 0.2), transparent 58%);
 }
 
 .community-board-hero.board-show::after {
     background:
-        linear-gradient(90deg, rgba(92, 139, 87, 0.96), rgba(92, 139, 87, 0.9) 44%, rgba(92, 139, 87, 0.72)),
-        linear-gradient(0deg, rgba(0, 0, 0, 0.12), transparent 58%);
+        linear-gradient(90deg, rgba(68, 112, 64, 0.58), rgba(68, 112, 64, 0.34) 44%, rgba(68, 112, 64, 0.16)),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.2), transparent 58%);
 }
 
 .community-board-hero.board-cast::after {
     background:
-        linear-gradient(90deg, rgba(142, 83, 114, 0.96), rgba(142, 83, 114, 0.9) 44%, rgba(142, 83, 114, 0.72)),
-        linear-gradient(0deg, rgba(0, 0, 0, 0.12), transparent 58%);
+        linear-gradient(90deg, rgba(128, 66, 98, 0.58), rgba(128, 66, 98, 0.34) 44%, rgba(128, 66, 98, 0.16)),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.2), transparent 58%);
 }
 
 .community-board-hero.board-hype::after {
     background:
-        linear-gradient(90deg, rgba(143, 116, 82, 0.96), rgba(143, 116, 82, 0.9) 44%, rgba(143, 116, 82, 0.72)),
-        linear-gradient(0deg, rgba(0, 0, 0, 0.12), transparent 58%);
+        linear-gradient(90deg, rgba(126, 95, 58, 0.58), rgba(126, 95, 58, 0.34) 44%, rgba(126, 95, 58, 0.16)),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.2), transparent 58%);
 }
 
 .community-board-hero.board-link::after {
     background:
-        linear-gradient(90deg, rgba(86, 96, 145, 0.96), rgba(86, 96, 145, 0.9) 44%, rgba(86, 96, 145, 0.72)),
-        linear-gradient(0deg, rgba(0, 0, 0, 0.12), transparent 58%);
+        linear-gradient(90deg, rgba(68, 78, 132, 0.58), rgba(68, 78, 132, 0.34) 44%, rgba(68, 78, 132, 0.16)),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.2), transparent 58%);
 }
 
 .community-board-hero .community-hero-media img {
-    opacity: 0.22;
-    filter: saturate(0.96) contrast(1.1);
+    opacity: 0.78;
+    filter: saturate(1.02) contrast(1.08);
 }
 
 .community-board-hero .community-hero-copy {

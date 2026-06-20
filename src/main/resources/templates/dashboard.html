@@ -174,7 +174,7 @@
                         <span></span>
                         <h2>TAGS</h2>
                     </div>
-                    <a th:href="@{/posts}">ALL →</a>
+                    <a th:href="@{/boards/all}">ALL →</a>
                 </div>
                 <div class="dashboard-tags">
                     <a class="dashboard-tag" th:each="tag, stat : ${tags}" th:if="${stat.index < 8}" th:href="@{/posts(tag=${tag})}" th:text="|# ${tag}|"># 힙합</a>
@@ -187,7 +187,7 @@
                         <span></span>
                         <h2>ACTIVITY</h2>
                     </div>
-                    <a th:href="@{/activity}">ALL →</a>
+                    <a th:href="@{/boards/all}">ALL →</a>
                 </div>
                 <ul class="dashboard-activity">
                     <li class="dashboard-activity-item" th:each="post, stat : ${recentPosts}" th:if="${stat.index < 5}">
