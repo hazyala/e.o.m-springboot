@@ -93,10 +93,10 @@
 - E.O.M은 댄서 플랫폼이므로 영상/릴스 중심 콘텐츠를 핵심으로 둡니다.
 - MVP에서는 직접 영상 업로드를 지원하지 않습니다.
 - 게시글은 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL을 첨부하는 방식으로 처리합니다.
-- 작성 폼은 `/posts/new`이며 헤더 `Add New`에서 진입합니다. 저장 후 생성된 `/posts/{id}` 상세로 이동하고, 해당 보드 목록에서도 작성 글을 확인할 수 있습니다.
+- 작성 폼은 `/posts/new`이며 헤더 `Add New` 또는 보드 목록 우측 `New Post`에서 진입합니다. 보드별 `New Post`는 현재 보드를 자동 선택하고, 저장 후 생성된 `/posts/{id}` 상세로 이동하며 해당 보드 목록에서도 작성 글을 확인할 수 있습니다.
 - 작성 폼은 파일 입력 없이 Instagram 게시물 링크 또는 외부 미디어 URL과 `thumbnailUrl` 문자열만 받습니다.
 - SHOW 외 보드는 `eventDate`/`deadline` 입력 영역을 제공하고, HYPE 관리자 승인 행사 체크는 admin에게만 노출/저장됩니다.
-- Live Preview는 URL 기반 썸네일 또는 placeholder만 보여주며 실제 embed는 하지 않습니다.
+- Live Preview는 입력값만 보여주며 실제 embed는 하지 않습니다. 입력 전 가짜 미디어/placeholder는 노출하지 않고, `thumbnailUrl`이 있을 때만 큰 미디어 프레임을, Instagram/외부 `mediaUrl`이 있을 때만 새 탭 링크 카드를 보여줍니다.
 - 목록은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세는 `thumbnailUrl` 중심 프리뷰와 외부 미디어 표시로 구성합니다.
 - 현재 대시보드와 커뮤니티 탐색의 미디어 표시는 `thumbnailUrl`을 썸네일로 사용하고 `mediaType`, boardType, 작성자/크루, 위치, 행사일, 조회/좋아요/댓글 수를 리스트 메타로 노출합니다.
 - 히어로 배경 슬라이드는 현재 `assets/source` 이미지로 연출하며, 이후 게시글 미디어 기반 슬라이드로 확장 가능합니다.
