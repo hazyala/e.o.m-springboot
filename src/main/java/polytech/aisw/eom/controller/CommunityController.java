@@ -2,13 +2,17 @@ package polytech.aisw.eom.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.service.CommunityService;
+import polytech.aisw.eom.service.PostSortOption;
 
 @Controller
 public class CommunityController {
@@ -32,56 +36,96 @@ public class CommunityController {
     }
 
     @GetMapping("/posts")
-    public String posts(@RequestParam(required = false) String tag, Model model) {
+    public String posts(
+            @RequestParam(required = false) String tag,
+            @RequestParam(defaultValue = "latest") String sort,
+            Model model
+    ) {
         boolean hasTag = tag != null && !tag.isBlank();
-        model.addAttribute("title", hasTag ? "# " + tag : "LATEST POSTS");
+        PostSortOption sortOption = PostSortOption.from(sort);
+        model.addAttribute("title", hasTag ? "# " + tag : "ALL");
         model.addAttribute("eyebrow", hasTag ? "TAG SEARCH" : "COMMUNITY");
         model.addAttribute("summary", hasTag
-                ? "선택한 태그와 연결된 게시글을 최신순으로 모았습니다."
+                ? "선택한 태그와 연결된 게시글을 카드형으로 모았습니다."
                 : "SHOW, CAST, HYPE, LINK의 최신 움직임을 한 화면에서 탐색합니다.");
         model.addAttribute("selectedTag", hasTag ? tag : null);
-        model.addAttribute("boards", BoardType.values());
-        model.addAttribute("tags", communityService.findTags());
-        model.addAttribute("posts", tag == null || tag.isBlank()
-                ? communityService.findLatestPosts()
-                : communityService.findPostsByTag(tag));
+        populatePostListModel(model, sortOption);
+        var posts = hasTag
+                ? communityService.findPostsByTag(tag, sortOption)
+                : communityService.findPosts(sortOption);
+        model.addAttribute("posts", posts);
+        model.addAttribute("postCount", posts.size());
+        model.addAttribute("sortLinks", buildSortLinks("/posts", hasTag ? tag : null));
         return "post-list";
     }
 
     @GetMapping("/activity")
-    public String activity(Model model) {
+    public String activity(@RequestParam(defaultValue = "latest") String sort, Model model) {
+        PostSortOption sortOption = PostSortOption.from(sort);
         model.addAttribute("title", "LATEST ACTIVITY");
         model.addAttribute("eyebrow", "ACTIVITY");
-        model.addAttribute("summary", "보드 선택과 무관하게 커뮤니티 전체 최신글을 시간순으로 확인합니다.");
-        model.addAttribute("boards", BoardType.values());
-        model.addAttribute("tags", communityService.findTags());
-        model.addAttribute("posts", communityService.findLatestPosts());
+        model.addAttribute("summary", "보드 선택과 무관하게 커뮤니티 전체 글을 원하는 기준으로 확인합니다.");
+        populatePostListModel(model, sortOption);
+        var posts = communityService.findPosts(sortOption);
+        model.addAttribute("posts", posts);
+        model.addAttribute("postCount", posts.size());
+        model.addAttribute("sortLinks", buildSortLinks("/activity", null));
         return "post-list";
     }
 
     @GetMapping("/events")
-    public String events(Model model) {
+    public String events(@RequestParam(defaultValue = "latest") String sort, Model model) {
+        PostSortOption sortOption = PostSortOption.from(sort);
         model.addAttribute("title", "THIS MONTH EVENTS");
         model.addAttribute("eyebrow", "HYPE EVENTS");
         model.addAttribute("summary", "이번 달 안에 열리는 HYPE 공식 행사와 모집 일정을 모았습니다.");
         model.addAttribute("selectedBoard", BoardType.HYPE);
-        model.addAttribute("boards", BoardType.values());
-        model.addAttribute("tags", communityService.findTags());
-        model.addAttribute("posts", communityService.findThisMonthEvents());
+        populatePostListModel(model, sortOption);
+        var posts = communityService.findThisMonthEvents(sortOption);
+        model.addAttribute("posts", posts);
+        model.addAttribute("postCount", posts.size());
+        model.addAttribute("sortLinks", buildSortLinks("/events", null));
         return "post-list";
     }
 
     @GetMapping("/boards/{board}")
-    public String board(@PathVariable String board, Model model) {
+    public String board(
+            @PathVariable String board,
+            @RequestParam(defaultValue = "latest") String sort,
+            Model model
+    ) {
         BoardType boardType = BoardType.valueOf(board.toUpperCase());
+        PostSortOption sortOption = PostSortOption.from(sort);
         model.addAttribute("title", boardType.getLabel());
         model.addAttribute("eyebrow", "BOARD");
         model.addAttribute("summary", boardType.getDescription());
         model.addAttribute("selectedBoard", boardType);
+        populatePostListModel(model, sortOption);
+        var posts = communityService.findPostsByBoard(boardType, sortOption);
+        model.addAttribute("posts", posts);
+        model.addAttribute("postCount", posts.size());
+        model.addAttribute("sortLinks", buildSortLinks("/boards/" + boardType.name(), null));
+        return "post-list";
+    }
+
+    private void populatePostListModel(Model model, PostSortOption sortOption) {
         model.addAttribute("boards", BoardType.values());
         model.addAttribute("tags", communityService.findTags());
-        model.addAttribute("posts", communityService.findPostsByBoard(boardType));
-        return "post-list";
+        model.addAttribute("sortOptions", PostSortOption.values());
+        model.addAttribute("selectedSort", sortOption);
+    }
+
+    private Map<PostSortOption, String> buildSortLinks(String basePath, String tag) {
+        Map<PostSortOption, String> links = new LinkedHashMap<>();
+        for (PostSortOption option : PostSortOption.values()) {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromPath(basePath);
+            if (tag != null && !tag.isBlank()) {
+                builder.queryParam("tag", tag);
+            }
+            builder.queryParam("sort", option.getKey());
+            links.put(option, builder.build().toUriString());
+        }
+        return links;
     }
 
     @GetMapping("/dancers")

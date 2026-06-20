@@ -12,77 +12,75 @@
 <body class="dashboard-page">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<main class="community-shell">
-    <section class="community-hero" th:classappend="${selectedBoard != null} ? | board-${selectedBoard.name().toLowerCase()}|">
+<main class="community-shell community-board-shell">
+    <section class="community-hero community-board-hero"
+             th:classappend="${selectedBoard != null} ? | board-${selectedBoard.name().toLowerCase()}| : ' board-all'">
         <div class="community-hero-media" aria-hidden="true">
-            <img th:if="${selectedBoard == null || selectedBoard.name() == 'SHOW'}" th:src="@{/assets/source/show.png}" alt="">
+            <img th:if="${selectedBoard == null}" th:src="@{/assets/source/anna-frizen-9UZokKRcdHI-unsplash.jpg}" alt="">
+            <img th:if="${selectedBoard != null and selectedBoard.name() == 'SHOW'}" th:src="@{/assets/source/show.png}" alt="">
             <img th:if="${selectedBoard != null and selectedBoard.name() == 'CAST'}" th:src="@{/assets/source/cast1.jpg}" alt="">
             <img th:if="${selectedBoard != null and selectedBoard.name() == 'HYPE'}" th:src="@{/assets/source/hype.jpg}" alt="">
             <img th:if="${selectedBoard != null and selectedBoard.name() == 'LINK'}" th:src="@{/assets/source/link.png}" alt="">
         </div>
+        <strong class="community-board-watermark" th:text="${title}">SHOW</strong>
         <div class="community-hero-copy">
             <p th:text="${eyebrow}">COMMUNITY</p>
             <h1 th:text="${title}">LATEST POSTS</h1>
             <span th:if="${selectedTag}" class="community-selected-tag" th:text="|Selected tag · #${selectedTag}|">Selected tag</span>
             <p th:text="${summary}">Community summary</p>
+            <span class="community-post-total" th:text="|총 ${postCount}개|">총 0개</span>
         </div>
     </section>
 
-    <section class="community-board-filter" aria-label="Board filters">
+    <section class="community-board-filter community-board-switcher" aria-label="Board filters">
         <a th:href="@{/posts}" th:classappend="${selectedBoard == null and selectedTag == null} ? ' is-active'">ALL</a>
         <a th:each="board : ${boards}"
            th:href="@{/boards/{board}(board=${board.name()})}"
+           th:attr="data-board=${board.name()}"
            th:classappend="${selectedBoard == board} ? ' is-active'"
            th:text="${board.label}">SHOW</a>
     </section>
 
-    <section class="community-layout">
-        <div class="community-list">
-            <article class="community-post-card" th:each="post : ${posts}">
-                <a class="community-card-media" th:href="@{/posts/{id}(id=${post.id})}">
-                    <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                    <span th:if="${post.mediaType.name() != 'IMAGE'}" th:text="${post.mediaType.name() == 'INSTAGRAM'} ? 'IG' : 'LINK'">LINK</span>
-                </a>
-                <div class="community-card-copy">
-                    <div class="community-card-topline">
-                        <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
-                           class="dashboard-type"
-                           th:classappend="| type-${post.boardType.name().toLowerCase()}|"
-                           th:text="${post.boardType.label}">SHOW</a>
-                        <span th:text="${post.mediaType}">IMAGE</span>
-                    </div>
-                    <h2><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a></h2>
-                    <p th:text="${#strings.abbreviate(post.content, 132)}">Post content preview</p>
-                    <div class="community-meta-grid">
-                        <span th:text="${post.author.displayName}">Author</span>
-                        <span th:if="${post.author.crewName}" th:text="${post.author.crewName}">Crew</span>
-                        <span th:if="${post.location}" th:text="${post.location}">Location</span>
-                        <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="${#temporals.format(post.eventDate, 'MM.dd')}">06.20</time>
-                    </div>
-                    <div class="dashboard-row-stats">
-                        <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">0</b></span>
-                        <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${post.commentCount}">0</b></span>
-                        <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">0</b></span>
-                    </div>
-                </div>
-            </article>
-        </div>
+    <section class="community-sort-row" aria-label="Sort posts">
+        <nav class="community-sort-tabs">
+            <a th:each="sortEntry : ${sortLinks}"
+               th:href="${sortEntry.value}"
+               th:classappend="${sortEntry.key == selectedSort} ? ' is-active'"
+               th:text="${sortEntry.key.label}">최신순</a>
+        </nav>
+        <span th:text="|총 ${postCount}개|">총 0개</span>
+    </section>
 
-        <aside class="community-side-panel">
-            <section>
-                <h2>Boards</h2>
-                <a th:each="board : ${boards}" th:href="@{/boards/{board}(board=${board.name()})}">
-                    <strong th:text="${board.label}">SHOW</strong>
-                    <span th:text="${board.description}">Board description</span>
-                </a>
-            </section>
-            <section>
-                <h2>Tags</h2>
-                <div class="community-tag-cloud">
-                    <a th:each="tag, stat : ${tags}" th:if="${stat.index < 12}" th:href="@{/posts(tag=${tag})}" th:text="|#${tag}|">#tag</a>
+    <section class="community-card-grid" aria-label="Community posts">
+        <article class="community-grid-card" th:each="post : ${posts}" th:classappend="| type-${post.boardType.name().toLowerCase()}|">
+            <a class="community-grid-media" th:href="@{/posts/{id}(id=${post.id})}">
+                <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                <span class="community-media-fallback" th:unless="${post.thumbnailUrl}" th:text="${post.boardType.label}">SHOW</span>
+                <span class="community-media-badge" th:text="${post.mediaType.name() == 'IMAGE'} ? ${post.boardType.label} : (${post.mediaType.name() == 'INSTAGRAM'} ? 'IG' : 'LINK')">SHOW</span>
+            </a>
+            <div class="community-grid-copy">
+                <div class="community-card-topline">
+                    <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
+                       class="dashboard-type"
+                       th:classappend="| type-${post.boardType.name().toLowerCase()}|"
+                       th:text="${post.boardType.label}">SHOW</a>
+                    <span th:text="${post.mediaType}">IMAGE</span>
                 </div>
-            </section>
-        </aside>
+                <h2><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a></h2>
+                <p th:text="${#strings.abbreviate(post.content, 86)}">Post content preview</p>
+                <div class="community-meta-line">
+                    <strong th:text="${post.author.displayName}">Author</strong>
+                    <span th:if="${post.author.crewName}" th:text="${post.author.crewName}">Crew</span>
+                    <span th:if="${post.location}" th:text="${post.location}">Location</span>
+                    <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="${#temporals.format(post.eventDate, 'MM.dd')}">06.20</time>
+                </div>
+                <div class="community-grid-stats">
+                    <span>♡ <b th:text="${post.likeCount}">0</b></span>
+                    <span>댓글 <b th:text="${post.commentCount}">0</b></span>
+                    <span>조회 <b th:text="${post.viewCount}">0</b></span>
+                </div>
+            </div>
+        </article>
     </section>
 </main>
 

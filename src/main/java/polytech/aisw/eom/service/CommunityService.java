@@ -28,16 +28,28 @@ public class CommunityService {
         return postRepository.findById(id).orElseThrow();
     }
 
+    public List<Post> findPosts(PostSortOption sortOption) {
+        return postRepository.findAll(sortOption.getSort());
+    }
+
     public List<Post> findLatestPosts() {
-        return postRepository.findTop12ByOrderByCreatedAtDesc();
+        return findPosts(PostSortOption.LATEST);
+    }
+
+    public List<Post> findPostsByTag(String tag, PostSortOption sortOption) {
+        return postRepository.findByTagsContainingIgnoreCase(tag, sortOption.getSort());
     }
 
     public List<Post> findPostsByTag(String tag) {
-        return postRepository.findTop12ByTagsContainingIgnoreCaseOrderByCreatedAtDesc(tag);
+        return findPostsByTag(tag, PostSortOption.LATEST);
+    }
+
+    public List<Post> findPostsByBoard(BoardType boardType, PostSortOption sortOption) {
+        return postRepository.findByBoardType(boardType, sortOption.getSort());
     }
 
     public List<Post> findPostsByBoard(BoardType boardType) {
-        return postRepository.findByBoardTypeOrderByCreatedAtDesc(boardType);
+        return findPostsByBoard(boardType, PostSortOption.LATEST);
     }
 
     public List<Post> findPopularPosts() {
@@ -48,13 +60,18 @@ public class CommunityService {
         return postRepository.findTop10ByBoardTypeOrderByCreatedAtDesc(boardType);
     }
 
-    public List<Post> findThisMonthEvents() {
+    public List<Post> findThisMonthEvents(PostSortOption sortOption) {
         LocalDate today = LocalDate.now();
-        return postRepository.findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+        return postRepository.findByBoardTypeAndEventDateBetween(
                 BoardType.HYPE,
                 today,
-                today.withDayOfMonth(today.lengthOfMonth())
+                today.withDayOfMonth(today.lengthOfMonth()),
+                sortOption.getSort()
         );
+    }
+
+    public List<Post> findThisMonthEvents() {
+        return findThisMonthEvents(PostSortOption.LATEST);
     }
 
     public List<AppUser> findDancers() {

@@ -3,6 +3,7 @@ package polytech.aisw.eom.repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Override
     @EntityGraph(attributePaths = "author")
     List<Post> findAll();
+
+    @Override
+    @EntityGraph(attributePaths = "author")
+    List<Post> findAll(Sort sort);
 
     @Override
     @EntityGraph(attributePaths = "author")
@@ -31,6 +36,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = "author")
     List<Post> findByBoardTypeOrderByCreatedAtDesc(BoardType boardType);
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findByBoardType(BoardType boardType, Sort sort);
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc();
@@ -50,6 +58,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop12ByTagsContainingIgnoreCaseOrderByCreatedAtDesc(String tag);
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findByTagsContainingIgnoreCase(String tag, Sort sort);
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findByBoardTypeAndEventDateBetween(
+            BoardType boardType,
+            LocalDate startDate,
+            LocalDate endDate,
+            Sort sort
+    );
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByBoardTypeAndMediaTypeInOrderByLikeCountDescCreatedAtDesc(
