@@ -99,22 +99,23 @@
                             <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
                             <span th:unless="${post.thumbnailUrl}" th:text="${post.boardType.label}">SHOW</span>
                         </a>
-                        <form class="my-pin-form" th:action="@{/my-page/portfolio/pin}" method="post">
-                            <input type="hidden" name="postId" th:value="${post.id}">
-                            <input type="hidden" name="pinned" th:value="${!post.portfolioPinned}">
-                            <input type="hidden" name="returnTab" value="portfolio">
-                            <button class="my-pin-button" type="submit" th:classappend="${post.portfolioPinned} ? ' is-pinned'" th:title="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}">
-                                <span th:text="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}">대표 고정</span>
-                            </button>
-                        </form>
-                        <form class="my-remove-form" th:action="@{/my-page/portfolio/select}" method="post">
-                            <input type="hidden" name="postId" th:value="${post.id}">
-                            <input type="hidden" name="selected" value="false">
-                            <input type="hidden" name="returnTab" value="portfolio">
-                            <button class="my-icon-action" type="submit" title="포트폴리오에서 제외">
-                                <span>포트폴리오에서 제외</span>
-                            </button>
-                        </form>
+                        <details class="my-card-menu">
+                            <summary aria-label="게시물 메뉴"><span></span></summary>
+                            <div>
+                                <form th:action="@{/my-page/portfolio/pin}" method="post">
+                                    <input type="hidden" name="postId" th:value="${post.id}">
+                                    <input type="hidden" name="pinned" th:value="${!post.portfolioPinned}">
+                                    <input type="hidden" name="returnTab" value="portfolio">
+                                    <button type="submit" th:text="${post.portfolioPinned ? '대표 고정 해제' : '대표 고정'}">대표 고정</button>
+                                </form>
+                                <form th:action="@{/my-page/portfolio/select}" method="post">
+                                    <input type="hidden" name="postId" th:value="${post.id}">
+                                    <input type="hidden" name="selected" value="false">
+                                    <input type="hidden" name="returnTab" value="portfolio">
+                                    <button type="submit">포트폴리오에서 제외</button>
+                                </form>
+                            </div>
+                        </details>
                         <div class="my-post-card-copy">
                             <strong th:text="${post.boardType.label}">SHOW</strong>
                             <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Portfolio title</a></h3>
@@ -151,16 +152,17 @@
                                 <span th:text="|좋아요 ${post.likeCount}|">좋아요 0</span>
                             </div>
                         </div>
-                        <form class="my-star-form" th:action="@{/my-page/portfolio/select}" method="post">
-                            <input type="hidden" name="postId" th:value="${post.id}">
-                            <input type="hidden" name="selected" th:value="${!post.portfolioSelected}">
-                            <input type="hidden" name="returnTab" value="posts">
-                            <button type="submit"
-                                    th:classappend="${post.portfolioSelected} ? ' is-selected'"
-                                    th:title="${post.portfolioSelected ? '포트폴리오에서 제외' : '포트폴리오에 추가'}">
-                                <span th:text="${post.portfolioSelected ? '포트폴리오에서 제외' : '포트폴리오에 추가'}">포트폴리오에 추가</span>
-                            </button>
-                        </form>
+                        <details class="my-card-menu">
+                            <summary aria-label="게시물 메뉴"><span></span></summary>
+                            <div>
+                                <form th:action="@{/my-page/portfolio/select}" method="post">
+                                    <input type="hidden" name="postId" th:value="${post.id}">
+                                    <input type="hidden" name="selected" th:value="${!post.portfolioSelected}">
+                                    <input type="hidden" name="returnTab" value="posts">
+                                    <button type="submit" th:text="${post.portfolioSelected ? '포트폴리오에서 제외' : '포트폴리오에 추가'}">포트폴리오에 추가</button>
+                                </form>
+                            </div>
+                        </details>
                     </article>
                 </div>
                 <p class="my-empty-state" th:if="${myPage.posts.isEmpty()}">아직 작성한 게시물이 없습니다.</p>
@@ -262,10 +264,12 @@
     (() => {
         const tabs = [...document.querySelectorAll("[data-my-page-tabs] a[data-my-tab]")];
         const panels = [...document.querySelectorAll("[data-my-panel]")];
+        const menus = [...document.querySelectorAll(".my-card-menu")];
         const showTab = (tabId) => {
             const nextTab = panels.some((panel) => panel.dataset.myPanel === tabId) ? tabId : "portfolio";
             tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.myTab === nextTab));
             panels.forEach((panel) => panel.classList.toggle("is-visible", panel.dataset.myPanel === nextTab));
+            menus.forEach((menu) => menu.removeAttribute("open"));
         };
 
         tabs.forEach((tab) => {
@@ -276,6 +280,22 @@
             });
         });
         window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
+        menus.forEach((menu) => {
+            menu.addEventListener("toggle", () => {
+                if (menu.open) {
+                    menus.forEach((item) => {
+                        if (item !== menu) {
+                            item.removeAttribute("open");
+                        }
+                    });
+                }
+            });
+        });
+        document.addEventListener("click", (event) => {
+            if (!event.target.closest(".my-card-menu")) {
+                menus.forEach((menu) => menu.removeAttribute("open"));
+            }
+        });
         showTab(location.hash.slice(1));
     })();
 </script>
