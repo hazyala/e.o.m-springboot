@@ -90,31 +90,38 @@
     <aside class="post-create-preview" aria-label="Live preview">
         <div class="post-preview-sticky">
             <div class="post-create-kicker post-preview-kicker">LIVE PREVIEW <span></span></div>
-            <p>입력하는 내용이 실시간으로 반영됩니다</p>
+            <p>보드 목록 카드에 표시될 모습을 실시간으로 보여줍니다</p>
 
-            <article class="post-preview-card">
-                <span class="post-board-pill type-show" data-preview-board>SHOW</span>
-                <h2 data-preview-title-output>서울 스트릿잼 후기</h2>
-                <div class="post-preview-author">
-                    <span aria-hidden="true"></span>
-                    <strong th:text="${currentUser.displayName}">DANCER</strong>
-                    <small>방금 전 · 조회 0</small>
-                </div>
-                <div class="post-preview-media" data-preview-media-frame>
+            <article class="community-grid-card post-preview-card type-show">
+                <div class="community-grid-media post-preview-media" data-preview-media-frame>
                     <img alt="" data-preview-thumbnail-output hidden>
-                    <span aria-hidden="true">▶</span>
+                    <span class="community-media-fallback" data-preview-media-fallback>SHOW</span>
+                    <span class="community-media-badge" data-preview-media-badge>SHOW</span>
                 </div>
-                <div class="post-preview-meta">
-                    <span data-preview-location-output hidden>서울</span>
-                    <time data-preview-event-output hidden>EVENT</time>
-                    <time data-preview-deadline-output hidden>DUE</time>
-                    <a href="#" target="_blank" rel="noreferrer" data-preview-media-link hidden>OPEN MEDIA</a>
-                </div>
-                <p data-preview-content-output>지난 주말 다녀온 서울 스트릿잼. 정말 에너지 넘치는 하루였습니다.</p>
-                <div class="post-preview-tags" data-preview-tags-output>
-                    <span># 스트릿잼</span>
-                    <span># 배틀</span>
-                    <span># 서울</span>
+
+                <div class="community-grid-copy">
+                    <div class="community-card-topline">
+                        <span class="dashboard-type type-show" data-preview-board>SHOW</span>
+                        <span data-preview-media-type>IMAGE</span>
+                        <time data-preview-event-output hidden>EVENT</time>
+                        <time data-preview-deadline-output hidden>DUE</time>
+                    </div>
+                    <h2><span data-preview-title-output>서울 스트릿잼 후기</span></h2>
+                    <p data-preview-content-output>지난 주말 다녀온 서울 스트릿잼. 정말 에너지 넘치는 하루였습니다.</p>
+                    <div class="community-meta-line">
+                        <strong th:text="${currentUser.displayName}">DANCER</strong>
+                        <span data-preview-location-output hidden>서울</span>
+                    </div>
+                    <div class="post-preview-tags" data-preview-tags-output>
+                        <span># 스트릿잼</span>
+                        <span># 배틀</span>
+                        <span># 서울</span>
+                    </div>
+                    <div class="community-grid-stats">
+                        <span>♡ <b>0</b></span>
+                        <span>댓글 <b>0</b></span>
+                        <span>조회 <b>0</b></span>
+                    </div>
                 </div>
             </article>
         </div>

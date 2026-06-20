@@ -4727,14 +4727,14 @@ html[data-theme="dark"] .community-event-meta span {
 }
 
 .post-preview-card {
-    max-width: 760px;
+    max-width: 520px;
 }
 
 .post-preview-card h2 {
-    margin: 18px 0 22px;
-    color: #030303;
-    font-size: clamp(34px, 4vw, 54px);
-    line-height: 1.08;
+    margin: 14px 0 10px;
+    color: #050505;
+    font-size: 19px;
+    line-height: 1.28;
     letter-spacing: 0;
 }
 
@@ -4765,13 +4765,11 @@ html[data-theme="dark"] .community-event-meta span {
 
 .post-preview-media {
     position: relative;
-    display: grid;
-    place-items: center;
     overflow: hidden;
-    min-height: 310px;
-    margin-bottom: 28px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 8px;
+    min-height: 0;
+    margin-bottom: 0;
+    border: 0;
+    border-radius: 0;
     background: #d7d7df;
 }
 
@@ -4795,50 +4793,19 @@ html[data-theme="dark"] .community-event-meta span {
     opacity: 1;
 }
 
-.post-preview-media > span {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.32);
-    color: #ffffff;
-    font-size: 24px;
-}
-
-.post-preview-meta,
 .post-preview-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 }
 
-.post-preview-meta {
-    margin-bottom: 22px;
-}
-
-.post-preview-meta span,
-.post-preview-meta time,
-.post-preview-meta a {
-    color: #666666;
-    font-family: "Roboto Mono", monospace;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.post-preview-card > p {
-    margin: 0 0 28px;
-    color: #333333;
-    font-size: 18px;
-    line-height: 1.8;
-    white-space: pre-line;
+.post-preview-tags {
+    margin-top: 12px;
 }
 
 .post-preview-tags span {
     color: #d30f46;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 800;
 }
 
