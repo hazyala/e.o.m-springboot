@@ -134,6 +134,7 @@ src/main/resources/static/assets/source
 - 좌우 분할 또는 강한 이미지 배경
 - 브랜드 무드와 로그인 폼의 대비
 - 현재 Spring Security 로그인 폼과 연결 완료
+- 로그인 상태 유지는 기본 체크 상태로 두어 사용자가 index를 왕복해도 인증 흐름이 끊기지 않게 합니다.
 - 회원가입 슬라이드 UI는 시각만 유지하며 실제 가입 기능은 다음 단계에서 연결
 
 ### Dashboard
@@ -153,6 +154,12 @@ src/main/resources/static/assets/source
 - Tags는 태그 검색 결과, Activity의 `ALL`은 `/boards/all` 전체 목록, Events는 이번 달 HYPE 공식 행사 목록, Dancers는 장르별 댄서 탐색 페이지로 이동합니다.
 - 미디어는 게시글의 `mediaType + mediaUrl + thumbnailUrl`을 유지하고, 대시보드에서는 작은 썸네일과 영상 표시 아이콘으로만 노출합니다.
 - Instagram/외부 미디어 링크가 상세/프로필 영역에 노출될 경우 새 탭으로 열고, 직접 영상 업로드 UI는 제공하지 않습니다.
+
+### Index
+
+- 공개 index의 Login 링크는 인증 상태에서 My Page로 전환합니다.
+- SHOW/CAST/HYPE/LINK CTA는 비로그인 상태에서 로그인으로 보내고, 로그인 상태에서는 각 보드 목록으로 바로 보냅니다.
+- index/login의 기존 레이아웃과 전용 CSS 톤은 유지하며, 인증 상태에 따른 목적지만 Thymeleaf 조건부 렌더링으로 처리합니다.
 
 ### Board
 

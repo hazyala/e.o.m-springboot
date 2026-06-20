@@ -154,11 +154,14 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/dashboard`, `/posts`, `/posts/{id}`, `/posts?tag={tag}`, `/boards/all`, `/boards/{board}`, `/events`, `/dancers`, `/my-page`, `/me`: 로그인 필요
 - `/admin/**`: ADMIN 필요
 
+로그인 폼의 `remember-me` 체크박스는 기본 선택 상태이며, Spring Security remember-me 쿠키 유효기간은 14일입니다. 로그아웃 시 `JSESSIONID`와 `remember-me` 쿠키를 함께 삭제합니다.
+
 ## 8. 화면 라우트
 
 대시보드와 커뮤니티 탐색 화면은 Spring MVC Controller -> Service -> Repository 흐름을 유지합니다.
 
 - `/dashboard`: 로그인 후 첫 화면. Today Pick, Popular, Recent, Tags, Activity, Events, Dancers 미리보기를 렌더링합니다.
+- `/`: 공개 index입니다. 인증 상태에 따라 Login/My Page 링크를 전환하고, SHOW/CAST/HYPE/LINK CTA는 비로그인 상태에서 `/login`, 로그인 상태에서 `/boards/{board}`로 이동합니다.
 - `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
 - `/boards/all`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 대시보드 Tags/Activity `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
 - `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
