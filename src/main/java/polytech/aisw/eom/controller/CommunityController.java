@@ -3,7 +3,9 @@ package polytech.aisw.eom.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -170,9 +172,13 @@ public class CommunityController {
     }
 
     @GetMapping("/dancers")
-    public String dancers(Model model) {
+    public String dancers(@RequestParam(name = "genres", required = false) List<String> genres, Model model) {
+        List<String> selectedGenres = normalizeSelectedGenres(genres);
         model.addAttribute("boards", BoardType.values());
-        model.addAttribute("dancers", communityService.findDancers());
+        model.addAttribute("dancers", communityService.findDancers(selectedGenres));
+        model.addAttribute("dancerGenres", communityService.findDancerGenres());
+        model.addAttribute("selectedGenres", selectedGenres);
+        model.addAttribute("genreLinks", buildDancerGenreLinks(selectedGenres));
         return "dancers";
     }
 
@@ -209,5 +215,35 @@ public class CommunityController {
         } catch (IllegalArgumentException exception) {
             return fallback;
         }
+    }
+
+    private List<String> normalizeSelectedGenres(List<String> genres) {
+        if (genres == null || genres.isEmpty()) {
+            return List.of();
+        }
+
+        return genres.stream()
+                .filter(genre -> genre != null && !genre.isBlank())
+                .map(String::trim)
+                .filter(communityService.findDancerGenres()::contains)
+                .distinct()
+                .toList();
+    }
+
+    private Map<String, String> buildDancerGenreLinks(List<String> selectedGenres) {
+        Map<String, String> links = new LinkedHashMap<>();
+        for (String genre : communityService.findDancerGenres()) {
+            List<String> nextGenres = new ArrayList<>(selectedGenres);
+            if (nextGenres.contains(genre)) {
+                nextGenres.remove(genre);
+            } else {
+                nextGenres.add(genre);
+            }
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/dancers");
+            nextGenres.forEach(selectedGenre -> builder.queryParam("genres", selectedGenre));
+            links.put(genre, builder.build().encode().toUriString());
+        }
+        return links;
     }
 }

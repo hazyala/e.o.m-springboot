@@ -1,9 +1,11 @@
 package polytech.aisw.eom.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 import polytech.aisw.eom.domain.AppUser;
@@ -15,6 +17,30 @@ import polytech.aisw.eom.repository.UserRepository;
 
 @Service
 public class CommunityService {
+
+    private static final List<String> DANCER_GENRES = List.of(
+            "힙합",
+            "하우스",
+            "크럼프",
+            "팝핑",
+            "락킹",
+            "브레이킹",
+            "왁킹",
+            "보깅",
+            "댄스홀"
+    );
+
+    private static final Map<String, List<String>> DANCER_GENRE_KEYWORDS = Map.of(
+            "힙합", List.of("힙합", "hiphop", "hip-hop", "hip hop", "choreo", "코레오"),
+            "하우스", List.of("하우스", "house"),
+            "크럼프", List.of("크럼프", "krump"),
+            "팝핑", List.of("팝핑", "popping"),
+            "락킹", List.of("락킹", "locking"),
+            "브레이킹", List.of("브레이킹", "breaking", "bboy", "b-boy", "bgirl", "b-girl"),
+            "왁킹", List.of("왁킹", "waacking", "whacking"),
+            "보깅", List.of("보깅", "voguing", "vogue"),
+            "댄스홀", List.of("댄스홀", "dancehall")
+    );
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -85,6 +111,22 @@ public class CommunityService {
         return userRepository.findByRoleOrderByCreatedAtDesc(UserRole.USER);
     }
 
+    public List<AppUser> findDancers(List<String> selectedGenres) {
+        List<String> normalizedGenres = normalizeDancerGenres(selectedGenres);
+        if (normalizedGenres.isEmpty()) {
+            return findDancers();
+        }
+
+        return userRepository.findByRoleOrderByCreatedAtDesc(UserRole.USER)
+                .stream()
+                .filter(dancer -> matchesAnyGenre(dancer.getPrimaryGenre(), normalizedGenres))
+                .toList();
+    }
+
+    public List<String> findDancerGenres() {
+        return DANCER_GENRES;
+    }
+
     public AppUser findDancer(Long id) {
         return userRepository.findById(id).orElseThrow();
     }
@@ -108,5 +150,31 @@ public class CommunityService {
                 .map(String::trim)
                 .filter(tag -> !tag.isBlank())
                 .toList();
+    }
+
+    private List<String> normalizeDancerGenres(List<String> genres) {
+        if (genres == null || genres.isEmpty()) {
+            return List.of();
+        }
+
+        Set<String> normalizedGenres = new LinkedHashSet<>();
+        genres.stream()
+                .filter(genre -> genre != null && !genre.isBlank())
+                .map(String::trim)
+                .filter(DANCER_GENRES::contains)
+                .forEach(normalizedGenres::add);
+        return new ArrayList<>(normalizedGenres);
+    }
+
+    private boolean matchesAnyGenre(String primaryGenre, List<String> selectedGenres) {
+        if (primaryGenre == null || primaryGenre.isBlank()) {
+            return false;
+        }
+
+        String searchableGenre = primaryGenre.toLowerCase();
+        return selectedGenres.stream()
+                .map(DANCER_GENRE_KEYWORDS::get)
+                .anyMatch(keywords -> keywords != null
+                        && keywords.stream().anyMatch(keyword -> searchableGenre.contains(keyword.toLowerCase())));
     }
 }

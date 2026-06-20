@@ -3773,46 +3773,288 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .dancer-hero {
-    margin-bottom: 34px;
+    margin-bottom: 22px;
+}
+
+.dancer-filter-panel {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.35fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: stretch;
+    margin-bottom: 18px;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.76);
+    box-shadow: 0 18px 52px rgba(0, 0, 0, 0.07);
+}
+
+.dancer-filter-panel > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.dancer-filter-panel p {
+    margin: 0;
+    color: #d30f46;
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.dancer-filter-panel strong {
+    color: #050505;
+    font-size: 24px;
+    line-height: 1.15;
+}
+
+.dancer-filter-panel span {
+    color: #666666;
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+}
+
+.dancer-genre-filter {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dancer-genre-filter a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 9px 13px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.58);
+    color: #333333;
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.dancer-genre-filter a.is-active,
+.dancer-genre-filter a:hover {
+    border-color: #050505;
+    background: #050505;
+    color: #ffffff;
 }
 
 .dancer-directory {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    margin-bottom: 70px;
 }
 
-.dancer-directory article {
+.dancer-talent-card {
     display: grid;
-    grid-template-columns: 170px minmax(0, 1fr);
-    gap: 20px;
-    min-height: 210px;
+    grid-template-columns: 184px minmax(0, 1fr);
+    gap: 18px;
+    min-height: 262px;
+    padding: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     background: rgba(255, 255, 255, 0.74);
     box-shadow: 0 18px 52px rgba(0, 0, 0, 0.08);
 }
 
-.dancer-directory img {
+.dancer-card-media {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 234px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #111111;
+    color: #ffffff;
+    font-family: "Irish Grover", cursive;
+    font-size: 64px;
+}
+
+.dancer-card-media img {
+    width: 100%;
     height: 100%;
-    min-height: 172px;
-    margin-bottom: 0;
+    min-height: 234px;
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    filter: saturate(0.98) contrast(1.04);
 }
 
 .dancer-card-copy {
     display: flex;
     flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+    padding: 6px 4px 4px 0;
+}
+
+.dancer-card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.dancer-card-head > div {
     min-width: 0;
 }
 
-.dancer-card-copy a {
-    align-self: flex-start;
+.dancer-card-head span {
+    display: block;
+    margin-bottom: 8px;
+    color: #d30f46;
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.dancer-card-head strong {
+    display: block;
+    color: #050505;
+    font-size: 28px;
+    line-height: 1.05;
+    word-break: keep-all;
+}
+
+.dancer-card-head small {
+    flex: 0 0 auto;
+    color: #777777;
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+}
+
+.dancer-card-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+}
+
+.dancer-card-meta div {
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.56);
+}
+
+.dancer-card-meta dt {
+    margin-bottom: 5px;
+    color: #888888;
+    font-family: "Roboto Mono", monospace;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.dancer-card-meta dd {
+    margin: 0;
+    overflow: hidden;
+    color: #222222;
+    font-size: 13px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dancer-card-copy > p {
+    display: -webkit-box;
+    min-height: 48px;
+    margin: 0;
+    overflow: hidden;
+    color: #555555;
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.dancer-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: auto;
-    padding-top: 8px;
+}
+
+.dancer-card-actions a,
+.dancer-empty-state a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 10px 13px;
+    border: 1px solid rgba(211, 15, 70, 0.28);
+    border-radius: 999px;
+    color: #d30f46;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.dancer-card-actions a:last-child {
+    border-color: #050505;
+    background: #050505;
+    color: #ffffff;
+}
+
+.dancer-empty-state {
+    grid-column: 1 / -1;
+    padding: 34px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.dancer-empty-state strong {
+    display: block;
+    color: #050505;
+    font-size: 24px;
+}
+
+.dancer-empty-state p {
+    margin: 10px 0 18px;
+    color: #666666;
 }
 
 html[data-theme="dark"] .community-post-card,
 html[data-theme="dark"] .community-side-panel section,
-html[data-theme="dark"] .dancer-directory article {
+html[data-theme="dark"] .dancer-filter-panel,
+html[data-theme="dark"] .dancer-talent-card,
+html[data-theme="dark"] .dancer-empty-state {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.12);
     box-shadow: 0 18px 52px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="dark"] .dancer-filter-panel strong,
+html[data-theme="dark"] .dancer-card-head strong,
+html[data-theme="dark"] .dancer-card-meta dd,
+html[data-theme="dark"] .dancer-empty-state strong {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .dancer-filter-panel span,
+html[data-theme="dark"] .dancer-card-head small,
+html[data-theme="dark"] .dancer-card-copy > p,
+html[data-theme="dark"] .dancer-empty-state p {
+    color: rgba(255, 255, 255, 0.68);
+}
+
+html[data-theme="dark"] .dancer-genre-filter a,
+html[data-theme="dark"] .dancer-card-meta div {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.82);
+}
+
+html[data-theme="dark"] .dancer-genre-filter a.is-active,
+html[data-theme="dark"] .dancer-genre-filter a:hover,
+html[data-theme="dark"] .dancer-card-actions a:last-child {
+    border-color: #ffffff;
+    background: #ffffff;
+    color: #121212;
 }
 
 html[data-theme="dark"] .community-card-topline > span,
@@ -4651,6 +4893,10 @@ th {
     .dashboard-dancer-grid article {
         padding: 18px;
     }
+
+    .dancer-filter-panel {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 1100px) {
@@ -5129,6 +5375,30 @@ th {
     }
 
     .dancer-directory article {
+        grid-template-columns: 1fr;
+    }
+
+    .dancer-filter-panel {
+        padding: 16px;
+    }
+
+    .dancer-genre-filter {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .dancer-talent-card {
+        gap: 14px;
+        min-height: 0;
+        padding: 12px;
+    }
+
+    .dancer-card-head {
+        flex-direction: column;
+    }
+
+    .dancer-card-meta {
         grid-template-columns: 1fr;
     }
 

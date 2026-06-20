@@ -88,6 +88,29 @@ class EomApplicationTests {
 
         mockMvc.perform(get("/dancers").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Street Genre Directory")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Street Genre Directory")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("GENRE FILTER")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("전체보기")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dancers?genres=")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Instagram")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("프로필 보기")));
+    }
+
+    @Test
+    void dancerDirectorySupportsMultiGenreFiltersAndProfileLinks() throws Exception {
+        mockMvc.perform(get("/dancers")
+                        .param("genres", "힙합")
+                        .param("genres", "크럼프")
+                        .with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("RAYA")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dancers/")));
+
+        mockMvc.perform(get("/dancers")
+                        .param("genres", "보깅")
+                        .with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("조건에 맞는 댄서가 없습니다.")));
     }
 }
