@@ -2023,6 +2023,91 @@ html[data-theme="dark"] .post-detail-copy .dashboard-quick-stats {
     color: #ffffff;
 }
 
+html[data-theme="dark"] .my-page-tabs {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .my-page-tabs a {
+    color: #9f9f9f;
+}
+
+html[data-theme="dark"] .my-page-tabs a.is-active,
+html[data-theme="dark"] .my-page-tabs a:hover,
+html[data-theme="dark"] .my-section-heading h2,
+html[data-theme="dark"] .my-post-card-copy h3,
+html[data-theme="dark"] .my-post-card-copy h3 a,
+html[data-theme="dark"] .my-event-card-grid strong,
+html[data-theme="dark"] .my-post-list article > a,
+html[data-theme="dark"] .my-comment-list article > a,
+html[data-theme="dark"] .my-activity-list strong,
+html[data-theme="dark"] .my-joined-list strong {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .my-section-heading span,
+html[data-theme="dark"] .my-post-card-copy p,
+html[data-theme="dark"] .my-card-meta,
+html[data-theme="dark"] .my-event-card-grid span,
+html[data-theme="dark"] .my-post-list p,
+html[data-theme="dark"] .my-comment-list p,
+html[data-theme="dark"] .my-activity-list span,
+html[data-theme="dark"] .my-joined-list span,
+html[data-theme="dark"] .my-empty-state {
+    color: #c7c7c7;
+}
+
+html[data-theme="dark"] .my-work-grid article,
+html[data-theme="dark"] .my-post-card-grid article,
+html[data-theme="dark"] .my-event-card-grid article,
+html[data-theme="dark"] .my-page-side section {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme="dark"] .my-work-media {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .my-card-menu summary {
+    color: #b6b6b6;
+}
+
+html[data-theme="dark"] .my-card-menu[open] summary,
+html[data-theme="dark"] .my-card-menu summary:hover {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .my-card-menu > div {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: #1d1d1d;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
+}
+
+html[data-theme="dark"] .my-card-menu button {
+    background: #1d1d1d;
+    color: #f3f3f3;
+}
+
+html[data-theme="dark"] .my-card-menu button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ff4d6d;
+}
+
+html[data-theme="dark"] .my-profile-editor input,
+html[data-theme="dark"] .my-profile-editor textarea,
+html[data-theme="dark"] .my-event-form input {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .my-post-list article,
+html[data-theme="dark"] .my-comment-list article,
+html[data-theme="dark"] .my-joined-list li {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
 .dashboard-nav a.is-current {
     background: #050505;
     color: #ffffff;
