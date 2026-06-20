@@ -4,8 +4,10 @@
 
 현재 주요 Service:
 - `DashboardService`: Today Pick, Popular, Recent, Tags, Events, Dancers 미리보기 조립
-- `CommunityService`: 보드 목록, HYPE 관리자 승인 행사 필터, 태그 검색, 통합 검색, Dancers 조회
+- `CommunityService`: 보드 목록, 게시글 작성, HYPE 관리자 승인 행사 필터, 태그 검색, 통합 검색, Dancers 조회
 - `MyPageService`: 프로필/계정 수정, 포트폴리오 선택/고정, 참여 이벤트 CRUD, 활동 이력 조립
 - `AdminService`: 관리자 조회 데이터 조립
 
 검색은 빈 검색어를 빈 리스트로 처리해 전체 목록으로 흐르지 않게 합니다.
+
+게시글 작성은 `PostCreateRequest`를 받아 로그인 사용자를 작성자로 연결하고, Instagram/외부 미디어 URL과 `thumbnailUrl`만 저장합니다. HYPE 관리자 승인 행사는 ADMIN 작성자일 때만 반영합니다.
