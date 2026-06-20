@@ -97,9 +97,9 @@ src/main/resources/static/assets/source
 - 보드 목록은 텍스트 리스트보다 이미지 카드 중심으로 구성합니다.
 - 인스타그램 문화와 이어지도록 프로필/게시글에 시각적 이미지 영역을 둡니다.
 - E.O.M은 댄서 플랫폼이므로 영상, 릴스, 인스타그램 게시물 URL 기반 콘텐츠를 핵심으로 둡니다.
-- MVP에서는 직접 영상 파일 업로드를 지원하지 않고 URL/임베드 기반으로 처리합니다.
+- MVP에서는 직접 영상 파일 업로드를 지원하지 않고 URL 링크 기반으로 처리합니다.
 - 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용합니다.
-- 상세 화면은 이후 `mediaType + mediaUrl`로 embed 또는 링크 폴백을 구현합니다.
+- 상세 화면은 `thumbnailUrl` 중심 프리뷰를 보여주고 `mediaUrl`/`instagramUrl`은 새 탭 링크로 제공합니다.
 - 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 하며, 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 URL로 교체 예정입니다.
 
 현재 index/login에서 사용하는 이미지:
@@ -148,16 +148,17 @@ src/main/resources/static/assets/source
 - 본문은 Popular/Recent 리스트와 Tags/Events/Dancers/Activity 사이드 컬럼으로 구성합니다.
 - Recent는 `SHOW/CAST/HYPE/LINK` 탭을 클라이언트에서 전환하며 선택된 보드의 최신 글 10개를 보여줍니다.
 - 모든 대시보드 리스트는 미리보기 개수를 제한해 데이터 수와 무관하게 화면 끝선이 흐트러지지 않게 합니다. 현재 기준은 Popular 5, Recent 10, Tags 8, Activity 5, Events 4, Dancers 4입니다.
+- 헤더의 SHOW/CAST/HYPE/LINK와 Recent의 `ALL`은 `/boards/{board}` 보드별 탐색으로 이동합니다.
 - Tags는 태그 검색 결과, Activity는 Recent 탭 선택과 독립적인 최신글 목록, Events는 이번 달 HYPE 공식 행사 목록, Dancers는 장르별 댄서 탐색 페이지로 이동합니다.
 - 미디어는 게시글의 `mediaType + mediaUrl + thumbnailUrl`을 유지하고, 대시보드에서는 작은 썸네일과 영상 표시 아이콘으로만 노출합니다.
 - Instagram/외부 미디어 링크가 상세/프로필 영역에 노출될 경우 새 탭으로 열고, 직접 영상 업로드 UI는 제공하지 않습니다.
 
 ### Board
 
-- 큰 섹션 타이틀
-- 최신순/인기순/댓글순 정렬
-- 대표 이미지 카드 그리드
-- 보드별 액센트 컬러
+- `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK`는 대시보드 헤더/푸터 톤을 유지합니다.
+- 상단 비주얼은 단색 카드 대신 `assets/source` 기존 이미지를 사용합니다.
+- 목록 카드는 `thumbnailUrl`, `mediaType`, boardType, 제목, 본문 미리보기, 작성자, 크루, 위치, 행사일, 좋아요/댓글/조회수를 함께 보여줍니다.
+- 보드별 액센트 컬러는 텍스트 배지와 필터 상태에만 절제해 사용합니다.
 
 ### My Page
 
@@ -169,13 +170,15 @@ src/main/resources/static/assets/source
 
 ### Post Detail
 
-- 태그
+- 보드 타입
 - 제목
-- 작성자
-- 대표 이미지
+- 작성자/크루
+- 위치, 행사일, 마감일
+- `thumbnailUrl` 중심 대표 미디어
 - 본문
-- 인스타그램 바로보기 또는 링크
-- 댓글/좋아요 영역
+- `mediaType`이 IMAGE가 아니면 외부 미디어 표시만 제공
+- `mediaUrl`/`instagramUrl` 새 탭 링크
+- 좋아요/댓글/조회수 요약
 
 ### Write Post
 

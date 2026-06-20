@@ -114,7 +114,7 @@ src/main/resources
 - VIDEO_LINK
 - EXTERNAL_LINK
 
-MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL을 `mediaUrl`로 저장합니다. 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세 화면은 이후 `mediaType + mediaUrl` 기준 embed 또는 링크 폴백으로 확장합니다. 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 하며, 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 URL로 교체 예정입니다.
+MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL을 `mediaUrl`로 저장합니다. 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세 화면은 `thumbnailUrl` 중심 프리뷰와 새 탭 외부 링크만 제공합니다. 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 하며, 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 URL로 교체 예정입니다.
 
 현재 `DataSeeder`는 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 게시글 `mediaUrl`에 반영합니다. Instagram 미디어 게시글은 `instagramUrl`도 해당 게시물 URL을 사용하고, 아직 개별 URL이 없는 항목만 프로필 URL을 fallback으로 둡니다.
 
@@ -139,7 +139,7 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 
 접근:
 - `/`, `/login`, `/css/**`, `/js/**`, `/assets/**`: 공개
-- `/dashboard`, `/posts`, `/posts/{id}`, `/activity`, `/events`, `/dancers`, 보드, 마이페이지: 로그인 필요
+- `/dashboard`, `/posts`, `/posts/{id}`, `/posts?tag={tag}`, `/boards/{board}`, `/activity`, `/events`, `/dancers`, 마이페이지: 로그인 필요
 - `/admin/**`: ADMIN 필요
 
 ## 8. 화면 라우트
@@ -148,12 +148,15 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 
 - `/dashboard`: 로그인 후 첫 화면. Today Pick, Popular, Recent, Tags, Activity, Events, Dancers 미리보기를 렌더링합니다.
 - `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
-- `/posts/{id}`: 대시보드 Today Pick, Popular, Recent의 내부 게시글 상세 목적지입니다.
+- `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지입니다.
+- `/posts`: SHOW, CAST, HYPE, LINK 전체 최신글 목록입니다.
+- `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다.
 - `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록입니다.
 - `/activity`: Recent 탭과 독립적인 전체 최신글 목록입니다.
 - `/events`: 이번 달 HYPE 공식 행사 목록입니다.
 - `/dancers`: 장르별 댄서 탐색 목록입니다.
-- 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 첨부 링크에서만 새 탭으로 열며, 대시보드 썸네일은 버튼이 아닌 게시글 미리보기로 취급합니다.
+- 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 `OPEN MEDIA`/`INSTAGRAM` 링크에서만 새 탭으로 열며, 대시보드와 목록 썸네일은 내부 게시글 미리보기로 취급합니다.
+- 직접 영상 업로드와 실제 embed는 현재 MVC 범위에 포함하지 않습니다. 기존 `mediaType + mediaUrl + thumbnailUrl` 필드를 유지합니다.
 
 ## 9. 배포 구조
 
