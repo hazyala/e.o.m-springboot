@@ -2561,25 +2561,20 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .community-search-panel {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 330px;
-    gap: 28px;
-    align-items: stretch;
-    margin: 30px 0 4px;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 24px;
+    align-items: start;
+    margin: 24px 0 4px;
 }
 
 .community-search-main,
 .community-recommended-tags {
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 8px;
-    box-shadow: 0 18px 52px rgba(0, 0, 0, 0.08);
 }
 
 .community-search-main {
     display: grid;
     align-content: start;
-    gap: 14px;
-    padding: 24px;
 }
 
 .community-search-form {
@@ -2587,7 +2582,7 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 14px;
     align-items: center;
-    min-height: 54px;
+    min-height: 48px;
     padding: 0 8px 0 18px;
     background: rgba(240, 240, 245, 0.92);
     border: 1px solid rgba(0, 0, 0, 0.06);
@@ -2640,7 +2635,23 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .community-recommended-tags {
-    padding: 22px;
+    position: relative;
+    isolation: isolate;
+    padding: 4px 0 0;
+}
+
+.community-recommended-tags::before {
+    position: absolute;
+    inset: -28px -18px auto -18px;
+    z-index: -1;
+    height: 180px;
+    background:
+        radial-gradient(circle at 34% 32%, rgba(211, 15, 70, 0.22), transparent 58%),
+        radial-gradient(circle at 82% 8%, rgba(255, 77, 109, 0.18), transparent 54%);
+    filter: blur(18px);
+    opacity: 0.9;
+    pointer-events: none;
+    content: "";
 }
 
 .community-recommended-tags h2 {
@@ -2654,14 +2665,14 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 .community-recommended-tags div {
     display: flex;
     flex-wrap: wrap;
-    gap: 9px;
+    gap: 8px;
 }
 
 .community-recommended-tags a {
     display: inline-flex;
     align-items: center;
-    min-height: 32px;
-    padding: 0 12px;
+    min-height: 30px;
+    padding: 0 11px;
     border: 1px solid rgba(211, 15, 70, 0.26);
     border-radius: 999px;
     color: #d30f46;
@@ -3838,8 +3849,6 @@ html[data-theme="dark"] .community-grid-stats b {
 }
 
 html[data-theme="dark"] .community-grid-card,
-html[data-theme="dark"] .community-search-main,
-html[data-theme="dark"] .community-recommended-tags,
 html[data-theme="dark"] .community-result-row,
 html[data-theme="dark"] .community-event-row,
 html[data-theme="dark"] .community-empty-state {
@@ -3862,6 +3871,10 @@ html[data-theme="dark"] .community-search-form {
 
 html[data-theme="dark"] .community-search-form:focus-within {
     background: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .community-recommended-tags::before {
+    opacity: 0.72;
 }
 
 html[data-theme="dark"] .community-search-form input,

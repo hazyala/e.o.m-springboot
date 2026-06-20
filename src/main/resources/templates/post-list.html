@@ -32,7 +32,7 @@
         </div>
     </section>
 
-    <section class="community-board-filter community-board-switcher" th:unless="${isEventsPage == true}" aria-label="Board filters">
+    <section class="community-board-filter community-board-switcher" th:unless="${isEventsPage == true or isSearchPage == true}" aria-label="Board filters">
         <a th:href="@{/boards/all}" th:classappend="${selectedBoard == null and selectedTag == null and isSearchPage != true} ? ' is-active'">ALL</a>
         <a th:each="board : ${boards}"
            th:href="@{/boards/{board}(board=${board.name()})}"
@@ -52,13 +52,11 @@
                        th:value="${selectedTag != null ? '#' + selectedTag : searchQuery}">
                 <button type="submit">Search</button>
             </form>
-            <p>태그, 제목, 내용, 작성자, 크루명에서 검색합니다.</p>
         </div>
         <aside class="community-recommended-tags" aria-label="Recommended tags">
-            <h2>Tags</h2>
+            <h2>Popular Tags</h2>
             <div>
-                <a th:each="tag, stat : ${tags}"
-                   th:if="${stat.index < 12}"
+                <a th:each="tag : ${tags}"
                    th:href="@{/posts(tag=${tag})}"
                    th:text="|# ${tag}|"># tag</a>
             </div>
