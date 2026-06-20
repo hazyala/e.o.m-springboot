@@ -1,5 +1,7 @@
 package polytech.aisw.eom.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import java.net.URI;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +20,10 @@ public class CommunityController {
     }
 
     @GetMapping("/posts/{id}")
-    public String postDetail(@PathVariable Long id, Model model) {
+    public String postDetail(@PathVariable Long id, HttpServletRequest request, Model model) {
         var post = communityService.findPost(id);
         model.addAttribute("post", post);
+        model.addAttribute("backUrl", resolveBackUrl(request));
         model.addAttribute("boards", BoardType.values());
         model.addAttribute("postTags", communityService.parseTags(post.getTags()));
         model.addAttribute("popularPosts", communityService.findPopularPosts());
@@ -93,5 +96,31 @@ public class CommunityController {
         model.addAttribute("boards", BoardType.values());
         model.addAttribute("dancer", communityService.findDancer(id));
         return "dancer-detail";
+    }
+
+    private String resolveBackUrl(HttpServletRequest request) {
+        String fallback = "/dashboard";
+        String referer = request.getHeader("Referer");
+        if (referer == null || referer.isBlank()) {
+            return fallback;
+        }
+
+        try {
+            URI refererUri = URI.create(referer);
+            String refererHost = refererUri.getHost();
+            if (refererHost != null && !refererHost.equalsIgnoreCase(request.getServerName())) {
+                return fallback;
+            }
+
+            String path = refererUri.getPath();
+            if (path == null || path.isBlank() || path.startsWith("/login") || path.startsWith("/posts/")) {
+                return fallback;
+            }
+
+            String query = refererUri.getQuery();
+            return query == null || query.isBlank() ? path : path + "?" + query;
+        } catch (IllegalArgumentException exception) {
+            return fallback;
+        }
     }
 }

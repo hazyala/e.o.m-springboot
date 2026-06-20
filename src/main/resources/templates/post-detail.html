@@ -14,7 +14,7 @@
 
 <main class="post-page-shell">
     <article class="post-article">
-        <a class="post-back-link" th:href="@{/dashboard}">← BACK TO DASHBOARD</a>
+        <a class="post-back-link" th:href="${backUrl}">← BACK</a>
 
         <header class="post-article-head">
             <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
