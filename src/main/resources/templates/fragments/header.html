@@ -5,7 +5,7 @@
         <input type="search" name="q" placeholder="Search" aria-label="Search">
     </form>
     <nav class="dashboard-nav" aria-label="Dashboard navigation">
-        <a class="dashboard-add-button" href="#">Add New<span class="subtitle">새 글을 작성하세요</span></a>
+        <a class="dashboard-add-button" th:href="@{/posts/new}">Add New<span class="subtitle">새 글을 작성하세요</span></a>
         <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
         <a th:href="@{/boards/SHOW}">Show<span class="subtitle">당신을 보여주세요</span></a>
         <a th:href="@{/boards/CAST}">Cast<span class="subtitle">공연 기회를 만나세요</span></a>
