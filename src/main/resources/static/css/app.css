@@ -2648,22 +2648,23 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 .community-recommended-tags h2 {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     margin: 0 0 16px;
     color: #050505;
     font-family: "Irish Grover", cursive;
-    font-size: 40px;
+    font-size: 32px;
     line-height: 1;
     text-shadow:
-        8px 8px 0 rgba(211, 15, 70, 0.13),
-        0 14px 24px rgba(211, 15, 70, 0.24);
+        0 1px 0 rgba(255, 255, 255, 0.9),
+        0 8px 18px rgba(211, 15, 70, 0.24),
+        2px 2px 0 rgba(211, 15, 70, 0.08);
 }
 
 .community-recommended-tags h2::before {
     flex: 0 0 auto;
-    width: 18px;
-    height: 18px;
-    border-radius: 5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
     background: #d30f46;
     content: "";
 }
@@ -5007,7 +5008,7 @@ th {
     }
 
     .community-recommended-tags h2 {
-        font-size: 34px;
+        font-size: 30px;
     }
 
     .community-search-form {
