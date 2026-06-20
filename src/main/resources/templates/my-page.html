@@ -101,15 +101,6 @@
                     <span th:text="|${myPage.portfolioPosts.size()} works|">0 works</span>
                 </div>
                 <p class="my-page-alert" th:if="${portfolioMessage}" th:text="${portfolioMessage}">Message</p>
-                <div class="my-pinned-strip" th:if="${!myPage.pinnedPortfolioPosts.isEmpty()}">
-                    <article th:each="post : ${myPage.pinnedPortfolioPosts}">
-                        <a th:href="@{/posts/{id}(id=${post.id})}">
-                            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                            <span th:unless="${post.thumbnailUrl}" th:text="${post.boardType.label}">SHOW</span>
-                        </a>
-                        <strong th:text="${post.title}">Pinned title</strong>
-                    </article>
-                </div>
                 <div class="my-work-grid" th:if="${!myPage.portfolioPosts.isEmpty()}">
                     <article th:each="post : ${myPage.portfolioPosts}">
                         <a class="my-work-media" th:href="@{/posts/{id}(id=${post.id})}">
@@ -164,7 +155,11 @@
                             <input type="hidden" name="postId" th:value="${post.id}">
                             <input type="hidden" name="selected" th:value="${!post.portfolioSelected}">
                             <input type="hidden" name="returnTab" value="posts">
-                            <button type="submit" th:title="${post.portfolioSelected ? '포트폴리오에서 제외' : '포트폴리오에 추가'}" th:text="${post.portfolioSelected ? '★' : '☆'}">☆</button>
+                            <button type="submit"
+                                    th:classappend="${post.portfolioSelected} ? ' is-selected'"
+                                    th:title="${post.portfolioSelected ? '포트폴리오에서 제외' : '포트폴리오에 추가'}">
+                                <span th:text="${post.portfolioSelected ? '포트폴리오에서 제외' : '포트폴리오에 추가'}">포트폴리오에 추가</span>
+                            </button>
                         </form>
                     </article>
                 </div>
@@ -227,7 +222,7 @@
                     <h2>Activity</h2>
                 </div>
                 <ol class="my-activity-list">
-                    <li th:each="item : ${myPage.activityItems}">
+                    <li th:each="item, stat : ${myPage.activityItems}" th:if="${stat.index < 5}">
                         <a th:href="${item.href}">
                             <strong th:text="${item.action}">Action</strong>
                             <span th:text="${item.title}">Title</span>
@@ -242,7 +237,7 @@
                     <h2>Joined Events</h2>
                 </div>
                 <ol class="my-joined-list">
-                    <li th:each="event, stat : ${myPage.joinedEvents}" th:if="${stat.index < 3}">
+                    <li th:each="event, stat : ${myPage.joinedEvents}" th:if="${stat.index < 5}">
                         <time th:datetime="${event.eventDate}" th:text="${#temporals.format(event.eventDate, 'MM.dd EEE')}">06.15 SUN</time>
                         <strong th:text="${event.eventName}">Event</strong>
                         <span th:text="${event.result}">Result</span>

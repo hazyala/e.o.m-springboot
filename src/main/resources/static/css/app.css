@@ -2961,20 +2961,11 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     text-transform: uppercase;
 }
 
-.my-pinned-strip {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 26px;
-}
-
-.my-pinned-strip article,
 .my-work-grid article {
     position: relative;
     min-width: 0;
 }
 
-.my-pinned-strip a,
 .my-work-media {
     position: relative;
     display: grid;
@@ -2985,17 +2976,10 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     background: #d9d9e1;
 }
 
-.my-pinned-strip img,
 .my-work-media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.my-pinned-strip strong {
-    display: block;
-    margin-top: 9px;
-    font-weight: 900;
 }
 
 .my-work-grid {
@@ -3042,15 +3026,15 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .my-pin-button {
     display: grid;
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
     place-items: center;
-    border: 0;
+    border: 1px solid rgba(255, 255, 255, 0.72);
     border-radius: 50%;
-    background: rgba(17, 17, 17, 0.72);
+    background: rgba(255, 255, 255, 0.84);
     color: #ffffff;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
 }
 
 .my-pin-button span {
@@ -3063,25 +3047,31 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .my-pin-button::before {
-    width: 10px;
-    height: 14px;
+    width: 9px;
+    height: 13px;
     border-radius: 7px 7px 7px 0;
-    background: currentColor;
+    background: #9a9aa2;
     content: "";
     transform: rotate(-45deg);
 }
 
 .my-pin-button::after {
     width: 2px;
-    height: 9px;
+    height: 8px;
     margin-top: -4px;
-    background: currentColor;
+    background: #9a9aa2;
     content: "";
     transform: rotate(45deg);
 }
 
 .my-pin-button.is-pinned {
     background: #d30f46;
+    border-color: #d30f46;
+}
+
+.my-pin-button.is-pinned::before,
+.my-pin-button.is-pinned::after {
+    background: #ffffff;
 }
 
 .my-post-actions button,
@@ -3160,13 +3150,38 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     width: 34px;
     height: 34px;
     place-items: center;
-    border: 0;
+    border: 1px solid rgba(255, 255, 255, 0.72);
     border-radius: 50%;
+    background: rgba(255, 255, 255, 0.86);
+    color: #9a9aa2;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
+.my-star-form button span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.my-star-form button::before {
+    color: currentColor;
+    content: "☆";
+    font-size: 20px;
+    line-height: 1;
+}
+
+.my-star-form button.is-selected {
+    border-color: #d30f46;
     background: #d30f46;
     color: #ffffff;
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
+}
+
+.my-star-form button.is-selected::before {
+    content: "★";
 }
 
 .my-event-card-grid article {
@@ -4594,7 +4609,6 @@ th {
 
     .my-profile-editor form,
     .my-page-side,
-    .my-pinned-strip,
     .my-work-grid,
     .my-post-card-grid,
     .my-event-card-grid,

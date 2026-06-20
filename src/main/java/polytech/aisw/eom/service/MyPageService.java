@@ -47,10 +47,6 @@ public class MyPageService {
         List<Post> posts = postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
         List<Post> portfolioPosts = postRepository
                 .findByAuthorUsernameAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(username);
-        List<Post> pinnedPortfolioPosts = portfolioPosts.stream()
-                .filter(Post::isPortfolioPinned)
-                .limit(MAX_PINNED_PORTFOLIO)
-                .toList();
         List<Post> likedPosts = postLikeRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
                 .map(like -> like.getPost())
                 .toList();
@@ -62,7 +58,6 @@ public class MyPageService {
                 user,
                 posts,
                 portfolioPosts,
-                pinnedPortfolioPosts,
                 likedPosts,
                 comments,
                 joinedEvents,
@@ -139,7 +134,7 @@ public class MyPageService {
                         ))
                 )
                 .sorted(Comparator.comparing(ActivityItem::createdAt).reversed())
-                .limit(8)
+                .limit(5)
                 .toList();
     }
 
@@ -159,7 +154,6 @@ public class MyPageService {
             AppUser user,
             List<Post> posts,
             List<Post> portfolioPosts,
-            List<Post> pinnedPortfolioPosts,
             List<Post> likedPosts,
             List<Comment> comments,
             List<JoinedEvent> joinedEvents,
