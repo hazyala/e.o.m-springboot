@@ -29,12 +29,7 @@
     const mediaFrame = root.querySelector("[data-preview-media-frame]");
     const thumbnailOutput = root.querySelector("[data-preview-thumbnail-output]");
     const mediaBadge = root.querySelector("[data-preview-media-badge]");
-
-    const fallback = {
-        title: "서울 스트릿잼 후기",
-        content: "지난 주말 다녀온 서울 스트릿잼. 정말 에너지 넘치는 하루였습니다.",
-        tags: ["스트릿잼", "배틀", "서울"]
-    };
+    const mediaPlay = root.querySelector(".post-preview-play");
 
     function selectedBoard() {
         return boardInputs.find((input) => input.checked)?.value || "SHOW";
@@ -46,8 +41,10 @@
         });
     }
 
-    function setTextOrFallback(element, value, fallbackText) {
-        element.textContent = value.trim() || fallbackText;
+    function setOptionalText(element, value) {
+        const text = value.trim();
+        element.hidden = !text;
+        element.textContent = text;
     }
 
     function formatDate(value, prefix) {
@@ -103,12 +100,13 @@
 
         boardOutput.textContent = board;
         boardOutput.className = `post-board-pill type-${board.toLowerCase()}`;
-        setTextOrFallback(titleOutput, titleInput.value, fallback.title);
-        setTextOrFallback(contentOutput, contentInput.value, fallback.content);
+        setOptionalText(titleOutput, titleInput.value);
+        setOptionalText(contentOutput, contentInput.value);
 
         const currentTags = parseTags(tagsInput.value);
         tagsOutput.innerHTML = "";
-        (currentTags.length ? currentTags : fallback.tags).forEach((tag) => {
+        tagsOutput.hidden = currentTags.length === 0;
+        currentTags.forEach((tag) => {
             const tagElement = document.createElement("span");
             tagElement.textContent = `# ${tag}`;
             tagsOutput.appendChild(tagElement);
@@ -136,7 +134,9 @@
         }
 
         const mediaUrl = mediaInput.value.trim();
-        mediaBadge.textContent = resolveMediaLabel(mediaUrl);
+        mediaBadge.hidden = !mediaUrl;
+        mediaBadge.textContent = mediaUrl ? resolveMediaLabel(mediaUrl) : "";
+        mediaPlay.hidden = !mediaUrl;
 
         if (contentCount) {
             contentCount.textContent = String(contentInput.value.length);

@@ -4733,6 +4733,10 @@ html[data-theme="dark"] .community-event-meta span {
     max-width: 760px;
 }
 
+.post-live-preview [hidden] {
+    display: none !important;
+}
+
 .post-live-preview h2 {
     margin: 14px 0 14px;
     color: #030303;
