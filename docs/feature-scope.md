@@ -99,7 +99,7 @@
 - Header 검색은 `/posts?q={query}`에서 `tags`, `title`, `content`, `author.displayName`, `author.crewName`을 통합 검색합니다. `/posts?tag={tag}`는 태그 클릭 호환 경로로 유지하며 같은 검색 결과 화면을 사용합니다.
 - 대시보드 Tags의 `ALL`은 `/posts` 검색 화면으로 이동합니다.
 - 빈 `/posts` 또는 빈 검색어는 전체 목록으로 흐르지 않고 검색 입력과 추천 태그를 보여줍니다.
-- 전체/보드/검색/태그 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원합니다. HYPE 보드는 같은 정렬 줄에서 `관리자 승인 행사` 필터를 함께 제공합니다.
+- 전체/보드/검색/태그 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원합니다. HYPE 보드는 같은 정렬 줄에서 최신순 고정 `관리자 승인 행사` 뷰를 함께 제공합니다.
 - Recent는 선택된 보드의 최신 글 10개를 보여주고, Tags 8개, Activity 5개, Events 4개, Dancers 4개로 대시보드 미리보기 개수를 제한합니다.
 - Activity 미리보기는 Recent 탭 선택과 무관하게 전체 최신글 기준으로 유지하고, `ALL`은 `/boards/all`로 이동합니다.
 - Events 미리보기는 관리자 승인 행사 중 이번 달 예정 HYPE 글을 보여주고, `ALL`은 `/boards/HYPE?officialEvents=true`로 이동합니다. 목록에는 `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, `author.displayName`을 노출합니다.

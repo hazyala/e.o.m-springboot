@@ -115,7 +115,7 @@
         <nav class="community-sort-tabs">
             <a th:each="sortEntry : ${sortLinks}"
                th:href="${sortEntry.value}"
-               th:classappend="${sortEntry.key == selectedSort} ? ' is-active'"
+               th:classappend="${officialEventsOnly != true and sortEntry.key == selectedSort} ? ' is-active'"
                th:text="${sortEntry.key.label}">최신순</a>
             <a th:if="${selectedBoard != null and selectedBoard.name() == 'HYPE'}"
                th:href="${officialEventsLink}"

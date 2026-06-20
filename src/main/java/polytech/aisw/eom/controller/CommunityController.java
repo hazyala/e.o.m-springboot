@@ -77,9 +77,8 @@ public class CommunityController {
     }
 
     @GetMapping("/events")
-    public String events(@RequestParam(defaultValue = "latest") String sort) {
-        PostSortOption sortOption = PostSortOption.from(sort);
-        return "redirect:/boards/HYPE?officialEvents=true&sort=" + sortOption.getKey();
+    public String events() {
+        return "redirect:/boards/HYPE?officialEvents=true";
     }
 
     @GetMapping("/boards/{board}")
@@ -104,6 +103,7 @@ public class CommunityController {
 
         BoardType boardType = BoardType.valueOf(board.toUpperCase());
         boolean officialEventsOnly = boardType == BoardType.HYPE && officialEvents;
+        PostSortOption effectiveSortOption = officialEventsOnly ? PostSortOption.LATEST : sortOption;
         model.addAttribute("title", boardType.getLabel());
         model.addAttribute("eyebrow", "BOARD");
         model.addAttribute("summary", officialEventsOnly
@@ -111,14 +111,14 @@ public class CommunityController {
                 : boardType.getDescription());
         model.addAttribute("selectedBoard", boardType);
         model.addAttribute("officialEventsOnly", officialEventsOnly);
-        model.addAttribute("officialEventsLink", buildOfficialEventsLink(sortOption));
-        populatePostListModel(model, sortOption);
+        model.addAttribute("officialEventsLink", buildOfficialEventsLink());
+        populatePostListModel(model, effectiveSortOption);
         var posts = officialEventsOnly
-                ? communityService.findOfficialEventPosts(sortOption)
-                : communityService.findPostsByBoard(boardType, sortOption);
+                ? communityService.findOfficialEventPosts(PostSortOption.LATEST)
+                : communityService.findPostsByBoard(boardType, effectiveSortOption);
         model.addAttribute("posts", posts);
         model.addAttribute("postCount", posts.size());
-        model.addAttribute("sortLinks", buildSortLinks("/boards/" + boardType.name(), null, officialEventsOnly));
+        model.addAttribute("sortLinks", buildSortLinks("/boards/" + boardType.name(), null, false));
         return "post-list";
     }
 
@@ -149,10 +149,9 @@ public class CommunityController {
         return links;
     }
 
-    private String buildOfficialEventsLink(PostSortOption sortOption) {
+    private String buildOfficialEventsLink() {
         return UriComponentsBuilder.fromPath("/boards/HYPE")
                 .queryParam("officialEvents", true)
-                .queryParam("sort", sortOption.getKey())
                 .build()
                 .toUriString();
     }

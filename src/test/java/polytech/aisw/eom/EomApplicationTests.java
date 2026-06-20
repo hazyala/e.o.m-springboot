@@ -85,15 +85,20 @@ class EomApplicationTests {
 
         mockMvc.perform(get("/events").with(user("dancer1").roles("USER")))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/boards/HYPE?officialEvents=true&sort=latest"));
+                .andExpect(redirectedUrl("/boards/HYPE?officialEvents=true"));
 
         mockMvc.perform(get("/boards/HYPE")
                         .param("officialEvents", "true")
+                        .param("sort", "views")
                         .with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("관리자 승인 행사")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Seoul Street Jam 참가자 모집")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("officialEvents=true")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("officialEvents=true")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("class=\" is-active\">관리자 승인 행사")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/boards/HYPE?sort=views\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("class=\" is-active\">최신순"))))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("officialEvents=true&amp;sort=views"))));
 
         mockMvc.perform(get("/dancers").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())

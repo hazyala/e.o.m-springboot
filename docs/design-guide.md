@@ -169,13 +169,13 @@ src/main/resources/static/assets/source
 - 검색 화면의 검색창, 정렬 탭, 결과 목록은 왼쪽 컬럼에 묶고, 추천 태그는 오른쪽 컬럼에 둡니다. 결과 카드가 태그 아래로 밀리지 않게 두 컬럼 구조를 유지합니다.
 - 추천 태그 타이틀은 대시보드 `dashboard-side-title`과 같은 크기감의 Irish Grover 제목, 16px 붉은 사각 마커, 얕은 핑크 shadow를 사용합니다. 과한 포스터형 번짐이나 Trending/급상승 표현은 사용하지 않습니다.
 - 추천 태그는 검색 화면에서 전체 태그를 보여주되, 태그 버튼은 대시보드의 pill 톤을 유지합니다.
-- `/boards/all`과 보드별 목록은 ALL/SHOW/CAST/HYPE/LINK 보드 전환, 최신순/조회순/댓글순/좋아요순 정렬 탭, 3열 카드 그리드로 구성합니다. HYPE 보드는 같은 정렬 탭 줄에 `관리자 승인 행사` 필터를 추가합니다.
+- `/boards/all`과 보드별 목록은 ALL/SHOW/CAST/HYPE/LINK 보드 전환, 최신순/조회순/댓글순/좋아요순 정렬 탭, 3열 카드 그리드로 구성합니다. HYPE 보드는 같은 줄에 최신순 고정 `관리자 승인 행사` 뷰를 추가하며, 다른 정렬 탭을 누르면 전체 HYPE 목록으로 돌아갑니다.
 - 목록 카드는 `thumbnailUrl`, `mediaType`, boardType, 제목, 본문 미리보기, 작성자, 크루, 위치, 행사일, 좋아요/댓글/조회수를 함께 보여줍니다.
 - 보드별 액센트 컬러는 텍스트 배지와 필터 상태에만 절제해 사용합니다.
 
 ### HYPE 관리자 승인 행사
 
-- 별도 Events 목록 화면 대신 HYPE 보드 안의 `관리자 승인 행사` 필터로 공식 행사, 배틀, 공연 글을 탐색합니다.
+- 별도 Events 목록 화면 대신 HYPE 보드 안의 `관리자 승인 행사` 뷰로 공식 행사, 배틀, 공연 글을 최신순으로 탐색합니다.
 - 필터가 켜진 HYPE 목록도 기존 카드 그리드 톤을 유지하며 `thumbnailUrl`, `boardType`, `mediaType`, `title`, 본문 미리보기, `eventDate`, `location`, `author.displayName`을 노출합니다.
 - `/events`는 기존 링크 호환을 위해 필터가 켜진 HYPE 보드로 이동합니다.
 

@@ -71,7 +71,8 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 ### HYPE 관리자 승인 행사
 
 - 공식 행사, 배틀, 공연은 HYPE 보드 안에서 `관리자 승인 행사` 필터로 탐색
-- `/boards/HYPE?officialEvents=true`는 `adminApprovedEvent=true`인 HYPE 글만 보여주며 기존 최신순/조회순/댓글순/좋아요순 정렬을 유지
+- `/boards/HYPE?officialEvents=true`는 `adminApprovedEvent=true`인 HYPE 글만 최신순으로 보여줌
+- 최신순/조회순/댓글순/좋아요순 탭은 관리자 승인 여부와 무관하게 HYPE 전체 글을 보여주는 정렬 탭으로 유지
 - `/events`는 기존 링크 호환을 위해 관리자 승인 행사 필터가 켜진 HYPE 보드로 리다이렉트
 - 목록에는 `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, `title`, `content` preview, `author.displayName`을 노출
 - 외부 미디어 링크는 상세 화면에서만 새 탭으로 열고, 목록에서는 썸네일과 내부 상세 링크만 제공
