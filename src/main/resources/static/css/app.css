@@ -3860,7 +3860,7 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     margin: 0;
     color: #020202;
     font-family: "Irish Grover", cursive;
-    font-size: clamp(54px, 7vw, 92px);
+    font-size: clamp(42px, 5.2vw, 66px);
     line-height: 1;
     text-shadow:
         0 1px 0 rgba(255, 255, 255, 0.9),
@@ -3893,7 +3893,7 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     min-height: 32px;
     padding: 0 0 8px;
     color: #777777;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 800;
     white-space: nowrap;
 }
