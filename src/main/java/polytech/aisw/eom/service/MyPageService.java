@@ -44,6 +44,17 @@ public class MyPageService {
     @Transactional(readOnly = true)
     public MyPageView findMyPage(String username) {
         AppUser user = findUser(username);
+        return buildMyPageView(user);
+    }
+
+    @Transactional(readOnly = true)
+    public MyPageView findProfilePage(Long userId) {
+        AppUser user = userRepository.findById(userId).orElseThrow();
+        return buildMyPageView(user);
+    }
+
+    private MyPageView buildMyPageView(AppUser user) {
+        String username = user.getUsername();
         List<Post> posts = postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
         List<Post> portfolioPosts = postRepository
                 .findByAuthorUsernameAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(username);

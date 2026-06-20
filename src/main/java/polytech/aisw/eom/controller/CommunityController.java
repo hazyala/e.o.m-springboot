@@ -2,6 +2,7 @@ package polytech.aisw.eom.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.security.Principal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.stereotype.Controller;
@@ -12,15 +13,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.service.CommunityService;
+import polytech.aisw.eom.service.MyPageService;
 import polytech.aisw.eom.service.PostSortOption;
 
 @Controller
 public class CommunityController {
 
     private final CommunityService communityService;
+    private final MyPageService myPageService;
 
-    public CommunityController(CommunityService communityService) {
+    public CommunityController(CommunityService communityService, MyPageService myPageService) {
         this.communityService = communityService;
+        this.myPageService = myPageService;
     }
 
     @GetMapping("/posts/{id}")
@@ -144,10 +148,12 @@ public class CommunityController {
     }
 
     @GetMapping("/dancers/{id}")
-    public String dancerDetail(@PathVariable Long id, Model model) {
+    public String dancerDetail(@PathVariable Long id, Principal principal, Model model) {
+        var myPage = myPageService.findProfilePage(id);
         model.addAttribute("boards", BoardType.values());
-        model.addAttribute("dancer", communityService.findDancer(id));
-        return "dancer-detail";
+        model.addAttribute("myPage", myPage);
+        model.addAttribute("isOwner", principal != null && myPage.user().getUsername().equals(principal.getName()));
+        return "my-page";
     }
 
     private String resolveBackUrl(HttpServletRequest request) {
