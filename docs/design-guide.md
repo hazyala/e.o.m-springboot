@@ -151,7 +151,7 @@ src/main/resources/static/assets/source
 - Recent는 `SHOW/CAST/HYPE/LINK` 탭을 클라이언트에서 전환하며 선택된 보드의 최신 글 10개를 보여줍니다.
 - 모든 대시보드 리스트는 미리보기 개수를 제한해 데이터 수와 무관하게 화면 끝선이 흐트러지지 않게 합니다. 현재 기준은 Popular 5, Recent 10, Tags 8, Activity 5, Events 4, Dancers 4입니다.
 - 헤더의 SHOW/CAST/HYPE/LINK와 Recent의 `ALL`은 `/boards/{board}` 보드별 탐색으로 이동합니다.
-- Tags는 태그 검색 결과, Activity의 `ALL`은 `/boards/all` 전체 목록, Events는 이번 달 HYPE 공식 행사 목록, Dancers는 장르별 댄서 탐색 페이지로 이동합니다.
+- Header 검색은 `/posts?q={query}` 통합 검색으로 이동하고, Tags는 `/posts?tag={tag}` 태그 검색 결과, Activity의 `ALL`은 `/boards/all` 전체 목록, Events는 이번 달 HYPE 공식 행사 목록, Dancers는 장르별 댄서 탐색 페이지로 이동합니다.
 - 미디어는 게시글의 `mediaType + mediaUrl + thumbnailUrl`을 유지하고, 대시보드에서는 작은 썸네일과 영상 표시 아이콘으로만 노출합니다.
 - Instagram/외부 미디어 링크가 상세/프로필 영역에 노출될 경우 새 탭으로 열고, 직접 영상 업로드 UI는 제공하지 않습니다.
 
@@ -165,9 +165,16 @@ src/main/resources/static/assets/source
 
 - `/boards/all`, `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK`는 대시보드 헤더/푸터 톤을 유지합니다.
 - 상단 비주얼은 단색 카드 대신 `assets/source` 기존 이미지를 사용하고, 보드 컬러는 이미지 위에 옅은 틴트 수준으로만 적용합니다.
-- `/posts`와 보드별 목록은 ALL/SHOW/CAST/HYPE/LINK 보드 전환, 최신순/조회순/댓글순/좋아요순 정렬 탭, 3열 카드 그리드로 구성합니다.
+- `/posts` 검색 화면은 대시보드 헤더 톤을 유지하되 목록형 결과와 추천 태그 패널로 구성합니다. 빈 검색어에서는 전체 게시글을 보여주지 않고 검색 입력과 추천 태그를 우선 노출합니다.
+- `/boards/all`과 보드별 목록은 ALL/SHOW/CAST/HYPE/LINK 보드 전환, 최신순/조회순/댓글순/좋아요순 정렬 탭, 3열 카드 그리드로 구성합니다.
 - 목록 카드는 `thumbnailUrl`, `mediaType`, boardType, 제목, 본문 미리보기, 작성자, 크루, 위치, 행사일, 좋아요/댓글/조회수를 함께 보여줍니다.
 - 보드별 액센트 컬러는 텍스트 배지와 필터 상태에만 절제해 사용합니다.
+
+### Events
+
+- `/events`는 HYPE 행사성 글만 모아 보여주는 탐색 화면이며, 실시간 상승률/급상승/Trending 표현은 사용하지 않습니다.
+- 이벤트 행은 `thumbnailUrl`, `boardType`, `mediaType`, `title`, 본문 미리보기, `eventDate`, `deadline`, `location`, `author.displayName`을 노출합니다.
+- 목록 썸네일은 내부 상세로 이동하고, 외부 미디어 링크는 상세 화면의 새 탭 링크로만 제공합니다.
 
 ### My Page
 

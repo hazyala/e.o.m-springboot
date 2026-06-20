@@ -50,7 +50,7 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - Recent 영역은 기본값을 SHOW로 두고 `SHOW`, `CAST`, `HYPE`, `LINK` 탭을 페이지 전체 새로고침 없이 전환
 - Recent 탭은 선택된 보드의 더미데이터 최신 글 10개만 미리보기로 노출
 - Recent의 `ALL` 및 헤더의 SHOW/CAST/HYPE/LINK는 보드별 목록 `/boards/{board}`로 이동
-- Tags는 태그 검색 결과 `/posts?tag={tag}`로 이동
+- Header 검색은 `/posts?q={query}` 통합 검색으로 이동하며, Tags는 호환용 태그 검색 결과 `/posts?tag={tag}`로 이동
 - Activity의 `ALL`은 별도 Activity 화면이 아니라 전체 게시글 목록 `/boards/all`로 이동
 - Events는 이번 달 HYPE 공식 행사 목록 `/events`로 이동
 - Dancers는 장르별 댄서 탐색 페이지 `/dancers`로 이동
@@ -64,7 +64,14 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - HYPE: 배틀, 워크숍, 쇼케이스, 파티와 같은 현장의 열기와 일정을 공유하는 공간
 - LINK: 연습 파트너, 촬영 메이트, 공간 공유, 피드백 모임처럼 댄서들이 서로 연결되는 공간
 
-전체 목록은 `/boards/all`, 각 보드는 `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK` 목록과 `/posts/{id}` 상세 흐름을 가진다. 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원한다. 작성 흐름은 후속 범위로 둔다.
+전체 목록은 `/boards/all`, 각 보드는 `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK` 목록과 `/posts/{id}` 상세 흐름을 가진다. 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원한다. 검색 화면 `/posts`는 빈 검색어에서 전체 목록으로 흐르지 않고 검색 안내와 추천 태그를 보여주며, 검색어가 있을 때 `tags`, `title`, `content`, `author.displayName`, `author.crewName`을 통합 검색한다. 작성 흐름은 후속 범위로 둔다.
+
+### Events
+
+- `/events`는 HYPE 중 `eventDate`가 오늘부터 이번 달 말까지인 공식 행사성 글을 보여주는 이벤트 탐색 화면
+- 목록에는 `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, `title`, `content` preview, `author.displayName`을 노출
+- 외부 미디어 링크는 상세 화면에서만 새 탭으로 열고, Events 목록에서는 썸네일과 내부 상세 링크만 제공
+- 직접 embed, 직접 영상 업로드, 새 이미지 원본 추가는 MVP 범위에서 제외
 
 ### 마이페이지
 

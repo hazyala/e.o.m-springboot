@@ -151,7 +151,7 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 
 접근:
 - `/`, `/login`, `/css/**`, `/js/**`, `/assets/**`: 공개
-- `/dashboard`, `/posts`, `/posts/{id}`, `/posts?tag={tag}`, `/boards/all`, `/boards/{board}`, `/events`, `/dancers`, `/my-page`, `/me`: 로그인 필요
+- `/dashboard`, `/posts`, `/posts/{id}`, `/posts?q={query}`, `/posts?tag={tag}`, `/boards/all`, `/boards/{board}`, `/events`, `/dancers`, `/my-page`, `/me`: 로그인 필요
 - `/admin/**`: ADMIN 필요
 
 로그인 폼의 `remember-me` 체크박스는 기본 선택 상태이며, Spring Security remember-me 쿠키 유효기간은 14일입니다. 로그아웃 시 `JSESSIONID`와 `remember-me` 쿠키를 함께 삭제합니다.
@@ -165,10 +165,10 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
 - `/boards/all`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 대시보드 Tags/Activity `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
 - `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
-- `/posts`: 태그 없이 접근하면 `/boards/all`로 이동하고, `tag` 쿼리가 있을 때 태그 검색 목록을 렌더링합니다.
+- `/posts`: 헤더 검색 결과 화면입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
 - `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다.
-- `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록입니다.
-- `/events`: 이번 달 HYPE 공식 행사 목록입니다.
+- `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록이며, 검색 결과 화면의 목록형 UI를 공유합니다.
+- `/events`: 이번 달 HYPE 공식 행사 목록입니다. `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, 작성자를 보여주며 외부 미디어는 상세 화면에서만 새 탭 링크로 제공합니다.
 - `/dancers`: 장르별 댄서 탐색 목록입니다.
 - `/my-page`, `/me`: 로그인한 사용자의 프로필, 포트폴리오, 작성 게시글, 참여 이벤트, 좋아요한 게시글, 작성 댓글, 자동 활동 이력을 렌더링합니다. admin도 본인 마이페이지에 접근할 수 있습니다.
 - `/my-page/profile`: 프로필 히어로에 쓰는 이름, 크루, 주 장르, 소개, 인스타그램 URL, 프로필 이미지 URL, 헤더 이미지 URL을 저장합니다.

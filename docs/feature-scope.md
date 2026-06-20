@@ -77,10 +77,12 @@
 - 대시보드와 목록의 게시글 썸네일은 외부 링크 버튼이 아니라 내부 게시글 미리보기이며, 외부 미디어 링크는 상세 화면에서만 새 탭으로 엽니다.
 - 전체 탐색 URL은 `/boards/all`, 보드별 탐색 URL은 `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK`입니다.
 - 공개 index의 SHOW/CAST/HYPE/LINK CTA는 비로그인 상태에서는 `/login`, 로그인 상태에서는 각 `/boards/{board}`로 이동합니다.
-- 전체/보드/태그/Events 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 카드 정렬을 지원합니다.
+- Header 검색은 `/posts?q={query}`에서 `tags`, `title`, `content`, `author.displayName`, `author.crewName`을 통합 검색합니다. `/posts?tag={tag}`는 태그 클릭 호환 경로로 유지하며 같은 검색 결과 화면을 사용합니다.
+- 빈 `/posts` 또는 빈 검색어는 전체 목록으로 흐르지 않고 검색 입력과 추천 태그를 보여줍니다.
+- 전체/보드/검색/태그/Events 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원합니다. 보드 목록은 카드형, 검색 결과는 목록형, Events는 HYPE 행사 탐색 목록형으로 구성합니다.
 - Recent는 선택된 보드의 최신 글 10개를 보여주고, Tags 8개, Activity 5개, Events 4개, Dancers 4개로 대시보드 미리보기 개수를 제한합니다.
 - Activity 미리보기는 Recent 탭 선택과 무관하게 전체 최신글 기준으로 유지하고, `ALL`은 `/boards/all`로 이동합니다.
-- Events는 HYPE 중 `eventDate`가 오늘부터 이번 달 말까지인 공식 행사성 글을 보여주는 목록으로 둡니다.
+- Events는 HYPE 중 `eventDate`가 오늘부터 이번 달 말까지인 공식 행사성 글을 보여주는 목록으로 둡니다. 목록에는 `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, `author.displayName`을 노출합니다.
 - 마이페이지 기본 URL은 `/my-page`이며 `/me`도 같은 화면으로 연결합니다.
 - 공통 헤더는 index 제외 화면에서 대시보드 톤을 유지하고, 인증 사용자의 버튼은 일반 화면에서 외곽선 없는 `My Page`, 마이페이지에서 같은 크기의 붉은 `Logout`으로 전환합니다.
 - 로그인 상태 유지는 기본 체크 상태이며 remember-me 쿠키로 유지하고, 로그아웃 시 세션 쿠키와 remember-me 쿠키를 함께 삭제합니다.
