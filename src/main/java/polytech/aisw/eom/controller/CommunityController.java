@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.validation.BindingResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,9 +37,15 @@ public class CommunityController {
     }
 
     @GetMapping("/posts/new")
-    public String newPost(Model model, Principal principal) {
+    public String newPost(
+            @RequestParam(required = false) String board,
+            Model model,
+            Principal principal
+    ) {
         if (!model.containsAttribute("postCreateRequest")) {
-            model.addAttribute("postCreateRequest", new PostCreateRequest());
+            PostCreateRequest postCreateRequest = new PostCreateRequest();
+            resolveBoardType(board).ifPresent(postCreateRequest::setBoardType);
+            model.addAttribute("postCreateRequest", postCreateRequest);
         }
         populatePostCreateModel(model, principal);
         return "post-create";
@@ -203,6 +210,17 @@ public class CommunityController {
             normalized = normalized.substring(1).trim();
         }
         return normalized;
+    }
+
+    private Optional<BoardType> resolveBoardType(String board) {
+        if (board == null || board.isBlank()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(BoardType.valueOf(board.trim().toUpperCase()));
+        } catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
     }
 
     private Map<PostSortOption, String> buildSearchSortLinks(String query, String tag) {
