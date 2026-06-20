@@ -28,9 +28,7 @@
     const deadlineOutput = root.querySelector("[data-preview-deadline-output]");
     const mediaFrame = root.querySelector("[data-preview-media-frame]");
     const thumbnailOutput = root.querySelector("[data-preview-thumbnail-output]");
-    const mediaFallback = root.querySelector("[data-preview-media-fallback]");
     const mediaBadge = root.querySelector("[data-preview-media-badge]");
-    const mediaTypeOutput = root.querySelector("[data-preview-media-type]");
 
     const fallback = {
         title: "서울 스트릿잼 후기",
@@ -71,32 +69,18 @@
             .slice(0, 6);
     }
 
-    function resolveMediaLabel(mediaUrl, board) {
+    function resolveMediaLabel(mediaUrl) {
         const lowerUrl = mediaUrl.toLowerCase();
         if (!lowerUrl) {
-            return board;
+            return "MEDIA PREVIEW";
         }
         if (lowerUrl.includes("instagram.com/")) {
-            return "IG";
+            return "INSTAGRAM PREVIEW";
         }
         if (lowerUrl.includes("youtube.com/") || lowerUrl.includes("youtu.be/")) {
-            return "YT";
+            return "YOUTUBE PREVIEW";
         }
-        return "LINK";
-    }
-
-    function resolveMediaType(mediaUrl) {
-        const lowerUrl = mediaUrl.toLowerCase();
-        if (!lowerUrl) {
-            return "IMAGE";
-        }
-        if (lowerUrl.includes("instagram.com/")) {
-            return "INSTAGRAM";
-        }
-        if (lowerUrl.includes("youtube.com/") || lowerUrl.includes("youtu.be/")) {
-            return "YOUTUBE";
-        }
-        return "EXTERNAL_LINK";
+        return "EXTERNAL MEDIA";
     }
 
     function syncOptionalFields(board) {
@@ -118,8 +102,7 @@
         syncOptionalFields(board);
 
         boardOutput.textContent = board;
-        boardOutput.className = `dashboard-type type-${board.toLowerCase()}`;
-        mediaFrame.closest(".post-preview-card").className = `community-grid-card post-preview-card type-${board.toLowerCase()}`;
+        boardOutput.className = `post-board-pill type-${board.toLowerCase()}`;
         setTextOrFallback(titleOutput, titleInput.value, fallback.title);
         setTextOrFallback(contentOutput, contentInput.value, fallback.content);
 
@@ -146,8 +129,6 @@
         const thumbnailUrl = thumbnailInput.value.trim();
         thumbnailOutput.hidden = !thumbnailUrl;
         mediaFrame.classList.toggle("has-image", Boolean(thumbnailUrl));
-        mediaFallback.hidden = Boolean(thumbnailUrl);
-        mediaFallback.textContent = board;
         if (thumbnailUrl) {
             thumbnailOutput.src = thumbnailUrl;
         } else {
@@ -155,8 +136,7 @@
         }
 
         const mediaUrl = mediaInput.value.trim();
-        mediaBadge.textContent = resolveMediaLabel(mediaUrl, board);
-        mediaTypeOutput.textContent = resolveMediaType(mediaUrl);
+        mediaBadge.textContent = resolveMediaLabel(mediaUrl);
 
         if (contentCount) {
             contentCount.textContent = String(contentInput.value.length);
