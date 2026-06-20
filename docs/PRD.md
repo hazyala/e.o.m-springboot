@@ -50,7 +50,7 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - Recent 영역은 기본값을 SHOW로 두고 `SHOW`, `CAST`, `HYPE`, `LINK` 탭을 페이지 전체 새로고침 없이 전환
 - Recent 탭은 선택된 보드의 더미데이터 최신 글 10개만 미리보기로 노출
 - Recent의 `ALL` 및 헤더의 SHOW/CAST/HYPE/LINK는 보드별 목록 `/boards/{board}`로 이동
-- Header 검색은 `/posts?q={query}` 통합 검색으로 이동하며, Tags는 호환용 태그 검색 결과 `/posts?tag={tag}`로 이동
+- Header 검색은 `/posts?q={query}` 통합 검색으로 이동하며, Tags의 `ALL`은 `/posts` 검색 화면, 개별 Tags는 호환용 태그 검색 결과 `/posts?tag={tag}`로 이동
 - Activity의 `ALL`은 별도 Activity 화면이 아니라 전체 게시글 목록 `/boards/all`로 이동
 - Events는 이번 달 HYPE 공식 행사 목록 `/events`로 이동
 - Dancers는 장르별 댄서 탐색 페이지 `/dancers`로 이동

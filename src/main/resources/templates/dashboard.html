@@ -174,7 +174,7 @@
                         <span></span>
                         <h2>TAGS</h2>
                     </div>
-                    <a th:href="@{/boards/all}">ALL →</a>
+                    <a th:href="@{/posts}">ALL →</a>
                 </div>
                 <div class="dashboard-tags">
                     <a class="dashboard-tag" th:each="tag, stat : ${tags}" th:if="${stat.index < 8}" th:href="@{/posts(tag=${tag})}" th:text="|# ${tag}|"># 힙합</a>

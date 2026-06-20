@@ -163,9 +163,9 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/dashboard`: 로그인 후 첫 화면. Today Pick, Popular, Recent, Tags, Activity, Events, Dancers 미리보기를 렌더링합니다.
 - `/`: 공개 index입니다. 인증 상태에 따라 Login/My Page 링크를 전환하고, SHOW/CAST/HYPE/LINK CTA는 비로그인 상태에서 `/login`, 로그인 상태에서 `/boards/{board}`로 이동합니다.
 - `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
-- `/boards/all`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 대시보드 Tags/Activity `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
+- `/boards/all`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 대시보드 Activity `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
 - `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
-- `/posts`: 헤더 검색 결과 화면입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
+- `/posts`: 헤더 검색과 대시보드 Tags `ALL` 목적지입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
 - `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다.
 - `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록이며, 검색 결과 화면의 목록형 UI를 공유합니다.
 - `/events`: 이번 달 HYPE 공식 행사 목록입니다. `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, 작성자를 보여주며 외부 미디어는 상세 화면에서만 새 탭 링크로 제공합니다.

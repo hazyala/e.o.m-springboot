@@ -78,6 +78,7 @@
 - 전체 탐색 URL은 `/boards/all`, 보드별 탐색 URL은 `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK`입니다.
 - 공개 index의 SHOW/CAST/HYPE/LINK CTA는 비로그인 상태에서는 `/login`, 로그인 상태에서는 각 `/boards/{board}`로 이동합니다.
 - Header 검색은 `/posts?q={query}`에서 `tags`, `title`, `content`, `author.displayName`, `author.crewName`을 통합 검색합니다. `/posts?tag={tag}`는 태그 클릭 호환 경로로 유지하며 같은 검색 결과 화면을 사용합니다.
+- 대시보드 Tags의 `ALL`은 `/posts` 검색 화면으로 이동합니다.
 - 빈 `/posts` 또는 빈 검색어는 전체 목록으로 흐르지 않고 검색 입력과 추천 태그를 보여줍니다.
 - 전체/보드/검색/태그/Events 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원합니다. 보드 목록은 카드형, 검색 결과는 목록형, Events는 HYPE 행사 탐색 목록형으로 구성합니다.
 - Recent는 선택된 보드의 최신 글 10개를 보여주고, Tags 8개, Activity 5개, Events 4개, Dancers 4개로 대시보드 미리보기 개수를 제한합니다.
