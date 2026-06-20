@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import polytech.aisw.eom.domain.AppUser;
@@ -26,19 +27,22 @@ public class MyPageService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final JoinedEventRepository joinedEventRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public MyPageService(
             UserRepository userRepository,
             PostRepository postRepository,
             PostLikeRepository postLikeRepository,
             CommentRepository commentRepository,
-            JoinedEventRepository joinedEventRepository
+            JoinedEventRepository joinedEventRepository,
+            PasswordEncoder passwordEncoder
     ) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
         this.joinedEventRepository = joinedEventRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -74,6 +78,26 @@ public class MyPageService {
                 joinedEvents,
                 activityItems
         );
+    }
+
+    @Transactional
+    public AccountUpdateResult updateAccount(String username, AccountUpdateRequest request) {
+        AppUser user = findUser(username);
+        String nextUsername = cleanRequired(request.username(), username);
+        if (!nextUsername.equals(username) && userRepository.findByUsername(nextUsername).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+        if (!passwordEncoder.matches(cleanRequired(request.currentPassword(), ""), user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
+        }
+
+        String nextPassword = user.getPassword();
+        String newPassword = clean(request.newPassword());
+        if (newPassword != null) {
+            nextPassword = passwordEncoder.encode(newPassword);
+        }
+        user.updateAccount(nextUsername, nextPassword);
+        return new AccountUpdateResult(!nextUsername.equals(username));
     }
 
     @Transactional
@@ -212,6 +236,18 @@ public class MyPageService {
             String instagramUrl,
             String profileImageUrl,
             String headerImageUrl
+    ) {
+    }
+
+    public record AccountUpdateRequest(
+            String username,
+            String currentPassword,
+            String newPassword
+    ) {
+    }
+
+    public record AccountUpdateResult(
+            boolean usernameChanged
     ) {
     }
 }

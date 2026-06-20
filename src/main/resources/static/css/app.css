@@ -2044,6 +2044,12 @@ html[data-theme="dark"] .my-joined-list strong {
     color: #ffffff;
 }
 
+html[data-theme="dark"] .my-section-heading h2 {
+    text-shadow:
+        0 7px 18px rgba(255, 77, 109, 0.24),
+        2px 2px 0 rgba(255, 77, 109, 0.12);
+}
+
 html[data-theme="dark"] .my-section-heading span,
 html[data-theme="dark"] .my-post-card-copy p,
 html[data-theme="dark"] .my-card-meta,
@@ -2099,6 +2105,7 @@ html[data-theme="dark"] .my-event-menu-panel label span {
 
 html[data-theme="dark"] .my-profile-editor input,
 html[data-theme="dark"] .my-profile-editor textarea,
+html[data-theme="dark"] .my-account-editor input,
 html[data-theme="dark"] .my-event-form input,
 html[data-theme="dark"] .my-event-menu-panel input {
     border-color: rgba(255, 255, 255, 0.14);
@@ -2816,12 +2823,19 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     font-weight: 800;
 }
 
-.my-profile-editor {
+.my-profile-editor,
+.my-account-editor {
+    grid-column: 3;
     align-self: start;
     margin-top: 8px;
 }
 
-.my-profile-editor summary {
+.my-account-editor {
+    margin-top: 10px;
+}
+
+.my-profile-editor summary,
+.my-account-editor summary {
     display: inline-flex;
     justify-content: center;
     min-width: 180px;
@@ -2833,7 +2847,8 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     list-style: none;
 }
 
-.my-profile-editor form {
+.my-profile-editor form,
+.my-account-editor form {
     display: grid;
     gap: 10px;
     margin-top: 14px;
@@ -2845,12 +2860,14 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .my-profile-editor label,
+.my-account-editor label,
 .my-event-form {
     display: grid;
     gap: 6px;
 }
 
-.my-profile-editor span {
+.my-profile-editor span,
+.my-account-editor span {
     color: #666666;
     font-size: 12px;
     font-weight: 800;
@@ -2858,6 +2875,7 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .my-profile-editor input,
 .my-profile-editor textarea,
+.my-account-editor input,
 .my-event-form input {
     width: 100%;
     border: 1px solid rgba(0, 0, 0, 0.12);
@@ -2869,6 +2887,7 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .my-profile-editor button,
+.my-account-editor button,
 .my-event-form button,
 .my-post-actions button,
 .my-post-list form button {
@@ -2977,6 +2996,10 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     font-size: 34px;
     line-height: 1;
     text-transform: uppercase;
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.85),
+        0 7px 16px rgba(211, 15, 70, 0.2),
+        2px 2px 0 rgba(211, 15, 70, 0.08);
 }
 
 .my-section-heading span {
@@ -4332,12 +4355,14 @@ th {
         grid-template-columns: 140px minmax(0, 1fr);
     }
 
-    .my-profile-editor {
+    .my-profile-editor,
+    .my-account-editor {
         grid-column: 1 / -1;
         margin-top: 0;
     }
 
-    .my-profile-editor form {
+    .my-profile-editor form,
+    .my-account-editor form {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -4345,6 +4370,10 @@ th {
     .my-profile-editor label:nth-child(5),
     .my-profile-editor label:nth-child(6),
     .my-profile-editor label:nth-child(7) {
+        grid-column: 1 / -1;
+    }
+
+    .my-account-editor label:nth-child(n) {
         grid-column: 1 / -1;
     }
 
@@ -4645,6 +4674,7 @@ th {
     }
 
     .my-profile-editor form,
+    .my-account-editor form,
     .my-page-side,
     .my-work-grid,
     .my-post-card-grid,
@@ -4653,7 +4683,8 @@ th {
         grid-template-columns: 1fr;
     }
 
-    .my-profile-editor label:nth-child(n) {
+    .my-profile-editor label:nth-child(n),
+    .my-account-editor label:nth-child(n) {
         grid-column: auto;
     }
 

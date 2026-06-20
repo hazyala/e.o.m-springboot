@@ -1,5 +1,7 @@
 package polytech.aisw.eom.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.LocalDate;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.service.MyPageService;
+import polytech.aisw.eom.service.MyPageService.AccountUpdateRequest;
 import polytech.aisw.eom.service.MyPageService.ProfileUpdateRequest;
 
 @Controller
@@ -52,6 +55,29 @@ public class MyPageController {
         ));
         redirectAttributes.addFlashAttribute("profileMessage", "프로필이 저장되었습니다.");
         return "redirect:/my-page";
+    }
+
+    @PostMapping("/my-page/account")
+    public String updateAccount(
+            Principal principal,
+            HttpServletRequest servletRequest,
+            @RequestParam String username,
+            @RequestParam String currentPassword,
+            @RequestParam(required = false) String newPassword,
+            RedirectAttributes redirectAttributes
+    ) throws ServletException {
+        try {
+            myPageService.updateAccount(principal.getName(), new AccountUpdateRequest(
+                    username,
+                    currentPassword,
+                    newPassword
+            ));
+        } catch (IllegalArgumentException exception) {
+            redirectAttributes.addFlashAttribute("accountMessage", exception.getMessage());
+            return "redirect:/my-page";
+        }
+        servletRequest.logout();
+        return "redirect:/login";
     }
 
     @PostMapping("/my-page/portfolio/select")

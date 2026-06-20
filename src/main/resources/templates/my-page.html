@@ -38,7 +38,7 @@
                 </div>
                 <a th:if="${myPage.user.instagramUrl}" th:href="${myPage.user.instagramUrl}" target="_blank" rel="noopener">Instagram</a>
             </div>
-            <details class="my-profile-editor" th:if="${isOwner}">
+            <details class="my-profile-editor" th:if="${isOwner}" th:attr="open=${profileMessage != null} ? 'open' : null">
                 <summary>프로필 편집</summary>
                 <form th:action="@{/my-page/profile}" method="post">
                     <label>
@@ -71,6 +71,25 @@
                     </label>
                     <button type="submit">저장</button>
                     <p th:if="${profileMessage}" th:text="${profileMessage}">Saved</p>
+                </form>
+            </details>
+            <details class="my-account-editor" th:if="${isOwner}" th:attr="open=${accountMessage != null} ? 'open' : null">
+                <summary>회원정보 수정</summary>
+                <form th:action="@{/my-page/account}" method="post">
+                    <label>
+                        <span>아이디</span>
+                        <input name="username" required th:value="${myPage.user.username}">
+                    </label>
+                    <label>
+                        <span>현재 비밀번호</span>
+                        <input type="password" name="currentPassword" required autocomplete="current-password">
+                    </label>
+                    <label>
+                        <span>새 비밀번호</span>
+                        <input type="password" name="newPassword" autocomplete="new-password" placeholder="변경할 때만 입력">
+                    </label>
+                    <button type="submit">저장 후 다시 로그인</button>
+                    <p th:if="${accountMessage}" th:text="${accountMessage}">Message</p>
                 </form>
             </details>
         </div>

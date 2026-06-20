@@ -162,4 +162,9 @@ public class AppUser {
         this.profileImageUrl = profileImageUrl;
         this.headerImageUrl = headerImageUrl;
     }
+
+    public void updateAccount(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }
