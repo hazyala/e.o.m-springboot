@@ -12,7 +12,7 @@
 - 대시보드
 - 마이페이지
 - 검색
-- Events 탐색
+- HYPE 관리자 승인 행사 필터
 - 인스타그램 프로필 링크
 - 게시글 인스타그램 릴스/게시물 URL
 - 유튜브 URL 또는 외부 영상 URL 기반 미디어 첨부
@@ -36,14 +36,14 @@
 - Figma 목업 기반 대시보드 UI 개선: 검색형 헤더, Today Pick 히어로, Popular/Recent 리스트, Tags/Events/Dancers/Activity 사이드 컬럼
 - 대시보드 전체 미리보기 개수 제한 및 Today Pick 히어로 배경 이미지 슬라이드 연출
 - 대시보드 `SHOW/CAST/HYPE/LINK` Recent 탭 클라이언트 전환
-- 대시보드 링크 목적지 연결: 게시글 상세, 태그 검색, 최신글 Activity, 이번 달 HYPE Events, Dancers 디렉터리
+- 대시보드 링크 목적지 연결: 게시글 상세, 태그 검색, 최신글 Activity, HYPE 관리자 승인 행사 필터, Dancers 디렉터리
 - `/boards/all`, `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK` 보드 탐색 목록
 - `/posts/{id}` 게시글 상세와 외부 미디어 새 탭 링크
 - `/posts?q=` 통합 검색: tags, title, content, author.displayName, author.crewName
 - `/posts?tag=` 태그 검색 호환 경로
 - 빈 `/posts`와 빈 검색어에서 전체 목록 노출 방지
 - 검색 화면 목록형 결과와 추천 태그 사이드 컬럼
-- `/events` 이번 달 HYPE 행사성 글 탐색 화면
+- HYPE 보드 관리자 승인 행사 필터(`/boards/HYPE?officialEvents=true`)
 - `/dancers`와 `/dancers/{id}` 작성자/댄서 프로필 이동
 - `/dancers` 다중 선택 장르 필터와 인재 카드형 댄서 비교 UI
 - `/my-page`, `/me` 마이페이지
@@ -99,10 +99,10 @@
 - Header 검색은 `/posts?q={query}`에서 `tags`, `title`, `content`, `author.displayName`, `author.crewName`을 통합 검색합니다. `/posts?tag={tag}`는 태그 클릭 호환 경로로 유지하며 같은 검색 결과 화면을 사용합니다.
 - 대시보드 Tags의 `ALL`은 `/posts` 검색 화면으로 이동합니다.
 - 빈 `/posts` 또는 빈 검색어는 전체 목록으로 흐르지 않고 검색 입력과 추천 태그를 보여줍니다.
-- 전체/보드/검색/태그/Events 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원합니다. 보드 목록은 카드형, 검색 결과는 목록형, Events는 HYPE 행사 탐색 목록형으로 구성합니다.
+- 전체/보드/검색/태그 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원합니다. HYPE 보드는 같은 정렬 줄에서 `관리자 승인 행사` 필터를 함께 제공합니다.
 - Recent는 선택된 보드의 최신 글 10개를 보여주고, Tags 8개, Activity 5개, Events 4개, Dancers 4개로 대시보드 미리보기 개수를 제한합니다.
 - Activity 미리보기는 Recent 탭 선택과 무관하게 전체 최신글 기준으로 유지하고, `ALL`은 `/boards/all`로 이동합니다.
-- Events는 HYPE 중 `eventDate`가 오늘부터 이번 달 말까지인 공식 행사성 글을 보여주는 목록으로 둡니다. 목록에는 `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, `author.displayName`을 노출합니다.
+- Events 미리보기는 관리자 승인 행사 중 이번 달 예정 HYPE 글을 보여주고, `ALL`은 `/boards/HYPE?officialEvents=true`로 이동합니다. 목록에는 `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, `author.displayName`을 노출합니다.
 - Dancers는 USER 역할 사용자를 댄서 카드로 보여주는 탐색 화면으로 둡니다. `All`, `Hip-hop`, `House`, `Krump`, `Popping`, `Locking`, `Breaking`, `Waacking`, `Voguing`, `Dancehall` 필터를 제공하고, 여러 장르를 선택하면 선택 장르 중 하나라도 `primaryGenre`에 매칭되는 댄서를 보여줍니다.
 - Dancers 카드에는 동일 비율 프로필 이미지, displayName, username, primaryGenre, crewName, bio, Instagram 새 탭 링크, 기존 `/dancers/{id}` 프로필 보기 링크를 노출합니다.
 - 마이페이지 기본 URL은 `/my-page`이며 `/me`도 같은 화면으로 연결합니다.

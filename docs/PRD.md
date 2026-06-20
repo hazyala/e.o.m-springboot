@@ -54,7 +54,7 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - Recent의 `ALL` 및 헤더의 SHOW/CAST/HYPE/LINK는 보드별 목록 `/boards/{board}`로 이동
 - Header 검색은 `/posts?q={query}` 통합 검색으로 이동하며, Tags의 `ALL`은 `/posts` 검색 화면, 개별 Tags는 호환용 태그 검색 결과 `/posts?tag={tag}`로 이동
 - Activity의 `ALL`은 별도 Activity 화면이 아니라 전체 게시글 목록 `/boards/all`로 이동
-- Events는 이번 달 HYPE 공식 행사 목록 `/events`로 이동
+- Events는 HYPE 보드의 관리자 승인 행사 필터(`/boards/HYPE?officialEvents=true`)로 이동
 - Dancers는 장르별 댄서 탐색 페이지 `/dancers`로 이동
 - 추천 댄서의 Follow는 사용자의 인스타그램 프로필을 새 탭으로 열기
 - 인스타그램, 유튜브 등 외부 미디어 링크는 게시글 상세에서 새 탭 링크로만 다루고, 대시보드와 목록 썸네일 자체는 내부 게시글 미리보기 역할만 수행
@@ -68,11 +68,13 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 
 전체 목록은 `/boards/all`, 각 보드는 `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK` 목록과 `/posts/{id}` 상세 흐름을 가진다. 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원한다. 검색 화면 `/posts`는 빈 검색어에서 전체 목록으로 흐르지 않고 검색 안내와 추천 태그를 보여주며, 검색어가 있을 때 `tags`, `title`, `content`, `author.displayName`, `author.crewName`을 통합 검색한다. `#`로 시작하는 헤더 검색어는 `#`를 제거해 같은 통합 검색으로 처리하고, `/posts?tag={tag}`는 태그 클릭 호환 경로로 유지한다. 작성 흐름은 후속 범위로 둔다.
 
-### Events
+### HYPE 관리자 승인 행사
 
-- `/events`는 HYPE 중 `eventDate`가 오늘부터 이번 달 말까지인 공식 행사성 글을 보여주는 이벤트 탐색 화면
+- 공식 행사, 배틀, 공연은 HYPE 보드 안에서 `관리자 승인 행사` 필터로 탐색
+- `/boards/HYPE?officialEvents=true`는 `adminApprovedEvent=true`인 HYPE 글만 보여주며 기존 최신순/조회순/댓글순/좋아요순 정렬을 유지
+- `/events`는 기존 링크 호환을 위해 관리자 승인 행사 필터가 켜진 HYPE 보드로 리다이렉트
 - 목록에는 `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, `title`, `content` preview, `author.displayName`을 노출
-- 외부 미디어 링크는 상세 화면에서만 새 탭으로 열고, Events 목록에서는 썸네일과 내부 상세 링크만 제공
+- 외부 미디어 링크는 상세 화면에서만 새 탭으로 열고, 목록에서는 썸네일과 내부 상세 링크만 제공
 - 직접 embed, 직접 영상 업로드, 새 이미지 원본 추가는 MVP 범위에서 제외
 
 ### Dancers
@@ -165,7 +167,7 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - 관리자 페이지가 권한으로 보호된다.
 - 4개 보드의 목록/상세 흐름이 동작한다.
 - 헤더 검색, 태그 검색, 빈 검색어 안내가 동작한다.
-- `/events`에서 이번 달 HYPE 행사성 글을 탐색할 수 있다.
+- HYPE 보드의 `관리자 승인 행사` 필터에서 공식 행사성 글을 탐색할 수 있다.
 - `/my-page`에서 프로필/계정 수정, 포트폴리오 선택, 참여 행사 기록을 관리할 수 있다.
 - 인스타그램 링크 또는 게시물 URL이 프로필/게시글에 표시된다.
 - Render 무료 티어에 배포 가능한 설정을 갖춘다.

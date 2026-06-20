@@ -136,7 +136,7 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - COMMENTS: `commentCount desc, createdAt desc`
 - LIKES: `likeCount desc, createdAt desc`
 
-보드 목록, 검색 결과, 태그 검색, Events 목록은 같은 정렬 키 `sort=latest|views|comments|likes`를 공유합니다.
+보드 목록, 검색 결과, 태그 검색, HYPE 관리자 승인 행사 필터는 같은 정렬 키 `sort=latest|views|comments|likes`를 공유합니다.
 
 ### Comment
 
@@ -188,12 +188,12 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/`: 공개 index입니다. 인증 상태에 따라 Login/My Page 링크를 전환하고, SHOW/CAST/HYPE/LINK CTA는 비로그인 상태에서 `/login`, 로그인 상태에서 `/boards/{board}`로 이동합니다.
 - `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
 - `/boards/all`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 대시보드 Activity `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
-- `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
+- `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다. HYPE는 `officialEvents=true` 쿼리로 관리자 승인 행사만 필터링할 수 있습니다.
 - `/posts`: 헤더 검색과 대시보드 Tags `ALL` 목적지입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
 - `/posts` 검색어 정규화: `q`가 `#왁킹`처럼 들어오면 앞의 `#`를 제거합니다. 태그 클릭은 `/posts?tag={tag}`를 사용하고 `findByTagsContainingIgnoreCase`로 조회합니다.
 - `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다.
 - `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록이며, 검색 결과 화면의 목록형 UI를 공유합니다.
-- `/events`: 이번 달 HYPE 공식 행사 목록입니다. `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, 작성자를 보여주며 외부 미디어는 상세 화면에서만 새 탭 링크로 제공합니다.
+- `/events`: 기존 링크 호환 경로이며 `/boards/HYPE?officialEvents=true&sort=latest`로 리다이렉트합니다.
 - `/dancers`: 장르별 댄서 탐색 목록입니다. `genres` 다중 쿼리 파라미터를 지원하며, 선택된 장르 중 하나라도 `primaryGenre`에 매칭되는 USER 역할 댄서를 카드형 목록으로 보여줍니다.
 - `/dancers/{id}`: 기존 작성자/댄서 프로필 이동 흐름을 유지하며 `my-page.html` 프로필 화면을 렌더링합니다.
 - `/my-page`, `/me`: 로그인한 사용자의 프로필, 포트폴리오, 작성 게시글, 참여 이벤트, 좋아요한 게시글, 작성 댓글, 자동 활동 이력을 렌더링합니다. admin도 본인 마이페이지에 접근할 수 있습니다.

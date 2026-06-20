@@ -151,7 +151,7 @@ src/main/resources/static/assets/source
 - Recent는 `SHOW/CAST/HYPE/LINK` 탭을 클라이언트에서 전환하며 선택된 보드의 최신 글 10개를 보여줍니다.
 - 모든 대시보드 리스트는 미리보기 개수를 제한해 데이터 수와 무관하게 화면 끝선이 흐트러지지 않게 합니다. 현재 기준은 Popular 5, Recent 10, Tags 8, Activity 5, Events 4, Dancers 4입니다.
 - 헤더의 SHOW/CAST/HYPE/LINK와 Recent의 `ALL`은 `/boards/{board}` 보드별 탐색으로 이동합니다.
-- Header 검색은 `/posts?q={query}` 통합 검색으로 이동하고, Tags의 `ALL`은 `/posts` 검색 화면, 개별 Tags는 `/posts?tag={tag}` 태그 검색 결과, Activity의 `ALL`은 `/boards/all` 전체 목록, Events는 이번 달 HYPE 공식 행사 목록, Dancers는 장르별 댄서 탐색 페이지로 이동합니다.
+- Header 검색은 `/posts?q={query}` 통합 검색으로 이동하고, Tags의 `ALL`은 `/posts` 검색 화면, 개별 Tags는 `/posts?tag={tag}` 태그 검색 결과, Activity의 `ALL`은 `/boards/all` 전체 목록, Events는 HYPE 관리자 승인 행사 필터, Dancers는 장르별 댄서 탐색 페이지로 이동합니다.
 - 미디어는 게시글의 `mediaType + mediaUrl + thumbnailUrl`을 유지하고, 대시보드에서는 작은 썸네일과 영상 표시 아이콘으로만 노출합니다.
 - Instagram/외부 미디어 링크가 상세/프로필 영역에 노출될 경우 새 탭으로 열고, 직접 영상 업로드 UI는 제공하지 않습니다.
 
@@ -169,15 +169,15 @@ src/main/resources/static/assets/source
 - 검색 화면의 검색창, 정렬 탭, 결과 목록은 왼쪽 컬럼에 묶고, 추천 태그는 오른쪽 컬럼에 둡니다. 결과 카드가 태그 아래로 밀리지 않게 두 컬럼 구조를 유지합니다.
 - 추천 태그 타이틀은 대시보드 `dashboard-side-title`과 같은 크기감의 Irish Grover 제목, 16px 붉은 사각 마커, 얕은 핑크 shadow를 사용합니다. 과한 포스터형 번짐이나 Trending/급상승 표현은 사용하지 않습니다.
 - 추천 태그는 검색 화면에서 전체 태그를 보여주되, 태그 버튼은 대시보드의 pill 톤을 유지합니다.
-- `/boards/all`과 보드별 목록은 ALL/SHOW/CAST/HYPE/LINK 보드 전환, 최신순/조회순/댓글순/좋아요순 정렬 탭, 3열 카드 그리드로 구성합니다.
+- `/boards/all`과 보드별 목록은 ALL/SHOW/CAST/HYPE/LINK 보드 전환, 최신순/조회순/댓글순/좋아요순 정렬 탭, 3열 카드 그리드로 구성합니다. HYPE 보드는 같은 정렬 탭 줄에 `관리자 승인 행사` 필터를 추가합니다.
 - 목록 카드는 `thumbnailUrl`, `mediaType`, boardType, 제목, 본문 미리보기, 작성자, 크루, 위치, 행사일, 좋아요/댓글/조회수를 함께 보여줍니다.
 - 보드별 액센트 컬러는 텍스트 배지와 필터 상태에만 절제해 사용합니다.
 
-### Events
+### HYPE 관리자 승인 행사
 
-- `/events`는 HYPE 행사성 글만 모아 보여주는 탐색 화면이며, 실시간 상승률/급상승/Trending 표현은 사용하지 않습니다.
-- 이벤트 행은 `thumbnailUrl`, `boardType`, `mediaType`, `title`, 본문 미리보기, `eventDate`, `deadline`, `location`, `author.displayName`을 노출합니다.
-- 목록 썸네일은 내부 상세로 이동하고, 외부 미디어 링크는 상세 화면의 새 탭 링크로만 제공합니다.
+- 별도 Events 목록 화면 대신 HYPE 보드 안의 `관리자 승인 행사` 필터로 공식 행사, 배틀, 공연 글을 탐색합니다.
+- 필터가 켜진 HYPE 목록도 기존 카드 그리드 톤을 유지하며 `thumbnailUrl`, `boardType`, `mediaType`, `title`, 본문 미리보기, `eventDate`, `location`, `author.displayName`을 노출합니다.
+- `/events`는 기존 링크 호환을 위해 필터가 켜진 HYPE 보드로 이동합니다.
 
 ### Dancers
 
