@@ -77,6 +77,14 @@
         <strong class="my-profile-watermark" th:text="${myPage.user.displayName}">E.O.M</strong>
     </section>
 
+    <div class="my-tab-anchors" aria-hidden="true">
+        <span id="portfolio"></span>
+        <span id="posts"></span>
+        <span id="joined-events"></span>
+        <span id="likes"></span>
+        <span id="comments"></span>
+    </div>
+
     <nav class="my-page-tabs" aria-label="My page sections" data-my-page-tabs>
         <a class="is-active" href="#portfolio" data-my-tab="portfolio">Portfolio</a>
         <a href="#posts" data-my-tab="posts">Posts</a>
@@ -87,7 +95,7 @@
 
     <div class="my-page-layout">
         <div class="my-page-main">
-            <section id="portfolio" class="my-page-section my-tab-panel is-visible" data-my-panel="portfolio">
+            <section class="my-page-section my-tab-panel is-visible" data-my-panel="portfolio">
                 <div class="my-section-heading">
                     <h2>Portfolio</h2>
                     <span th:text="|${myPage.portfolioPosts.size()} works|">0 works</span>
@@ -131,7 +139,7 @@
                 <p class="my-empty-state" th:if="${myPage.portfolioPosts.isEmpty()}">아직 포트폴리오에 선택한 게시물이 없습니다.</p>
             </section>
 
-            <section id="posts" class="my-page-section my-tab-panel" data-my-panel="posts">
+            <section class="my-page-section my-tab-panel" data-my-panel="posts">
                 <div class="my-section-heading">
                     <h2>Posts</h2>
                     <span th:text="|${myPage.posts.size()} posts|">0 posts</span>
@@ -163,7 +171,7 @@
                 <p class="my-empty-state" th:if="${myPage.posts.isEmpty()}">아직 작성한 게시물이 없습니다.</p>
             </section>
 
-            <section id="joined-events" class="my-page-section my-tab-panel" data-my-panel="joined-events">
+            <section class="my-page-section my-tab-panel" data-my-panel="joined-events">
                 <div class="my-section-heading">
                     <h2>Joined Events</h2>
                     <span th:text="|${myPage.joinedEvents.size()} events|">0 events</span>
@@ -184,7 +192,7 @@
                 <p class="my-empty-state" th:if="${myPage.joinedEvents.isEmpty()}">직접 기입한 참여 행사가 없습니다.</p>
             </section>
 
-            <section id="likes" class="my-page-section my-tab-panel" data-my-panel="likes">
+            <section class="my-page-section my-tab-panel" data-my-panel="likes">
                 <div class="my-section-heading">
                     <h2>Likes</h2>
                     <span th:text="|${myPage.likedPosts.size()} likes|">0 likes</span>
@@ -198,7 +206,7 @@
                 <p class="my-empty-state" th:if="${myPage.likedPosts.isEmpty()}">아직 좋아요한 게시물이 없습니다.</p>
             </section>
 
-            <section id="comments" class="my-page-section my-tab-panel" data-my-panel="comments">
+            <section class="my-page-section my-tab-panel" data-my-panel="comments">
                 <div class="my-section-heading">
                     <h2>Comments</h2>
                     <span th:text="|${myPage.comments.size()} comments|">0 comments</span>
