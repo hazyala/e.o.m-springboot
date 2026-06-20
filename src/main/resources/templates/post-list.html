@@ -32,7 +32,7 @@
         </div>
     </section>
 
-    <section class="community-board-filter community-board-switcher" th:unless="${isEventsPage == true or isSearchPage == true}" aria-label="Board filters">
+    <section class="community-board-filter community-board-switcher" th:unless="${isSearchPage == true}" aria-label="Board filters">
         <a th:href="@{/boards/all}" th:classappend="${selectedBoard == null and selectedTag == null and isSearchPage != true} ? ' is-active'">ALL</a>
         <a th:each="board : ${boards}"
            th:href="@{/boards/{board}(board=${board.name()})}"
@@ -117,48 +117,14 @@
                th:href="${sortEntry.value}"
                th:classappend="${sortEntry.key == selectedSort} ? ' is-active'"
                th:text="${sortEntry.key.label}">최신순</a>
+            <a th:if="${selectedBoard != null and selectedBoard.name() == 'HYPE'}"
+               th:href="${officialEventsLink}"
+               th:classappend="${officialEventsOnly == true} ? ' is-active'">관리자 승인 행사</a>
         </nav>
         <span th:text="|총 ${postCount}개|">총 0개</span>
     </section>
 
-    <section class="community-event-list" th:if="${isEventsPage == true}" aria-label="Events">
-        <p class="community-empty-state" th:if="${posts.isEmpty()}">이번 달 예정된 HYPE 행사가 없습니다.</p>
-        <article class="community-event-row" th:each="post : ${posts}">
-            <a class="community-event-media" th:href="@{/posts/{id}(id=${post.id})}">
-                <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                <span class="community-media-fallback" th:unless="${post.thumbnailUrl}" th:text="${post.boardType.label}">HYPE</span>
-                <span class="community-media-badge" th:text="${post.mediaType.name() == 'IMAGE'} ? 'IMAGE' : (${post.mediaType.name() == 'INSTAGRAM'} ? 'IG' : 'LINK')">IG</span>
-            </a>
-            <div class="community-event-copy">
-                <div class="community-card-topline">
-                    <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
-                       class="dashboard-type"
-                       th:classappend="| type-${post.boardType.name().toLowerCase()}|"
-                       th:text="${post.boardType.label}">HYPE</a>
-                    <span th:text="${post.mediaType}">IMAGE</span>
-                    <span th:if="${post.location}" th:text="${post.location}">Location</span>
-                </div>
-                <h2><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Event title</a></h2>
-                <p th:text="${#strings.abbreviate(post.content, 142)}">Event content preview</p>
-                <div class="community-event-meta">
-                    <span th:if="${post.eventDate}">
-                        <b>EVENT</b>
-                        <time th:datetime="${post.eventDate}" th:text="${#temporals.format(post.eventDate, 'MM.dd EEE')}">06.20 SAT</time>
-                    </span>
-                    <span th:if="${post.deadline}">
-                        <b>DEADLINE</b>
-                        <time th:datetime="${post.deadline}" th:text="${#temporals.format(post.deadline, 'MM.dd EEE')}">06.18 THU</time>
-                    </span>
-                    <span>
-                        <b>HOST</b>
-                        <strong th:text="${post.author.displayName}">Author</strong>
-                    </span>
-                </div>
-            </div>
-        </article>
-    </section>
-
-    <section class="community-card-grid" th:unless="${isSearchPage == true or isEventsPage == true}" aria-label="Community posts">
+    <section class="community-card-grid" th:unless="${isSearchPage == true}" aria-label="Community posts">
         <article class="community-grid-card" th:each="post : ${posts}" th:classappend="| type-${post.boardType.name().toLowerCase()}|">
             <a class="community-grid-media" th:href="@{/posts/{id}(id=${post.id})}">
                 <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">

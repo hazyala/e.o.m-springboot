@@ -72,6 +72,9 @@ public class Post {
     @Column(nullable = false)
     private boolean portfolioPinned;
 
+    @Column(nullable = false)
+    private boolean adminApprovedEvent;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private AppUser author;
 
@@ -137,6 +140,7 @@ public class Post {
         this.thumbnailUrl = thumbnailUrl;
         this.portfolioSelected = boardType == BoardType.SHOW;
         this.portfolioPinned = false;
+        this.adminApprovedEvent = false;
         this.author = author;
         this.createdAt = LocalDateTime.now();
     }
@@ -211,6 +215,16 @@ public class Post {
 
     public boolean isPortfolioPinned() {
         return portfolioPinned;
+    }
+
+    public boolean isAdminApprovedEvent() {
+        return adminApprovedEvent;
+    }
+
+    public void approveAsOfficialEvent() {
+        if (boardType == BoardType.HYPE && eventDate != null) {
+            this.adminApprovedEvent = true;
+        }
     }
 
     public AppUser getAuthor() {

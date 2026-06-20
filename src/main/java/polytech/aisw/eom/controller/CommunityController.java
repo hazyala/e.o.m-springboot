@@ -77,25 +77,16 @@ public class CommunityController {
     }
 
     @GetMapping("/events")
-    public String events(@RequestParam(defaultValue = "latest") String sort, Model model) {
+    public String events(@RequestParam(defaultValue = "latest") String sort) {
         PostSortOption sortOption = PostSortOption.from(sort);
-        model.addAttribute("title", "THIS MONTH EVENTS");
-        model.addAttribute("eyebrow", "HYPE EVENTS");
-        model.addAttribute("summary", "이번 달 안에 열리는 HYPE 공식 행사와 모집 일정을 모았습니다.");
-        model.addAttribute("selectedBoard", BoardType.HYPE);
-        model.addAttribute("isEventsPage", true);
-        populatePostListModel(model, sortOption);
-        var posts = communityService.findThisMonthEvents(sortOption);
-        model.addAttribute("posts", posts);
-        model.addAttribute("postCount", posts.size());
-        model.addAttribute("sortLinks", buildSortLinks("/events", null));
-        return "post-list";
+        return "redirect:/boards/HYPE?officialEvents=true&sort=" + sortOption.getKey();
     }
 
     @GetMapping("/boards/{board}")
     public String board(
             @PathVariable String board,
             @RequestParam(defaultValue = "latest") String sort,
+            @RequestParam(name = "officialEvents", defaultValue = "false") boolean officialEvents,
             Model model
     ) {
         PostSortOption sortOption = PostSortOption.from(sort);
@@ -107,20 +98,27 @@ public class CommunityController {
             var posts = communityService.findPosts(sortOption);
             model.addAttribute("posts", posts);
             model.addAttribute("postCount", posts.size());
-            model.addAttribute("sortLinks", buildSortLinks("/boards/all", null));
+            model.addAttribute("sortLinks", buildSortLinks("/boards/all", null, false));
             return "post-list";
         }
 
         BoardType boardType = BoardType.valueOf(board.toUpperCase());
+        boolean officialEventsOnly = boardType == BoardType.HYPE && officialEvents;
         model.addAttribute("title", boardType.getLabel());
         model.addAttribute("eyebrow", "BOARD");
-        model.addAttribute("summary", boardType.getDescription());
+        model.addAttribute("summary", officialEventsOnly
+                ? "관리자가 승인한 공식 행사, 배틀, 공연 HYPE 글만 모아봅니다."
+                : boardType.getDescription());
         model.addAttribute("selectedBoard", boardType);
+        model.addAttribute("officialEventsOnly", officialEventsOnly);
+        model.addAttribute("officialEventsLink", buildOfficialEventsLink(sortOption));
         populatePostListModel(model, sortOption);
-        var posts = communityService.findPostsByBoard(boardType, sortOption);
+        var posts = officialEventsOnly
+                ? communityService.findOfficialEventPosts(sortOption)
+                : communityService.findPostsByBoard(boardType, sortOption);
         model.addAttribute("posts", posts);
         model.addAttribute("postCount", posts.size());
-        model.addAttribute("sortLinks", buildSortLinks("/boards/" + boardType.name(), null));
+        model.addAttribute("sortLinks", buildSortLinks("/boards/" + boardType.name(), null, officialEventsOnly));
         return "post-list";
     }
 
@@ -132,16 +130,31 @@ public class CommunityController {
     }
 
     private Map<PostSortOption, String> buildSortLinks(String basePath, String tag) {
+        return buildSortLinks(basePath, tag, false);
+    }
+
+    private Map<PostSortOption, String> buildSortLinks(String basePath, String tag, boolean officialEventsOnly) {
         Map<PostSortOption, String> links = new LinkedHashMap<>();
         for (PostSortOption option : PostSortOption.values()) {
             UriComponentsBuilder builder = UriComponentsBuilder.fromPath(basePath);
             if (tag != null && !tag.isBlank()) {
                 builder.queryParam("tag", tag);
             }
+            if (officialEventsOnly) {
+                builder.queryParam("officialEvents", true);
+            }
             builder.queryParam("sort", option.getKey());
             links.put(option, builder.build().toUriString());
         }
         return links;
+    }
+
+    private String buildOfficialEventsLink(PostSortOption sortOption) {
+        return UriComponentsBuilder.fromPath("/boards/HYPE")
+                .queryParam("officialEvents", true)
+                .queryParam("sort", sortOption.getKey())
+                .build()
+                .toUriString();
     }
 
     private String normalizeSearchTerm(String query) {

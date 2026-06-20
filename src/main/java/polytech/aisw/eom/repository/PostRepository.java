@@ -42,13 +42,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBoardType(BoardType boardType, Sort sort);
 
     @EntityGraph(attributePaths = "author")
+    List<Post> findByBoardTypeAndAdminApprovedEventTrue(BoardType boardType, Sort sort);
+
+    @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc();
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop6ByBoardTypeOrderByEventDateAscCreatedAtDesc(BoardType boardType);
+    List<Post> findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+            BoardType boardType,
+            LocalDate startDate,
+            LocalDate endDate
+    );
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+    List<Post> findTop6ByBoardTypeAndAdminApprovedEventTrueAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
             BoardType boardType,
             LocalDate startDate,
             LocalDate endDate
@@ -74,14 +81,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                or lower(a.crewName) like lower(concat('%', :query, '%'))
             """)
     List<Post> searchPosts(@Param("query") String query, Sort sort);
-
-    @EntityGraph(attributePaths = "author")
-    List<Post> findByBoardTypeAndEventDateBetween(
-            BoardType boardType,
-            LocalDate startDate,
-            LocalDate endDate,
-            Sort sort
-    );
 
     @EntityGraph(attributePaths = "author")
     List<Post> findByAuthorUsernameOrderByCreatedAtDesc(String username);

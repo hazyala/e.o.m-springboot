@@ -269,7 +269,7 @@ public class DataSeeder implements CommandLineRunner {
             String thumbnailUrl,
             AppUser author
     ) {
-        postRepository.save(new Post(
+        Post post = new Post(
                 boardType,
                 title,
                 content,
@@ -286,6 +286,10 @@ public class DataSeeder implements CommandLineRunner {
                 mediaUrl,
                 thumbnailUrl,
                 author
-        ));
+        );
+        if (boardType == BoardType.HYPE && eventDate != null) {
+            post.approveAsOfficialEvent();
+        }
+        postRepository.save(post);
     }
 }

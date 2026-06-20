@@ -71,7 +71,8 @@ class EomApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("홍대 쇼케이스 백업댄서 모집")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("LINK에 새 글")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/boards/HYPE?officialEvents=true")));
 
         mockMvc.perform(get("/activity").with(user("dancer1").roles("USER")))
                 .andExpect(status().is3xxRedirection())
@@ -83,8 +84,16 @@ class EomApplicationTests {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("릴스 기반 코레오 쇼케이스")));
 
         mockMvc.perform(get("/events").with(user("dancer1").roles("USER")))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/boards/HYPE?officialEvents=true&sort=latest"));
+
+        mockMvc.perform(get("/boards/HYPE")
+                        .param("officialEvents", "true")
+                        .with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("THIS MONTH EVENTS")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("관리자 승인 행사")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Seoul Street Jam 참가자 모집")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("officialEvents=true")));
 
         mockMvc.perform(get("/dancers").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())

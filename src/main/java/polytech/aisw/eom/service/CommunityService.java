@@ -1,6 +1,5 @@
 package polytech.aisw.eom.service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -81,6 +80,10 @@ public class CommunityService {
         return postRepository.findByBoardType(boardType, sortOption.getSort());
     }
 
+    public List<Post> findOfficialEventPosts(PostSortOption sortOption) {
+        return postRepository.findByBoardTypeAndAdminApprovedEventTrue(BoardType.HYPE, sortOption.getSort());
+    }
+
     public List<Post> findPostsByBoard(BoardType boardType) {
         return findPostsByBoard(boardType, PostSortOption.LATEST);
     }
@@ -91,20 +94,6 @@ public class CommunityService {
 
     public List<Post> findRecentPostsByBoard(BoardType boardType) {
         return postRepository.findTop10ByBoardTypeOrderByCreatedAtDesc(boardType);
-    }
-
-    public List<Post> findThisMonthEvents(PostSortOption sortOption) {
-        LocalDate today = LocalDate.now();
-        return postRepository.findByBoardTypeAndEventDateBetween(
-                BoardType.HYPE,
-                today,
-                today.withDayOfMonth(today.lengthOfMonth()),
-                sortOption.getSort()
-        );
-    }
-
-    public List<Post> findThisMonthEvents() {
-        return findThisMonthEvents(PostSortOption.LATEST);
     }
 
     public List<AppUser> findDancers() {

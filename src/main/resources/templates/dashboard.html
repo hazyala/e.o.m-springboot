@@ -203,7 +203,7 @@
                         <span></span>
                         <h2>EVENTS</h2>
                     </div>
-                    <a th:href="@{/events}">ALL →</a>
+                    <a th:href="@{/boards/HYPE(officialEvents=true)}">ALL →</a>
                 </div>
                 <ol class="dashboard-events">
                     <li class="dashboard-event-card" th:each="post, stat : ${upcomingEvents}" th:if="${stat.index < 4}">
