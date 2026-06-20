@@ -2103,6 +2103,37 @@ html[data-theme="dark"] .my-event-menu-panel label span {
     color: #b6b6b6;
 }
 
+html[data-theme="dark"] .my-profile-editor summary,
+html[data-theme="dark"] .my-account-editor summary {
+    border-color: rgba(255, 255, 255, 0.34);
+    background: rgba(10, 10, 10, 0.18);
+    color: #ffffff;
+    backdrop-filter: blur(14px);
+}
+
+html[data-theme="dark"] .my-profile-editor[open] summary,
+html[data-theme="dark"] .my-account-editor[open] summary,
+html[data-theme="dark"] .my-profile-editor summary:hover,
+html[data-theme="dark"] .my-account-editor summary:hover {
+    border-color: rgba(255, 77, 109, 0.72);
+    background: rgba(255, 77, 109, 0.16);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+}
+
+html[data-theme="dark"] .my-profile-editor form,
+html[data-theme="dark"] .my-account-editor form {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(18, 18, 18, 0.88);
+    color: #ffffff;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(18px);
+}
+
+html[data-theme="dark"] .my-profile-editor span,
+html[data-theme="dark"] .my-account-editor span {
+    color: rgba(255, 255, 255, 0.72);
+}
+
 html[data-theme="dark"] .my-profile-editor input,
 html[data-theme="dark"] .my-profile-editor textarea,
 html[data-theme="dark"] .my-account-editor input,
@@ -2111,6 +2142,29 @@ html[data-theme="dark"] .my-event-menu-panel input {
     border-color: rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
+}
+
+html[data-theme="dark"] .my-profile-editor input::placeholder,
+html[data-theme="dark"] .my-profile-editor textarea::placeholder,
+html[data-theme="dark"] .my-account-editor input::placeholder {
+    color: rgba(255, 255, 255, 0.42);
+}
+
+html[data-theme="dark"] .my-profile-editor input:focus,
+html[data-theme="dark"] .my-profile-editor textarea:focus,
+html[data-theme="dark"] .my-account-editor input:focus {
+    outline: 2px solid rgba(255, 77, 109, 0.42);
+    outline-offset: 2px;
+    border-color: rgba(255, 77, 109, 0.62);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .my-profile-editor form > p,
+html[data-theme="dark"] .my-account-editor form > p {
+    margin: 0;
+    color: #ff9eb4;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 html[data-theme="dark"] .my-post-list article,
