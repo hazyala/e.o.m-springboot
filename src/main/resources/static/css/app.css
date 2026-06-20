@@ -874,6 +874,7 @@ body.dashboard-page::before {
 }
 
 .dashboard-add-button,
+.dashboard-account-link,
 .dashboard-logout {
     display: inline-flex;
     position: relative;
@@ -897,6 +898,7 @@ body.dashboard-page::before {
 }
 
 .dashboard-add-button:hover,
+.dashboard-account-link:hover,
 .dashboard-logout:hover {
     background: #d30f46;
     border-color: #d30f46;
@@ -947,18 +949,32 @@ body.dashboard-page::before {
 }
 
 .dashboard-nav a:hover .subtitle,
+.dashboard-account-link:hover .subtitle,
 .dashboard-logout:hover .subtitle {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
 
 .dashboard-nav .dashboard-add-button:hover,
+.dashboard-account-link:hover,
 .dashboard-logout:hover {
     background: #d30f46;
     border-color: #d30f46;
     color: #ffffff;
     box-shadow: 0 12px 28px rgba(211, 15, 70, 0.2);
     transform: translateY(-1px);
+}
+
+.dashboard-logout-active {
+    min-width: 120px;
+    min-height: 48px;
+    border-color: #d30f46;
+    border-radius: 999px;
+    background: #d30f46;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 800;
+    box-shadow: 0 14px 34px rgba(211, 15, 70, 0.28);
 }
 
 .dashboard-theme-toggle {
@@ -1899,13 +1915,15 @@ html[data-theme="dark"] .dashboard-nav a:hover {
 }
 
 html[data-theme="dark"] .dashboard-nav .dashboard-add-button:hover,
+html[data-theme="dark"] .dashboard-account-link:hover,
 html[data-theme="dark"] .dashboard-logout:hover {
     background: #d30f46;
     border-color: #d30f46;
     color: #ffffff;
 }
 
-html[data-theme="dark"] .dashboard-add-button {
+html[data-theme="dark"] .dashboard-add-button,
+html[data-theme="dark"] .dashboard-account-link {
     border-color: rgba(255, 77, 109, 0.46);
     color: #ffffff;
 }
@@ -1913,6 +1931,10 @@ html[data-theme="dark"] .dashboard-add-button {
 html[data-theme="dark"] .dashboard-logout {
     border-color: transparent;
     color: #ffffff;
+}
+
+html[data-theme="dark"] .dashboard-logout-active {
+    border-color: #d30f46;
 }
 
 html[data-theme="dark"] .dashboard-header .subtitle {
@@ -2559,6 +2581,467 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .community-grid-stats b {
     color: #666666;
+}
+
+.my-page-shell {
+    width: min(100%, 1320px);
+    margin: 0 auto;
+    padding-bottom: 72px;
+}
+
+.my-profile-hero {
+    position: relative;
+    min-height: 360px;
+    margin-right: calc(50% - 50vw);
+    margin-left: calc(50% - 50vw);
+    overflow: hidden;
+    background: #8d0824;
+    color: #ffffff;
+}
+
+.my-profile-hero-media {
+    position: absolute;
+    inset: 0;
+    opacity: 0.22;
+}
+
+.my-profile-hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(0.3) contrast(1.12);
+}
+
+.my-profile-hero::after {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(141, 8, 36, 0.96), rgba(141, 8, 36, 0.8));
+    content: "";
+}
+
+.my-profile-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr) 320px;
+    gap: 28px;
+    align-items: center;
+    width: min(100%, 1320px);
+    min-height: 360px;
+    margin: 0 auto;
+    padding: 56px 32px;
+}
+
+.my-profile-avatar {
+    display: grid;
+    width: 150px;
+    height: 150px;
+    place-items: center;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.72);
+    border-radius: 50%;
+    background: #dedee6;
+    color: #8d0824;
+    font-family: "Irish Grover", cursive;
+    font-size: 72px;
+}
+
+.my-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.my-profile-copy {
+    position: relative;
+    z-index: 1;
+}
+
+.my-profile-kicker {
+    margin: 0 0 12px;
+    color: rgba(255, 255, 255, 0.82);
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.my-profile-copy h1 {
+    margin: 0;
+    font-size: clamp(48px, 8vw, 92px);
+    line-height: 0.9;
+    text-transform: uppercase;
+}
+
+.my-profile-copy > p:not(.my-profile-kicker) {
+    max-width: 620px;
+    margin: 18px 0 0;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.my-profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    margin-top: 24px;
+    color: rgba(255, 255, 255, 0.76);
+}
+
+.my-profile-meta b {
+    display: block;
+    color: #ffffff;
+    font-size: 24px;
+}
+
+.my-profile-copy > a {
+    display: inline-flex;
+    margin-top: 22px;
+    padding: 9px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.my-profile-editor {
+    align-self: start;
+    margin-top: 8px;
+}
+
+.my-profile-editor summary {
+    display: inline-flex;
+    justify-content: center;
+    min-width: 180px;
+    padding: 12px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 800;
+    list-style: none;
+}
+
+.my-profile-editor form {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #111111;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+}
+
+.my-profile-editor label,
+.my-event-form {
+    display: grid;
+    gap: 6px;
+}
+
+.my-profile-editor span {
+    color: #666666;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.my-profile-editor input,
+.my-profile-editor textarea,
+.my-event-form input {
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #ffffff;
+    color: #111111;
+    font: inherit;
+}
+
+.my-profile-editor button,
+.my-event-form button,
+.my-post-actions button,
+.my-post-list form button {
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 14px;
+    background: #d30f46;
+    color: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+}
+
+.my-profile-watermark {
+    position: absolute;
+    right: 3vw;
+    bottom: 34px;
+    z-index: 0;
+    color: rgba(255, 255, 255, 0.08);
+    font-family: "Irish Grover", cursive;
+    font-size: clamp(88px, 18vw, 220px);
+    line-height: 0.8;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.my-page-tabs {
+    display: flex;
+    gap: 42px;
+    overflow-x: auto;
+    padding: 28px 0 18px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.my-page-tabs a {
+    position: relative;
+    color: #999999;
+}
+
+.my-page-tabs a:first-child,
+.my-page-tabs a:hover {
+    color: #050505;
+}
+
+.my-page-tabs a:first-child::after {
+    position: absolute;
+    right: 0;
+    bottom: -18px;
+    left: 0;
+    height: 4px;
+    border-radius: 999px;
+    background: #d30f46;
+    content: "";
+}
+
+.my-page-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 54px;
+    padding-top: 30px;
+}
+
+.my-page-main,
+.my-page-side {
+    display: grid;
+    gap: 46px;
+    align-content: start;
+}
+
+.my-page-section,
+.my-page-side section {
+    scroll-margin-top: 110px;
+}
+
+.my-section-heading {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.my-section-heading::before {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    background: #d30f46;
+    content: "";
+}
+
+.my-section-heading h2 {
+    margin: 0;
+    font-family: "Irish Grover", cursive;
+    font-size: 34px;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.my-section-heading span {
+    color: #666666;
+    font-family: "Roboto Mono", monospace;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.my-pinned-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 26px;
+}
+
+.my-pinned-strip article,
+.my-work-grid article {
+    min-width: 0;
+}
+
+.my-pinned-strip a,
+.my-work-media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    min-height: 168px;
+    border-radius: 8px;
+    background: #d9d9e1;
+}
+
+.my-pinned-strip img,
+.my-work-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.my-pinned-strip strong {
+    display: block;
+    margin-top: 9px;
+    font-weight: 900;
+}
+
+.my-work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px 20px;
+}
+
+.my-work-media {
+    aspect-ratio: 16 / 10;
+}
+
+.my-work-media i {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: #d30f46;
+    color: #ffffff;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 900;
+}
+
+.my-work-grid h3 {
+    margin: 12px 0 8px;
+    font-size: 18px;
+    line-height: 1.3;
+}
+
+.my-post-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.my-post-actions button,
+.my-post-list form button {
+    padding: 7px 11px;
+    background: #111111;
+    font-size: 12px;
+}
+
+.my-post-list,
+.my-comment-list {
+    display: grid;
+    gap: 14px;
+}
+
+.my-post-list article,
+.my-comment-list article {
+    display: grid;
+    gap: 8px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.my-post-list article > a,
+.my-comment-list article > a {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.my-post-list p,
+.my-comment-list p {
+    margin: 0;
+    color: #666666;
+    line-height: 1.6;
+}
+
+.my-post-list div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #777777;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.my-activity-list,
+.my-joined-list {
+    display: grid;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.my-activity-list li {
+    position: relative;
+    padding-left: 18px;
+}
+
+.my-activity-list li::before {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #d30f46;
+    content: "";
+}
+
+.my-activity-list strong,
+.my-activity-list span,
+.my-joined-list time,
+.my-joined-list strong,
+.my-joined-list span {
+    display: block;
+}
+
+.my-activity-list strong,
+.my-joined-list strong {
+    font-weight: 900;
+}
+
+.my-activity-list span,
+.my-joined-list span {
+    color: #666666;
+}
+
+.my-event-form {
+    margin-bottom: 22px;
+}
+
+.my-joined-list li {
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.my-joined-list time {
+    margin-bottom: 6px;
+    color: #d30f46;
+    font-family: "Roboto Mono", monospace;
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.my-empty-state,
+.my-page-alert {
+    margin: 0;
+    color: #777777;
+    line-height: 1.6;
 }
 
 .community-tag-cloud {
@@ -3533,6 +4016,34 @@ th {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .my-profile-hero-inner {
+        grid-template-columns: 140px minmax(0, 1fr);
+    }
+
+    .my-profile-editor {
+        grid-column: 1 / -1;
+        margin-top: 0;
+    }
+
+    .my-profile-editor form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .my-profile-editor label:nth-child(4),
+    .my-profile-editor label:nth-child(5),
+    .my-profile-editor label:nth-child(6),
+    .my-profile-editor label:nth-child(7) {
+        grid-column: 1 / -1;
+    }
+
+    .my-page-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .my-page-side {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .dancer-directory {
         grid-template-columns: 1fr;
     }
@@ -3571,6 +4082,10 @@ th {
     }
 
     .dashboard-header > form:not(.dashboard-search) {
+        grid-column: 2;
+    }
+
+    .dashboard-account-link {
         grid-column: 2;
     }
 
@@ -3779,6 +4294,48 @@ th {
 
     .community-side-panel {
         grid-template-columns: 1fr;
+    }
+
+    .my-page-shell {
+        width: 100%;
+        padding-right: 22px;
+        padding-left: 22px;
+    }
+
+    .my-profile-hero {
+        margin-right: -22px;
+        margin-left: -22px;
+    }
+
+    .my-profile-hero-inner {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 42px 22px;
+    }
+
+    .my-profile-avatar {
+        width: 116px;
+        height: 116px;
+        font-size: 54px;
+    }
+
+    .my-profile-copy h1 {
+        font-size: 46px;
+    }
+
+    .my-profile-editor form,
+    .my-page-side,
+    .my-pinned-strip,
+    .my-work-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .my-profile-editor label:nth-child(n) {
+        grid-column: auto;
+    }
+
+    .my-page-tabs {
+        gap: 28px;
     }
 
     .post-detail-card {

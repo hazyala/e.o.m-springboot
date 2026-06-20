@@ -66,6 +66,12 @@ public class Post {
     @Column(length = 300)
     private String thumbnailUrl;
 
+    @Column(nullable = false)
+    private boolean portfolioSelected;
+
+    @Column(nullable = false)
+    private boolean portfolioPinned;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private AppUser author;
 
@@ -129,6 +135,8 @@ public class Post {
         this.mediaType = mediaType;
         this.mediaUrl = mediaUrl;
         this.thumbnailUrl = thumbnailUrl;
+        this.portfolioSelected = boardType == BoardType.SHOW;
+        this.portfolioPinned = false;
         this.author = author;
         this.createdAt = LocalDateTime.now();
     }
@@ -197,11 +205,37 @@ public class Post {
         return thumbnailUrl;
     }
 
+    public boolean isPortfolioSelected() {
+        return portfolioSelected;
+    }
+
+    public boolean isPortfolioPinned() {
+        return portfolioPinned;
+    }
+
     public AppUser getAuthor() {
         return author;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public boolean isAuthoredBy(String username) {
+        return author.getUsername().equals(username);
+    }
+
+    public void setPortfolioSelected(boolean portfolioSelected) {
+        this.portfolioSelected = portfolioSelected;
+        if (!portfolioSelected) {
+            this.portfolioPinned = false;
+        }
+    }
+
+    public void setPortfolioPinned(boolean portfolioPinned) {
+        if (portfolioPinned) {
+            this.portfolioSelected = true;
+        }
+        this.portfolioPinned = portfolioPinned;
     }
 }

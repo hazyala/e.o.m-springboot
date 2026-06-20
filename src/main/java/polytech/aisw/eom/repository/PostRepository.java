@@ -71,6 +71,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     );
 
     @EntityGraph(attributePaths = "author")
+    List<Post> findByAuthorUsernameOrderByCreatedAtDesc(String username);
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findByAuthorUsernameAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(String username);
+
+    long countByAuthorUsernameAndPortfolioPinnedTrue(String username);
+
+    @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByBoardTypeAndMediaTypeInOrderByLikeCountDescCreatedAtDesc(
             BoardType boardType,
             List<MediaType> mediaTypes

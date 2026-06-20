@@ -72,8 +72,10 @@ public class DataSeeder implements CommandLineRunner {
                 "E.O.M Admin",
                 HAZYALA_INSTAGRAM,
                 "/assets/source/hero.jpg",
+                "/assets/source/background.jpg",
                 "E.O.M 커뮤니티 운영자. 쇼케이스, 배틀, 워크숍 소식을 큐레이션합니다.",
                 "E.O.M",
+                "Community Curator",
                 UserRole.ADMIN
         ));
 
@@ -83,19 +85,25 @@ public class DataSeeder implements CommandLineRunner {
                 "SHADOW_98",
                 HAZYALA_INSTAGRAM,
                 "/assets/source/show.png",
+                "/assets/source/hero.jpg",
                 "힙합과 코레오를 오가며 무대와 연습 기록을 남기는 댄서.",
                 "Night Shift",
+                "Hip-hop / Choreo",
                 UserRole.USER
         ));
 
         AppUser mina = saveUser("mina.flow", "MINA FLOW", "/assets/source/cast1.jpg",
-                "락킹 기반으로 팀 퍼포먼스와 클래스 영상을 기록합니다.", "Ripple Crew");
+                "/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg",
+                "락킹 기반으로 팀 퍼포먼스와 클래스 영상을 기록합니다.", "Ripple Crew", "Locking");
         AppUser jun = saveUser("jun.wav", "JUN WAV", "/assets/source/cast2.jpg",
-                "프리스타일 배틀과 오픈 세션을 즐기는 올라운더.", "Wave Room");
+                "/assets/source/dan-duffey-7NaBBaRzfZ4-unsplash.jpg",
+                "프리스타일 배틀과 오픈 세션을 즐기는 올라운더.", "Wave Room", "Freestyle");
         AppUser raya = saveUser("raya.krump", "RAYA", "/assets/source/cast3.jpg",
-                "크럼프와 힙합 에너지로 쇼케이스를 만드는 댄서.", "Raw Steps");
+                "/assets/source/dwayne-joe-_Haw_PsHa5E-unsplash.jpg",
+                "크럼프와 힙합 에너지로 쇼케이스를 만드는 댄서.", "Raw Steps", "Krump");
         AppUser host = saveUser("stage.host", "STAGE HOST", "/assets/source/hype.jpg",
-                "서울 기반 배틀, 워크숍, 팝업 클래스를 연결하는 주최자.", "Open Floor");
+                "/assets/source/praise-judah-q0CU-yUn_Nc-unsplash.jpg",
+                "서울 기반 배틀, 워크숍, 팝업 클래스를 연결하는 주최자.", "Open Floor", "Event Host");
 
         savePost(BoardType.SHOW, "릴스 기반 코레오 쇼케이스", "짧은 릴스로 무드와 동선을 먼저 보여주는 SHOW 포스트입니다.",
                 1480, 284, 32, "코레오,릴스,쇼케이스", "성수", null, null,
@@ -222,15 +230,25 @@ public class DataSeeder implements CommandLineRunner {
                 MediaType.INSTAGRAM, REEL_OPEN_SESSION, "/assets/source/link.png", host);
     }
 
-    private AppUser saveUser(String username, String displayName, String profileImageUrl, String bio, String crewName) {
+    private AppUser saveUser(
+            String username,
+            String displayName,
+            String profileImageUrl,
+            String headerImageUrl,
+            String bio,
+            String crewName,
+            String primaryGenre
+    ) {
         return userRepository.save(new AppUser(
                 username,
                 passwordEncoder.encode("1234"),
                 displayName,
                 HAZYALA_INSTAGRAM,
                 profileImageUrl,
+                headerImageUrl,
                 bio,
                 crewName,
+                primaryGenre,
                 UserRole.USER
         ));
     }

@@ -1,0 +1,171 @@
+package polytech.aisw.eom.service;
+
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Stream;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import polytech.aisw.eom.domain.AppUser;
+import polytech.aisw.eom.domain.Comment;
+import polytech.aisw.eom.domain.JoinedEvent;
+import polytech.aisw.eom.domain.Post;
+import polytech.aisw.eom.repository.CommentRepository;
+import polytech.aisw.eom.repository.JoinedEventRepository;
+import polytech.aisw.eom.repository.PostRepository;
+import polytech.aisw.eom.repository.UserRepository;
+
+@Service
+public class MyPageService {
+
+    private static final int MAX_PINNED_PORTFOLIO = 3;
+
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final JoinedEventRepository joinedEventRepository;
+
+    public MyPageService(
+            UserRepository userRepository,
+            PostRepository postRepository,
+            CommentRepository commentRepository,
+            JoinedEventRepository joinedEventRepository
+    ) {
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
+        this.joinedEventRepository = joinedEventRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public MyPageView findMyPage(String username) {
+        AppUser user = findUser(username);
+        List<Post> posts = postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
+        List<Post> portfolioPosts = postRepository
+                .findByAuthorUsernameAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(username);
+        List<Post> pinnedPortfolioPosts = portfolioPosts.stream()
+                .filter(Post::isPortfolioPinned)
+                .limit(MAX_PINNED_PORTFOLIO)
+                .toList();
+        List<Comment> comments = commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
+        List<JoinedEvent> joinedEvents = joinedEventRepository.findByUserUsernameOrderByEventDateDescCreatedAtDesc(username);
+        List<ActivityItem> activityItems = buildActivity(posts, comments);
+
+        return new MyPageView(user, posts, portfolioPosts, pinnedPortfolioPosts, comments, joinedEvents, activityItems);
+    }
+
+    @Transactional
+    public void updateProfile(String username, ProfileUpdateRequest request) {
+        AppUser user = findUser(username);
+        user.updateProfile(
+                cleanRequired(request.displayName(), user.getDisplayName()),
+                clean(request.crewName()),
+                clean(request.primaryGenre()),
+                clean(request.bio()),
+                clean(request.instagramUrl()),
+                clean(request.profileImageUrl()),
+                clean(request.headerImageUrl())
+        );
+    }
+
+    @Transactional
+    public void updatePortfolioSelection(String username, Long postId, boolean selected) {
+        Post post = findOwnedPost(username, postId);
+        post.setPortfolioSelected(selected);
+    }
+
+    @Transactional
+    public void updatePortfolioPin(String username, Long postId, boolean pinned) {
+        Post post = findOwnedPost(username, postId);
+        if (pinned && !post.isPortfolioPinned()
+                && postRepository.countByAuthorUsernameAndPortfolioPinnedTrue(username) >= MAX_PINNED_PORTFOLIO) {
+            throw new IllegalStateException("Pinned portfolio limit exceeded");
+        }
+        post.setPortfolioPinned(pinned);
+    }
+
+    @Transactional
+    public void addJoinedEvent(String username, LocalDate eventDate, String eventName, String result) {
+        AppUser user = findUser(username);
+        joinedEventRepository.save(new JoinedEvent(
+                user,
+                eventDate,
+                cleanRequired(eventName, "Untitled event"),
+                cleanRequired(result, "참여")
+        ));
+    }
+
+    private AppUser findUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow();
+    }
+
+    private Post findOwnedPost(String username, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        if (!post.isAuthoredBy(username)) {
+            throw new IllegalArgumentException("Cannot edit another user's portfolio");
+        }
+        return post;
+    }
+
+    private List<ActivityItem> buildActivity(List<Post> posts, List<Comment> comments) {
+        return Stream.concat(
+                        posts.stream().map(post -> new ActivityItem(
+                                post.getCreatedAt(),
+                                post.getBoardType().getLabel() + " 게시글 작성",
+                                post.getTitle(),
+                                "/posts/" + post.getId()
+                        )),
+                        comments.stream().map(comment -> new ActivityItem(
+                                comment.getCreatedAt(),
+                                "댓글 작성",
+                                comment.getPost().getTitle(),
+                                "/posts/" + comment.getPost().getId()
+                        ))
+                )
+                .sorted(Comparator.comparing(ActivityItem::createdAt).reversed())
+                .limit(8)
+                .toList();
+    }
+
+    private String clean(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
+    }
+
+    private String cleanRequired(String value, String fallback) {
+        String cleaned = clean(value);
+        return cleaned == null ? fallback : cleaned;
+    }
+
+    public record MyPageView(
+            AppUser user,
+            List<Post> posts,
+            List<Post> portfolioPosts,
+            List<Post> pinnedPortfolioPosts,
+            List<Comment> comments,
+            List<JoinedEvent> joinedEvents,
+            List<ActivityItem> activityItems
+    ) {
+    }
+
+    public record ActivityItem(
+            java.time.LocalDateTime createdAt,
+            String action,
+            String title,
+            String href
+    ) {
+    }
+
+    public record ProfileUpdateRequest(
+            String displayName,
+            String crewName,
+            String primaryGenre,
+            String bio,
+            String instagramUrl,
+            String profileImageUrl,
+            String headerImageUrl
+    ) {
+    }
+}

@@ -33,11 +33,17 @@ public class AppUser {
     @Column(length = 300)
     private String profileImageUrl;
 
+    @Column(length = 300)
+    private String headerImageUrl;
+
     @Column(length = 500)
     private String bio;
 
     @Column(length = 80)
     private String crewName;
+
+    @Column(length = 80)
+    private String primaryGenre;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -63,13 +69,30 @@ public class AppUser {
             String crewName,
             UserRole role
     ) {
+        this(username, password, displayName, instagramUrl, profileImageUrl, null, bio, crewName, null, role);
+    }
+
+    public AppUser(
+            String username,
+            String password,
+            String displayName,
+            String instagramUrl,
+            String profileImageUrl,
+            String headerImageUrl,
+            String bio,
+            String crewName,
+            String primaryGenre,
+            UserRole role
+    ) {
         this.username = username;
         this.password = password;
         this.displayName = displayName;
         this.instagramUrl = instagramUrl;
         this.profileImageUrl = profileImageUrl;
+        this.headerImageUrl = headerImageUrl;
         this.bio = bio;
         this.crewName = crewName;
+        this.primaryGenre = primaryGenre;
         this.role = role;
         this.createdAt = LocalDateTime.now();
     }
@@ -98,6 +121,10 @@ public class AppUser {
         return profileImageUrl;
     }
 
+    public String getHeaderImageUrl() {
+        return headerImageUrl;
+    }
+
     public String getBio() {
         return bio;
     }
@@ -106,11 +133,33 @@ public class AppUser {
         return crewName;
     }
 
+    public String getPrimaryGenre() {
+        return primaryGenre;
+    }
+
     public UserRole getRole() {
         return role;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void updateProfile(
+            String displayName,
+            String crewName,
+            String primaryGenre,
+            String bio,
+            String instagramUrl,
+            String profileImageUrl,
+            String headerImageUrl
+    ) {
+        this.displayName = displayName;
+        this.crewName = crewName;
+        this.primaryGenre = primaryGenre;
+        this.bio = bio;
+        this.instagramUrl = instagramUrl;
+        this.profileImageUrl = profileImageUrl;
+        this.headerImageUrl = headerImageUrl;
     }
 }
