@@ -32,8 +32,8 @@
         </div>
     </section>
 
-    <section class="community-board-filter community-board-switcher" aria-label="Board filters">
-        <a th:href="@{/boards/all}" th:classappend="${selectedBoard == null and selectedTag == null} ? ' is-active'">ALL</a>
+    <section class="community-board-filter community-board-switcher" th:unless="${isSearchPage == true}" aria-label="Board filters">
+        <a th:href="@{/boards/all}" th:classappend="${selectedBoard == null and selectedTag == null and isSearchPage != true} ? ' is-active'">ALL</a>
         <a th:each="board : ${boards}"
            th:href="@{/boards/{board}(board=${board.name()})}"
            th:attr="data-board=${board.name()}"
@@ -41,17 +41,90 @@
            th:text="${board.label}">SHOW</a>
     </section>
 
-    <section class="community-sort-row" aria-label="Sort posts">
+    <section class="community-search-panel" th:if="${isSearchPage == true}">
+        <div class="community-search-column">
+            <div class="community-search-main">
+                <form class="community-search-form" th:action="@{/posts}" method="get" role="search">
+                    <span aria-hidden="true">⌕</span>
+                    <input type="search"
+                           name="q"
+                           placeholder="검색어를 입력하세요"
+                           aria-label="Search posts"
+                           th:value="${selectedTag != null ? '#' + selectedTag : searchQuery}">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
+            <section class="community-sort-row" aria-label="Sort posts">
+                <nav class="community-sort-tabs">
+                    <a th:each="sortEntry : ${sortLinks}"
+                       th:href="${sortEntry.value}"
+                       th:classappend="${sortEntry.key == selectedSort} ? ' is-active'"
+                       th:text="${sortEntry.key.label}">최신순</a>
+                </nav>
+                <span th:text="|총 ${postCount}개|">총 0개</span>
+            </section>
+
+            <section class="community-search-results" aria-label="Search results">
+                <p class="community-empty-state" th:if="${!hasSearchTerm}">검색어를 입력하거나 추천 태그를 선택해 주세요.</p>
+                <p class="community-empty-state" th:if="${hasSearchTerm and posts.isEmpty()}">일치하는 게시글이 없습니다.</p>
+                <article class="community-result-row" th:each="post : ${posts}" th:classappend="| type-${post.boardType.name().toLowerCase()}|">
+                    <a class="community-result-media" th:href="@{/posts/{id}(id=${post.id})}">
+                        <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                        <span class="community-media-fallback" th:unless="${post.thumbnailUrl}" th:text="${post.boardType.label}">SHOW</span>
+                        <span class="community-media-badge" th:text="${post.mediaType.name() == 'IMAGE'} ? ${post.boardType.label} : (${post.mediaType.name() == 'INSTAGRAM'} ? 'IG' : 'LINK')">SHOW</span>
+                    </a>
+                    <div class="community-result-copy">
+                        <div class="community-card-topline">
+                            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
+                               class="dashboard-type"
+                               th:classappend="| type-${post.boardType.name().toLowerCase()}|"
+                               th:text="${post.boardType.label}">SHOW</a>
+                            <span th:text="${post.mediaType}">IMAGE</span>
+                            <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="|EVENT ${#temporals.format(post.eventDate, 'MM.dd')}|">EVENT 06.20</time>
+                            <time th:if="${post.deadline}" th:datetime="${post.deadline}" th:text="|DUE ${#temporals.format(post.deadline, 'MM.dd')}|">DUE 06.18</time>
+                        </div>
+                        <h2><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a></h2>
+                        <p th:text="${#strings.abbreviate(post.content, 120)}">Post content preview</p>
+                        <div class="community-meta-line">
+                            <strong th:text="${post.author.displayName}">Author</strong>
+                            <span th:if="${post.author.crewName}" th:text="${post.author.crewName}">Crew</span>
+                            <span th:if="${post.location}" th:text="${post.location}">Location</span>
+                        </div>
+                        <div class="community-grid-stats">
+                            <span>♡ <b th:text="${post.likeCount}">0</b></span>
+                            <span>댓글 <b th:text="${post.commentCount}">0</b></span>
+                            <span>조회 <b th:text="${post.viewCount}">0</b></span>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </div>
+
+        <aside class="community-recommended-tags" aria-label="Recommended tags">
+            <h2>Popular Tags</h2>
+            <div>
+                <a th:each="tag : ${tags}"
+                   th:href="@{/posts(tag=${tag})}"
+                   th:text="|# ${tag}|"># tag</a>
+            </div>
+        </aside>
+    </section>
+
+    <section class="community-sort-row" th:unless="${isSearchPage == true}" aria-label="Sort posts">
         <nav class="community-sort-tabs">
             <a th:each="sortEntry : ${sortLinks}"
                th:href="${sortEntry.value}"
-               th:classappend="${sortEntry.key == selectedSort} ? ' is-active'"
+               th:classappend="${officialEventsOnly != true and sortEntry.key == selectedSort} ? ' is-active'"
                th:text="${sortEntry.key.label}">최신순</a>
+            <a th:if="${selectedBoard != null and selectedBoard.name() == 'HYPE'}"
+               th:href="${officialEventsLink}"
+               th:classappend="${officialEventsOnly == true} ? ' is-active'">관리자 승인 행사</a>
         </nav>
         <span th:text="|총 ${postCount}개|">총 0개</span>
     </section>
 
-    <section class="community-card-grid" aria-label="Community posts">
+    <section class="community-card-grid" th:unless="${isSearchPage == true}" aria-label="Community posts">
         <article class="community-grid-card" th:each="post : ${posts}" th:classappend="| type-${post.boardType.name().toLowerCase()}|">
             <a class="community-grid-media" th:href="@{/posts/{id}(id=${post.id})}">
                 <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">

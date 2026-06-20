@@ -49,7 +49,7 @@ public class DashboardService {
     public List<Post> findUpcomingEvents() {
         LocalDate today = LocalDate.now();
         LocalDate monthEnd = today.withDayOfMonth(today.lengthOfMonth());
-        return postRepository.findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+        return postRepository.findTop6ByBoardTypeAndAdminApprovedEventTrueAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
                 BoardType.HYPE,
                 today,
                 monthEnd

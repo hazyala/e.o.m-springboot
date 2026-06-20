@@ -2,7 +2,10 @@ package polytech.aisw.eom.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,15 +15,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.service.CommunityService;
+import polytech.aisw.eom.service.MyPageService;
 import polytech.aisw.eom.service.PostSortOption;
 
 @Controller
 public class CommunityController {
 
     private final CommunityService communityService;
+    private final MyPageService myPageService;
 
-    public CommunityController(CommunityService communityService) {
+    public CommunityController(CommunityService communityService, MyPageService myPageService) {
         this.communityService = communityService;
+        this.myPageService = myPageService;
     }
 
     @GetMapping("/posts/{id}")
@@ -37,29 +43,30 @@ public class CommunityController {
 
     @GetMapping("/posts")
     public String posts(
+            @RequestParam(required = false) String q,
             @RequestParam(required = false) String tag,
             @RequestParam(defaultValue = "latest") String sort,
             Model model
     ) {
+        String searchQuery = normalizeSearchTerm(q);
         boolean hasTag = tag != null && !tag.isBlank();
         PostSortOption sortOption = PostSortOption.from(sort);
-        if (!hasTag) {
-            return "redirect:/boards/all?sort=" + sortOption.getKey();
-        }
 
-        model.addAttribute("title", hasTag ? "# " + tag : "ALL");
-        model.addAttribute("eyebrow", hasTag ? "TAG SEARCH" : "COMMUNITY");
-        model.addAttribute("summary", hasTag
-                ? "선택한 태그와 연결된 게시글을 카드형으로 모았습니다."
-                : "SHOW, CAST, HYPE, LINK의 최신 움직임을 한 화면에서 탐색합니다.");
+        String effectiveQuery = hasTag ? tag.trim() : searchQuery;
+        model.addAttribute("title", "SEARCH");
+        model.addAttribute("eyebrow", hasTag ? "TAG SEARCH" : "COMMUNITY SEARCH");
+        model.addAttribute("summary", "태그, 제목, 내용, 작성자, 크루명에서 입력한 움직임을 찾아봅니다.");
+        model.addAttribute("searchQuery", effectiveQuery);
+        model.addAttribute("hasSearchTerm", !effectiveQuery.isBlank());
         model.addAttribute("selectedTag", hasTag ? tag : null);
+        model.addAttribute("isSearchPage", true);
         populatePostListModel(model, sortOption);
         var posts = hasTag
                 ? communityService.findPostsByTag(tag, sortOption)
-                : communityService.findPosts(sortOption);
+                : communityService.searchPosts(searchQuery, sortOption);
         model.addAttribute("posts", posts);
         model.addAttribute("postCount", posts.size());
-        model.addAttribute("sortLinks", buildSortLinks("/posts", hasTag ? tag : null));
+        model.addAttribute("sortLinks", buildSearchSortLinks(hasTag ? null : searchQuery, hasTag ? tag : null));
         return "post-list";
     }
 
@@ -70,24 +77,15 @@ public class CommunityController {
     }
 
     @GetMapping("/events")
-    public String events(@RequestParam(defaultValue = "latest") String sort, Model model) {
-        PostSortOption sortOption = PostSortOption.from(sort);
-        model.addAttribute("title", "THIS MONTH EVENTS");
-        model.addAttribute("eyebrow", "HYPE EVENTS");
-        model.addAttribute("summary", "이번 달 안에 열리는 HYPE 공식 행사와 모집 일정을 모았습니다.");
-        model.addAttribute("selectedBoard", BoardType.HYPE);
-        populatePostListModel(model, sortOption);
-        var posts = communityService.findThisMonthEvents(sortOption);
-        model.addAttribute("posts", posts);
-        model.addAttribute("postCount", posts.size());
-        model.addAttribute("sortLinks", buildSortLinks("/events", null));
-        return "post-list";
+    public String events() {
+        return "redirect:/boards/HYPE?officialEvents=true";
     }
 
     @GetMapping("/boards/{board}")
     public String board(
             @PathVariable String board,
             @RequestParam(defaultValue = "latest") String sort,
+            @RequestParam(name = "officialEvents", defaultValue = "false") boolean officialEvents,
             Model model
     ) {
         PostSortOption sortOption = PostSortOption.from(sort);
@@ -99,20 +97,28 @@ public class CommunityController {
             var posts = communityService.findPosts(sortOption);
             model.addAttribute("posts", posts);
             model.addAttribute("postCount", posts.size());
-            model.addAttribute("sortLinks", buildSortLinks("/boards/all", null));
+            model.addAttribute("sortLinks", buildSortLinks("/boards/all", null, false));
             return "post-list";
         }
 
         BoardType boardType = BoardType.valueOf(board.toUpperCase());
+        boolean officialEventsOnly = boardType == BoardType.HYPE && officialEvents;
+        PostSortOption effectiveSortOption = officialEventsOnly ? PostSortOption.LATEST : sortOption;
         model.addAttribute("title", boardType.getLabel());
         model.addAttribute("eyebrow", "BOARD");
-        model.addAttribute("summary", boardType.getDescription());
+        model.addAttribute("summary", officialEventsOnly
+                ? "관리자가 승인한 공식 행사, 배틀, 공연 HYPE 글만 모아봅니다."
+                : boardType.getDescription());
         model.addAttribute("selectedBoard", boardType);
-        populatePostListModel(model, sortOption);
-        var posts = communityService.findPostsByBoard(boardType, sortOption);
+        model.addAttribute("officialEventsOnly", officialEventsOnly);
+        model.addAttribute("officialEventsLink", buildOfficialEventsLink());
+        populatePostListModel(model, effectiveSortOption);
+        var posts = officialEventsOnly
+                ? communityService.findOfficialEventPosts(PostSortOption.LATEST)
+                : communityService.findPostsByBoard(boardType, effectiveSortOption);
         model.addAttribute("posts", posts);
         model.addAttribute("postCount", posts.size());
-        model.addAttribute("sortLinks", buildSortLinks("/boards/" + boardType.name(), null));
+        model.addAttribute("sortLinks", buildSortLinks("/boards/" + boardType.name(), null, false));
         return "post-list";
     }
 
@@ -124,9 +130,50 @@ public class CommunityController {
     }
 
     private Map<PostSortOption, String> buildSortLinks(String basePath, String tag) {
+        return buildSortLinks(basePath, tag, false);
+    }
+
+    private Map<PostSortOption, String> buildSortLinks(String basePath, String tag, boolean officialEventsOnly) {
         Map<PostSortOption, String> links = new LinkedHashMap<>();
         for (PostSortOption option : PostSortOption.values()) {
             UriComponentsBuilder builder = UriComponentsBuilder.fromPath(basePath);
+            if (tag != null && !tag.isBlank()) {
+                builder.queryParam("tag", tag);
+            }
+            if (officialEventsOnly) {
+                builder.queryParam("officialEvents", true);
+            }
+            builder.queryParam("sort", option.getKey());
+            links.put(option, builder.build().toUriString());
+        }
+        return links;
+    }
+
+    private String buildOfficialEventsLink() {
+        return UriComponentsBuilder.fromPath("/boards/HYPE")
+                .queryParam("officialEvents", true)
+                .build()
+                .toUriString();
+    }
+
+    private String normalizeSearchTerm(String query) {
+        if (query == null || query.isBlank()) {
+            return "";
+        }
+        String normalized = query.trim();
+        while (normalized.startsWith("#")) {
+            normalized = normalized.substring(1).trim();
+        }
+        return normalized;
+    }
+
+    private Map<PostSortOption, String> buildSearchSortLinks(String query, String tag) {
+        Map<PostSortOption, String> links = new LinkedHashMap<>();
+        for (PostSortOption option : PostSortOption.values()) {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/posts");
+            if (query != null && !query.isBlank()) {
+                builder.queryParam("q", query);
+            }
             if (tag != null && !tag.isBlank()) {
                 builder.queryParam("tag", tag);
             }
@@ -137,17 +184,23 @@ public class CommunityController {
     }
 
     @GetMapping("/dancers")
-    public String dancers(Model model) {
+    public String dancers(@RequestParam(name = "genres", required = false) List<String> genres, Model model) {
+        List<String> selectedGenres = normalizeSelectedGenres(genres);
         model.addAttribute("boards", BoardType.values());
-        model.addAttribute("dancers", communityService.findDancers());
+        model.addAttribute("dancers", communityService.findDancers(selectedGenres));
+        model.addAttribute("dancerGenres", communityService.findDancerGenres());
+        model.addAttribute("selectedGenres", selectedGenres);
+        model.addAttribute("genreLinks", buildDancerGenreLinks(selectedGenres));
         return "dancers";
     }
 
     @GetMapping("/dancers/{id}")
-    public String dancerDetail(@PathVariable Long id, Model model) {
+    public String dancerDetail(@PathVariable Long id, Principal principal, Model model) {
+        var myPage = myPageService.findProfilePage(id);
         model.addAttribute("boards", BoardType.values());
-        model.addAttribute("dancer", communityService.findDancer(id));
-        return "dancer-detail";
+        model.addAttribute("myPage", myPage);
+        model.addAttribute("isOwner", principal != null && myPage.user().getUsername().equals(principal.getName()));
+        return "my-page";
     }
 
     private String resolveBackUrl(HttpServletRequest request) {
@@ -174,5 +227,35 @@ public class CommunityController {
         } catch (IllegalArgumentException exception) {
             return fallback;
         }
+    }
+
+    private List<String> normalizeSelectedGenres(List<String> genres) {
+        if (genres == null || genres.isEmpty()) {
+            return List.of();
+        }
+
+        return genres.stream()
+                .filter(genre -> genre != null && !genre.isBlank())
+                .map(String::trim)
+                .filter(communityService.findDancerGenres()::contains)
+                .distinct()
+                .toList();
+    }
+
+    private Map<String, String> buildDancerGenreLinks(List<String> selectedGenres) {
+        Map<String, String> links = new LinkedHashMap<>();
+        for (String genre : communityService.findDancerGenres()) {
+            List<String> nextGenres = new ArrayList<>(selectedGenres);
+            if (nextGenres.contains(genre)) {
+                nextGenres.remove(genre);
+            } else {
+                nextGenres.add(genre);
+            }
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/dancers");
+            nextGenres.forEach(selectedGenre -> builder.queryParam("genres", selectedGenre));
+            links.put(genre, builder.build().encode().toUriString());
+        }
+        return links;
     }
 }

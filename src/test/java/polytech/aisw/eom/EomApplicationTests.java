@@ -71,7 +71,8 @@ class EomApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("홍대 쇼케이스 백업댄서 모집")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("LINK에 새 글")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/boards/HYPE?officialEvents=true")));
 
         mockMvc.perform(get("/activity").with(user("dancer1").roles("USER")))
                 .andExpect(status().is3xxRedirection())
@@ -83,11 +84,47 @@ class EomApplicationTests {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("릴스 기반 코레오 쇼케이스")));
 
         mockMvc.perform(get("/events").with(user("dancer1").roles("USER")))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/boards/HYPE?officialEvents=true"));
+
+        mockMvc.perform(get("/boards/HYPE")
+                        .param("officialEvents", "true")
+                        .param("sort", "views")
+                        .with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("THIS MONTH EVENTS")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("관리자 승인 행사")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Seoul Street Jam 참가자 모집")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("officialEvents=true")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("class=\" is-active\">관리자 승인 행사")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/boards/HYPE?sort=views\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("class=\" is-active\">최신순"))))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("officialEvents=true&amp;sort=views"))));
 
         mockMvc.perform(get("/dancers").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Street Genre Directory")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Street Genre Directory")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Dancers")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("All")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dancers?genres=")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Instagram")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("visit profile")));
+    }
+
+    @Test
+    void dancerDirectorySupportsMultiGenreFiltersAndProfileLinks() throws Exception {
+        mockMvc.perform(get("/dancers")
+                        .param("genres", "Hip-hop")
+                        .param("genres", "Krump")
+                        .with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("RAYA")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/dancers/")));
+
+        mockMvc.perform(get("/dancers")
+                        .param("genres", "Voguing")
+                        .with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("No dancers match these filters.")));
     }
 }

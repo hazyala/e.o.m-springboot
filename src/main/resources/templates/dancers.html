@@ -17,19 +17,56 @@
         <div>
             <p>DANCERS</p>
             <h1>Street Genre Directory</h1>
-            <span>crew, style, archive, contact</span>
+            <span>crew, style, archive, contact. 장르와 프로필을 한눈에 비교하고 바로 연결합니다.</span>
         </div>
     </section>
 
-    <section class="dancer-directory">
-        <article th:each="dancer : ${dancers}">
-            <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
-            <div class="dancer-card-copy">
-                <strong th:text="${dancer.displayName}">Dancer</strong>
-                <span th:if="${dancer.crewName}" th:text="${dancer.crewName}">Crew</span>
-                <p th:text="${dancer.bio}">Bio</p>
-                <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">INSTAGRAM</a>
+    <section class="dancer-explorer-head" aria-label="Genre filter">
+        <div class="dancer-section-title">
+            <div>
+                <span aria-hidden="true"></span>
+                <h2 th:text="${#lists.isEmpty(selectedGenres) ? 'Dancers' : #strings.listJoin(selectedGenres, ' · ')}">Dancers</h2>
             </div>
+            <p th:text="|${#lists.size(dancers)} profiles|">0 profiles</p>
+        </div>
+        <nav class="dancer-genre-filter" aria-label="Dancer genre filter">
+            <a th:href="@{/dancers}" th:classappend="${#lists.isEmpty(selectedGenres)} ? ' is-active'">All</a>
+            <a th:each="genre : ${dancerGenres}"
+               th:href="${genreLinks.get(genre)}"
+               th:classappend="${#lists.contains(selectedGenres, genre)} ? ' is-active'"
+               th:text="${genre}">Hip-hop</a>
+        </nav>
+    </section>
+
+    <section class="dancer-directory">
+        <article class="dancer-talent-card" th:each="dancer : ${dancers}">
+            <a class="dancer-card-media" th:href="@{/dancers/{id}(id=${dancer.id})}" aria-label="프로필 보기">
+                <img th:if="${dancer.profileImageUrl}" th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
+                <span th:unless="${dancer.profileImageUrl}" th:text="${#strings.substring(dancer.displayName, 0, 1)}">E</span>
+            </a>
+            <div class="dancer-card-copy">
+                <div class="dancer-card-head">
+                    <div>
+                        <span th:text="${dancer.primaryGenre ?: 'Genre open'}">Hip-hop</span>
+                        <strong th:text="${dancer.displayName}">Dancer</strong>
+                    </div>
+                    <small th:text="|@${dancer.username}|">@dancer</small>
+                </div>
+                <div class="dancer-card-meta">
+                    <span th:text="${dancer.crewName ?: 'Solo'}">Crew</span>
+                    <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">Instagram ↗</a>
+                    <span th:unless="${dancer.instagramUrl}">Profile only</span>
+                </div>
+                <p th:text="${dancer.bio}">Bio</p>
+                <div class="dancer-card-actions">
+                    <a th:href="@{/dancers/{id}(id=${dancer.id})}">visit profile →</a>
+                </div>
+            </div>
+        </article>
+        <article class="dancer-empty-state" th:if="${#lists.isEmpty(dancers)}">
+            <strong>No dancers match these filters.</strong>
+            <p>Try another genre or return to the full directory.</p>
+            <a th:href="@{/dancers}">All</a>
         </article>
     </section>
 </main>

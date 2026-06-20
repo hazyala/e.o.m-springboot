@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.domain.MediaType;
 import polytech.aisw.eom.domain.Post;
@@ -41,13 +42,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBoardType(BoardType boardType, Sort sort);
 
     @EntityGraph(attributePaths = "author")
+    List<Post> findByBoardTypeAndAdminApprovedEventTrue(BoardType boardType, Sort sort);
+
+    @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc();
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop6ByBoardTypeOrderByEventDateAscCreatedAtDesc(BoardType boardType);
+    List<Post> findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+            BoardType boardType,
+            LocalDate startDate,
+            LocalDate endDate
+    );
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+    List<Post> findTop6ByBoardTypeAndAdminApprovedEventTrueAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
             BoardType boardType,
             LocalDate startDate,
             LocalDate endDate
@@ -63,12 +71,24 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByTagsContainingIgnoreCase(String tag, Sort sort);
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findByBoardTypeAndEventDateBetween(
-            BoardType boardType,
-            LocalDate startDate,
-            LocalDate endDate,
-            Sort sort
-    );
+    @Query("""
+            select p from Post p
+            join p.author a
+            where lower(p.tags) like lower(concat('%', :query, '%'))
+               or lower(p.title) like lower(concat('%', :query, '%'))
+               or lower(p.content) like lower(concat('%', :query, '%'))
+               or lower(a.displayName) like lower(concat('%', :query, '%'))
+               or lower(a.crewName) like lower(concat('%', :query, '%'))
+            """)
+    List<Post> searchPosts(@Param("query") String query, Sort sort);
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findByAuthorUsernameOrderByCreatedAtDesc(String username);
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findByAuthorUsernameAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(String username);
+
+    long countByAuthorUsernameAndPortfolioPinnedTrue(String username);
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByBoardTypeAndMediaTypeInOrderByLikeCountDescCreatedAtDesc(

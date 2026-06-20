@@ -23,10 +23,14 @@
                th:text="${post.boardType.label}">SHOW</a>
             <h1 th:text="${post.title}">Post title</h1>
             <div class="post-author-row">
-                <img th:if="${post.author.profileImageUrl}" th:src="${post.author.profileImageUrl}" th:alt="${post.author.displayName}">
-                <span th:unless="${post.author.profileImageUrl}" aria-hidden="true"></span>
+                <a class="post-author-avatar-link" th:href="@{/dancers/{id}(id=${post.author.id})}" aria-label="작성자 프로필 보기">
+                    <img th:if="${post.author.profileImageUrl}" th:src="${post.author.profileImageUrl}" th:alt="${post.author.displayName}">
+                    <span th:unless="${post.author.profileImageUrl}" aria-hidden="true"></span>
+                </a>
                 <div>
-                    <strong th:text="${post.author.displayName}">Author</strong>
+                    <a class="post-author-name-link" th:href="@{/dancers/{id}(id=${post.author.id})}">
+                        <strong th:text="${post.author.displayName}">Author</strong>
+                    </a>
                     <p>
                         <span th:if="${post.author.crewName}" th:text="${post.author.crewName}">Crew</span>
                         <span th:text="| · ${post.location}|"> · Location</span>
@@ -93,10 +97,14 @@
         <section class="post-side-author">
             <h2><span></span>WRITTEN BY</h2>
             <div>
-                <img th:if="${post.author.profileImageUrl}" th:src="${post.author.profileImageUrl}" th:alt="${post.author.displayName}">
-                <span th:unless="${post.author.profileImageUrl}" aria-hidden="true"></span>
+                <a class="post-author-avatar-link" th:href="@{/dancers/{id}(id=${post.author.id})}" aria-label="작성자 프로필 보기">
+                    <img th:if="${post.author.profileImageUrl}" th:src="${post.author.profileImageUrl}" th:alt="${post.author.displayName}">
+                    <span th:unless="${post.author.profileImageUrl}" aria-hidden="true"></span>
+                </a>
                 <div>
-                    <strong th:text="${post.author.displayName}">Author</strong>
+                    <a class="post-author-name-link" th:href="@{/dancers/{id}(id=${post.author.id})}">
+                        <strong th:text="${post.author.displayName}">Author</strong>
+                    </a>
                     <p th:text="|${post.author.crewName ?: 'DANCER'} · ${post.boardType.label}|">DANCER · SHOW</p>
                 </div>
             </div>

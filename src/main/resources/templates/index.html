@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,7 +28,8 @@
                 <a href="#link" data-section-link="link">Link<span class="subtitle">세상과 연결되세요</span></a>
             </li>
             <li>
-                <a th:href="@{/login}">Login<span class="subtitle">가입해보세요</span></a>
+                <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login<span class="subtitle">가입해보세요</span></a>
+                <a sec:authorize="isAuthenticated()" th:href="@{/my-page}">My Page<span class="subtitle">프로필로 돌아가기</span></a>
             </li>
             <li>
                 <button class="theme-toggle-button" type="button" data-theme-toggle aria-label="Toggle theme">☀</button>
@@ -56,7 +57,8 @@
                     지금, 당신을 보여주세요.<br>
                     누군가가 기다리고 있어요.
                 </p>
-                <a class="show-button" th:href="@{/login}">SHOW</a>
+                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">SHOW</a>
+                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/SHOW}">SHOW</a>
             </div>
         </div>
     </section>
@@ -77,7 +79,8 @@
         <div class="cast-content-wrapper reveal-up">
             <h2 class="cast-title">Post it. Fill the Stage.</h2>
             <p class="cast-desc">댄서를 찾고 계신가요?&nbsp;&nbsp;공고를 등록해 연결을 시작하세요.</p>
-            <a class="show-button" th:href="@{/login}">CAST</a>
+            <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">CAST</a>
+            <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/CAST}">CAST</a>
         </div>
     </section>
 
@@ -94,7 +97,8 @@
                     배틀, 행사, 이벤트.<br>
                     이 씬의 모든 하입은 여기에.
                 </p>
-                <a class="show-button" th:href="@{/login}">HYPE</a>
+                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">HYPE</a>
+                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/HYPE}">HYPE</a>
             </div>
             <div class="hype-image-wrapper reveal-right">
                 <img th:src="@{/assets/source/hype.jpg}" alt="Hype Image">
@@ -112,7 +116,8 @@
                 <div class="desc">함께 연습할 사람, 지금 찾기.</div>
             </div>
             <div class="button-wrapper reveal-up">
-                <a class="show-button" th:href="@{/login}">LINK</a>
+                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">LINK</a>
+                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/LINK}">LINK</a>
             </div>
             <div class="link-right reveal-right">
                 <div class="title">Drop It</div>
@@ -142,7 +147,8 @@
         <div class="footer-column">
             <div class="footer-column-title">CONNECT</div>
             <a href="#link" data-section-link="link">Link</a>
-            <a th:href="@{/login}">Login</a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/my-page}">My Page</a>
             <a th:href="@{/dashboard}">Dashboard</a>
         </div>
         <div class="footer-column">
