@@ -19,8 +19,12 @@ public class CommunityController {
 
     @GetMapping("/posts/{id}")
     public String postDetail(@PathVariable Long id, Model model) {
-        model.addAttribute("post", communityService.findPost(id));
+        var post = communityService.findPost(id);
+        model.addAttribute("post", post);
         model.addAttribute("boards", BoardType.values());
+        model.addAttribute("postTags", communityService.parseTags(post.getTags()));
+        model.addAttribute("popularPosts", communityService.findPopularPosts());
+        model.addAttribute("recentPosts", communityService.findRecentPostsByBoard(post.getBoardType()));
         return "post-detail";
     }
 

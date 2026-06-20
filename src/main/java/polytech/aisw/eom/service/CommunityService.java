@@ -40,6 +40,14 @@ public class CommunityService {
         return postRepository.findByBoardTypeOrderByCreatedAtDesc(boardType);
     }
 
+    public List<Post> findPopularPosts() {
+        return postRepository.findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc();
+    }
+
+    public List<Post> findRecentPostsByBoard(BoardType boardType) {
+        return postRepository.findTop10ByBoardTypeOrderByCreatedAtDesc(boardType);
+    }
+
     public List<Post> findThisMonthEvents() {
         LocalDate today = LocalDate.now();
         return postRepository.findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
@@ -62,5 +70,15 @@ public class CommunityService {
                         .forEach(tags::add)
         );
         return List.copyOf(tags);
+    }
+
+    public List<String> parseTags(String tagText) {
+        if (tagText == null || tagText.isBlank()) {
+            return List.of();
+        }
+        return Arrays.stream(tagText.split(","))
+                .map(String::trim)
+                .filter(tag -> !tag.isBlank())
+                .toList();
     }
 }

@@ -10,20 +10,7 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body class="dashboard-page">
-<header class="dashboard-header">
-    <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
-    <form class="dashboard-search" th:action="@{/posts}" role="search">
-        <span aria-hidden="true">⌕</span>
-        <input type="search" name="tag" placeholder="Search tags" aria-label="Search tags">
-    </form>
-    <nav class="dashboard-nav" aria-label="Community navigation">
-        <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
-        <a th:each="board : ${boards}" th:href="@{/boards/{board}(board=${board.name()})}" th:text="${board.label}">Show</a>
-        <a th:href="@{/activity}">Activity<span class="subtitle">최신 글 목록</span></a>
-        <a th:href="@{/events}">Events<span class="subtitle">이번 달 공식 행사</span></a>
-    </nav>
-    <button class="dashboard-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">☼</button>
-</header>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <main class="community-shell">
     <section class="dancer-hero">
