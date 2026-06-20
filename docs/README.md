@@ -16,3 +16,11 @@
 - `feature-scope.md`: MVP, SHOULD, 제외 기능 범위
 - `render-deploy-guide.md`: Docker 없는 Render 배포 가이드
 
+현재 문서 기준:
+- Spring Boot MVC + Thymeleaf 구조를 유지합니다.
+- Controller -> Service -> Repository -> Domain 흐름을 유지합니다.
+- index/login 디자인 파일과 전용 CSS는 별도 요청 없이 수정하지 않습니다.
+- 로그인 후 화면은 대시보드 헤더 톤을 공유합니다.
+- 검색은 `/posts?q=` 통합 검색과 `/posts?tag=` 태그 검색을 지원하고, 빈 검색어는 전체 목록으로 흐르지 않습니다.
+- `/events`는 이번 달 HYPE 행사성 글 탐색 화면입니다.
+- 직접 영상 업로드, 직접 이미지 업로드, 외부 미디어 직접 embed는 제외합니다.

@@ -53,6 +53,11 @@ src/main/resources
 │  ├─ index.html
 │  ├─ login.html
 │  ├─ dashboard.html
+│  ├─ post-list.html
+│  ├─ post-detail.html
+│  ├─ my-page.html
+│  ├─ dancers.html
+│  ├─ dancer-detail.html
 │  └─ admin.html
 └─ static
    ├─ css
@@ -68,7 +73,9 @@ src/main/resources
 - Thymeleaf 템플릿은 화면 표현에 집중합니다.
 - 공통 헤더, 푸터, 네비게이션은 fragments로 분리합니다.
 - 인증/권한은 Spring Security 설정과 security 패키지에서 관리합니다.
-- 게시글 작성, 삭제, 조회 같은 기능은 Service를 통해 처리합니다.
+- 게시글 조회와 후속 작성/삭제 같은 기능은 Service를 통해 처리합니다.
+- 검색, 보드 탐색, Events, 마이페이지 데이터 조립은 Controller -> Service -> Repository 순서를 지킵니다.
+- 빈 검색어는 Service에서 빈 리스트로 처리해 `/posts`가 전체 게시글 목록으로 흐르지 않게 합니다.
 - `open-in-view=false`를 기준으로 지연 로딩 문제가 없도록 조회합니다.
 - Render 배포를 위해 `server.port=${PORT:8080}` 설정을 유지합니다.
 
@@ -122,6 +129,15 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 
 현재 `DataSeeder`는 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 게시글 `mediaUrl`에 반영합니다. Instagram 미디어 게시글은 `instagramUrl`도 해당 게시물 URL을 사용하고, 아직 개별 URL이 없는 항목만 프로필 URL을 fallback으로 둡니다.
 
+### PostSortOption
+
+- LATEST: `createdAt desc`
+- VIEWS: `viewCount desc, createdAt desc`
+- COMMENTS: `commentCount desc, createdAt desc`
+- LIKES: `likeCount desc, createdAt desc`
+
+보드 목록, 검색 결과, 태그 검색, Events 목록은 같은 정렬 키 `sort=latest|views|comments|likes`를 공유합니다.
+
 ### Comment
 
 - post
@@ -166,15 +182,18 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/boards/all`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 대시보드 Activity `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
 - `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
 - `/posts`: 헤더 검색과 대시보드 Tags `ALL` 목적지입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
+- `/posts` 검색어 정규화: `q`가 `#왁킹`처럼 들어오면 앞의 `#`를 제거합니다. 태그 클릭은 `/posts?tag={tag}`를 사용하고 `findByTagsContainingIgnoreCase`로 조회합니다.
 - `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다.
 - `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록이며, 검색 결과 화면의 목록형 UI를 공유합니다.
 - `/events`: 이번 달 HYPE 공식 행사 목록입니다. `eventDate`, `deadline`, `location`, `boardType`, `mediaType`, `thumbnailUrl`, 제목, 본문 미리보기, 작성자를 보여주며 외부 미디어는 상세 화면에서만 새 탭 링크로 제공합니다.
 - `/dancers`: 장르별 댄서 탐색 목록입니다.
 - `/my-page`, `/me`: 로그인한 사용자의 프로필, 포트폴리오, 작성 게시글, 참여 이벤트, 좋아요한 게시글, 작성 댓글, 자동 활동 이력을 렌더링합니다. admin도 본인 마이페이지에 접근할 수 있습니다.
 - `/my-page/profile`: 프로필 히어로에 쓰는 이름, 크루, 주 장르, 소개, 인스타그램 URL, 프로필 이미지 URL, 헤더 이미지 URL을 저장합니다.
+- `/my-page/account`: 아이디와 비밀번호를 변경합니다. 현재 비밀번호 검증을 통과해야 하며, 저장 후 로그아웃되어 `/login`으로 이동합니다.
 - `/my-page/portfolio/select`: 내가 쓴 게시글을 포트폴리오 탭에 포함하거나 제외합니다.
 - `/my-page/portfolio/pin`: 선택된 포트폴리오 중 상단 고정 상태를 저장하며 최대 3개로 제한합니다.
 - `/my-page/joined-events`: 날짜, 행사명, 결과로 구성된 참여 이벤트 이력을 사용자가 직접 추가합니다.
+- `/my-page/joined-events/update`, `/my-page/joined-events/delete`: 본인 참여 이벤트 이력만 수정/삭제합니다.
 - 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 `OPEN MEDIA`/`INSTAGRAM` 링크에서만 새 탭으로 열며, 대시보드와 목록 썸네일은 내부 게시글 미리보기로 취급합니다.
 - 직접 영상 업로드와 실제 embed는 현재 MVC 범위에 포함하지 않습니다. 기존 `mediaType + mediaUrl + thumbnailUrl` 필드를 유지합니다.
 
