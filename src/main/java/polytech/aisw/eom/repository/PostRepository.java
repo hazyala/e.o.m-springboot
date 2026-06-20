@@ -2,6 +2,7 @@ package polytech.aisw.eom.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @EntityGraph(attributePaths = "author")
     List<Post> findAll();
 
+    @Override
+    @EntityGraph(attributePaths = "author")
+    Optional<Post> findById(Long id);
+
     @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByOrderByCreatedAtDesc();
 
@@ -23,6 +28,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop10ByBoardTypeOrderByCreatedAtDesc(BoardType boardType);
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findByBoardTypeOrderByCreatedAtDesc(BoardType boardType);
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc();

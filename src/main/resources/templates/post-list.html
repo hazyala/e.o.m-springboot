@@ -14,10 +14,14 @@
     <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
     <form class="dashboard-search" th:action="@{/posts}" role="search">
         <span aria-hidden="true">⌕</span>
-        <input type="search" name="tag" placeholder="Search" aria-label="Search">
+        <input type="search" name="tag" placeholder="Search tags" aria-label="Search tags" th:value="${selectedTag}">
     </form>
     <nav class="dashboard-nav" aria-label="Community navigation">
         <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
+        <a th:each="board : ${boards}"
+           th:href="@{/boards/{board}(board=${board.name()})}"
+           th:classappend="${selectedBoard == board} ? ' is-current'"
+           th:text="${board.label}">Show</a>
         <a th:href="@{/activity}">Activity<span class="subtitle">최신 글 목록</span></a>
         <a th:href="@{/events}">Events<span class="subtitle">이번 달 공식 행사</span></a>
         <a th:href="@{/dancers}">Dancers<span class="subtitle">장르별 댄서 탐색</span></a>
@@ -26,30 +30,87 @@
 </header>
 
 <main class="community-shell">
-    <section class="community-title">
-        <p>COMMUNITY</p>
-        <h1 th:text="${title}">LATEST POSTS</h1>
+    <section class="community-hero" th:classappend="${selectedBoard != null} ? | board-${selectedBoard.name().toLowerCase()}|">
+        <div class="community-hero-media" aria-hidden="true">
+            <img th:if="${selectedBoard == null || selectedBoard.name() == 'SHOW'}" th:src="@{/assets/source/show.png}" alt="">
+            <img th:if="${selectedBoard != null and selectedBoard.name() == 'CAST'}" th:src="@{/assets/source/cast1.jpg}" alt="">
+            <img th:if="${selectedBoard != null and selectedBoard.name() == 'HYPE'}" th:src="@{/assets/source/hype.jpg}" alt="">
+            <img th:if="${selectedBoard != null and selectedBoard.name() == 'LINK'}" th:src="@{/assets/source/link.png}" alt="">
+        </div>
+        <div class="community-hero-copy">
+            <p th:text="${eyebrow}">COMMUNITY</p>
+            <h1 th:text="${title}">LATEST POSTS</h1>
+            <span th:if="${selectedTag}" class="community-selected-tag" th:text="|Selected tag · #${selectedTag}|">Selected tag</span>
+            <p th:text="${summary}">Community summary</p>
+        </div>
     </section>
-    <section class="community-list">
-        <article th:each="post : ${posts}">
-            <a class="community-card-media" th:href="@{/posts/{id}(id=${post.id})}">
-                <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-                <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
-            </a>
-            <div>
-                <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">SHOW</span>
-                <h2><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a></h2>
-                <p th:text="${post.content}">Post content</p>
-                <div class="dashboard-row-stats">
-                    <span th:text="${post.author.displayName}">Author</span>
-                    <span th:text="${post.location}">Location</span>
-                    <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">0</b></span>
-                    <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">0</b></span>
+
+    <section class="community-board-filter" aria-label="Board filters">
+        <a th:href="@{/posts}" th:classappend="${selectedBoard == null and selectedTag == null} ? ' is-active'">ALL</a>
+        <a th:each="board : ${boards}"
+           th:href="@{/boards/{board}(board=${board.name()})}"
+           th:classappend="${selectedBoard == board} ? ' is-active'"
+           th:text="${board.label}">SHOW</a>
+    </section>
+
+    <section class="community-layout">
+        <div class="community-list">
+            <article class="community-post-card" th:each="post : ${posts}">
+                <a class="community-card-media" th:href="@{/posts/{id}(id=${post.id})}">
+                    <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+                    <span th:if="${post.mediaType.name() != 'IMAGE'}" th:text="${post.mediaType.name() == 'INSTAGRAM'} ? 'IG' : 'LINK'">LINK</span>
+                </a>
+                <div class="community-card-copy">
+                    <div class="community-card-topline">
+                        <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
+                           class="dashboard-type"
+                           th:classappend="| type-${post.boardType.name().toLowerCase()}|"
+                           th:text="${post.boardType.label}">SHOW</a>
+                        <span th:text="${post.mediaType}">IMAGE</span>
+                    </div>
+                    <h2><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a></h2>
+                    <p th:text="${#strings.abbreviate(post.content, 132)}">Post content preview</p>
+                    <div class="community-meta-grid">
+                        <span th:text="${post.author.displayName}">Author</span>
+                        <span th:if="${post.author.crewName}" th:text="${post.author.crewName}">Crew</span>
+                        <span th:if="${post.location}" th:text="${post.location}">Location</span>
+                        <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="${#temporals.format(post.eventDate, 'MM.dd')}">06.20</time>
+                    </div>
+                    <div class="dashboard-row-stats">
+                        <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">0</b></span>
+                        <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${post.commentCount}">0</b></span>
+                        <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">0</b></span>
+                    </div>
                 </div>
-            </div>
-        </article>
+            </article>
+        </div>
+
+        <aside class="community-side-panel">
+            <section>
+                <h2>Boards</h2>
+                <a th:each="board : ${boards}" th:href="@{/boards/{board}(board=${board.name()})}">
+                    <strong th:text="${board.label}">SHOW</strong>
+                    <span th:text="${board.description}">Board description</span>
+                </a>
+            </section>
+            <section>
+                <h2>Tags</h2>
+                <div class="community-tag-cloud">
+                    <a th:each="tag, stat : ${tags}" th:if="${stat.index < 12}" th:href="@{/posts(tag=${tag})}" th:text="|#${tag}|">#tag</a>
+                </div>
+            </section>
+        </aside>
     </section>
 </main>
+
+<footer class="dashboard-footer">
+    <div>
+        <strong>Echo of Movement</strong>
+        <span>WE DON'T JUST MOVE, WE ECHO.</span>
+    </div>
+    <p>© 2026 E.O.M</p>
+</footer>
+
 <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

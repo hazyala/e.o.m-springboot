@@ -14,10 +14,11 @@
     <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
     <form class="dashboard-search" th:action="@{/posts}" role="search">
         <span aria-hidden="true">⌕</span>
-        <input type="search" name="tag" placeholder="Search" aria-label="Search">
+        <input type="search" name="tag" placeholder="Search tags" aria-label="Search tags">
     </form>
     <nav class="dashboard-nav" aria-label="Community navigation">
         <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
+        <a th:each="board : ${boards}" th:href="@{/boards/{board}(board=${board.name()})}" th:text="${board.label}">Show</a>
         <a th:href="@{/activity}">Activity<span class="subtitle">최신 글 목록</span></a>
         <a th:href="@{/events}">Events<span class="subtitle">이번 달 공식 행사</span></a>
     </nav>
@@ -25,20 +26,35 @@
 </header>
 
 <main class="community-shell">
-    <section class="community-title">
-        <p>DANCERS</p>
-        <h1>Street Genre Directory</h1>
+    <section class="dancer-hero">
+        <div>
+            <p>DANCERS</p>
+            <h1>Street Genre Directory</h1>
+            <span>crew, style, archive, contact</span>
+        </div>
     </section>
+
     <section class="dancer-directory">
         <article th:each="dancer : ${dancers}">
             <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
-            <strong th:text="${dancer.displayName}">Dancer</strong>
-            <span th:text="${dancer.crewName}">Crew</span>
-            <p th:text="${dancer.bio}">Bio</p>
-            <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">INSTAGRAM →</a>
+            <div class="dancer-card-copy">
+                <strong th:text="${dancer.displayName}">Dancer</strong>
+                <span th:if="${dancer.crewName}" th:text="${dancer.crewName}">Crew</span>
+                <p th:text="${dancer.bio}">Bio</p>
+                <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">INSTAGRAM</a>
+            </div>
         </article>
     </section>
 </main>
+
+<footer class="dashboard-footer">
+    <div>
+        <strong>Echo of Movement</strong>
+        <span>WE DON'T JUST MOVE, WE ECHO.</span>
+    </div>
+    <p>© 2026 E.O.M</p>
+</footer>
+
 <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

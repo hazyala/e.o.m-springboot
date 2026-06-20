@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findByUsername(String username);
 
     List<AppUser> findTop6ByRoleOrderByCreatedAtDesc(UserRole role);
+
+    List<AppUser> findByRoleOrderByCreatedAtDesc(UserRole role);
 }

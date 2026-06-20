@@ -14,10 +14,11 @@
     <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
     <form class="dashboard-search" th:action="@{/posts}" role="search">
         <span aria-hidden="true">⌕</span>
-        <input type="search" name="tag" placeholder="Search" aria-label="Search">
+        <input type="search" name="tag" placeholder="Search tags" aria-label="Search tags">
     </form>
     <nav class="dashboard-nav" aria-label="Community navigation">
         <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
+        <a th:each="board : ${boards}" th:href="@{/boards/{board}(board=${board.name()})}" th:text="${board.label}">Show</a>
         <a th:href="@{/activity}">Activity<span class="subtitle">최신 글 목록</span></a>
         <a th:href="@{/events}">Events<span class="subtitle">이번 달 공식 행사</span></a>
         <a th:href="@{/dancers}">Dancers<span class="subtitle">장르별 댄서 탐색</span></a>
@@ -26,25 +27,49 @@
 </header>
 
 <main class="community-shell">
-    <article class="post-detail-card">
+    <article class="post-detail-card" th:classappend="| board-${post.boardType.name().toLowerCase()}|">
         <div class="post-detail-media">
             <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-            <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
+            <div class="post-detail-media-badge" th:if="${post.mediaType.name() != 'IMAGE'}">
+                <span th:text="${post.mediaType.name() == 'INSTAGRAM'} ? 'External Instagram Media' : 'External Media Link'">External Media</span>
+            </div>
         </div>
         <div class="post-detail-copy">
-            <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">SHOW</span>
+            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
+               class="dashboard-type"
+               th:classappend="| type-${post.boardType.name().toLowerCase()}|"
+               th:text="${post.boardType.label}">SHOW</a>
             <h1 th:text="${post.title}">Post title</h1>
-            <p class="post-detail-meta" th:text="|${post.author.displayName} · ${post.author.crewName} · ${post.location}|">Author · Crew · Location</p>
+            <div class="post-detail-meta-grid">
+                <span th:text="|Writer · ${post.author.displayName}|">Writer</span>
+                <span th:if="${post.author.crewName}" th:text="|Crew · ${post.author.crewName}|">Crew</span>
+                <span th:text="|Board · ${post.boardType.label}|">Board</span>
+                <span th:if="${post.location}" th:text="|Location · ${post.location}|">Location</span>
+                <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="|Event · ${#temporals.format(post.eventDate, 'yyyy.MM.dd')}|">Event</time>
+                <time th:if="${post.deadline}" th:datetime="${post.deadline}" th:text="|Deadline · ${#temporals.format(post.deadline, 'yyyy.MM.dd')}|">Deadline</time>
+            </div>
             <p th:text="${post.content}">Content</p>
             <div class="dashboard-quick-stats">
                 <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">0</b></span>
                 <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${post.commentCount}">0</b></span>
                 <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">0</b></span>
             </div>
-            <a class="dashboard-view-post" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">MEDIA LINK →</a>
+            <div class="post-detail-actions">
+                <a th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">OPEN MEDIA</a>
+                <a th:if="${post.instagramUrl}" th:href="${post.instagramUrl}" target="_blank" rel="noreferrer">INSTAGRAM</a>
+            </div>
         </div>
     </article>
 </main>
+
+<footer class="dashboard-footer">
+    <div>
+        <strong>Echo of Movement</strong>
+        <span>WE DON'T JUST MOVE, WE ECHO.</span>
+    </div>
+    <p>© 2026 E.O.M</p>
+</footer>
+
 <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

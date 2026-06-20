@@ -1,7 +1,10 @@
 package polytech.aisw.eom.service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import polytech.aisw.eom.domain.AppUser;
 import polytech.aisw.eom.domain.BoardType;
@@ -33,6 +36,10 @@ public class CommunityService {
         return postRepository.findTop12ByTagsContainingIgnoreCaseOrderByCreatedAtDesc(tag);
     }
 
+    public List<Post> findPostsByBoard(BoardType boardType) {
+        return postRepository.findByBoardTypeOrderByCreatedAtDesc(boardType);
+    }
+
     public List<Post> findThisMonthEvents() {
         LocalDate today = LocalDate.now();
         return postRepository.findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
@@ -43,6 +50,17 @@ public class CommunityService {
     }
 
     public List<AppUser> findDancers() {
-        return userRepository.findTop6ByRoleOrderByCreatedAtDesc(UserRole.USER);
+        return userRepository.findByRoleOrderByCreatedAtDesc(UserRole.USER);
+    }
+
+    public List<String> findTags() {
+        Set<String> tags = new LinkedHashSet<>();
+        postRepository.findTagTexts().forEach(tagText ->
+                Arrays.stream(tagText.split(","))
+                        .map(String::trim)
+                        .filter(tag -> !tag.isBlank())
+                        .forEach(tags::add)
+        );
+        return List.copyOf(tags);
     }
 }
