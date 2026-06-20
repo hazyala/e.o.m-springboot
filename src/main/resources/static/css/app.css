@@ -2401,6 +2401,26 @@ html[data-theme="dark"] .community-side-panel section > a {
     font-weight: 800;
 }
 
+.post-board-pill.type-show {
+    background: var(--accent-show);
+    color: #ffffff;
+}
+
+.post-board-pill.type-cast {
+    background: var(--accent-cast);
+    color: #ffffff;
+}
+
+.post-board-pill.type-hype {
+    background: var(--accent-hype);
+    color: #ffffff;
+}
+
+.post-board-pill.type-link {
+    background: var(--accent-link);
+    color: #ffffff;
+}
+
 .post-article-head h1 {
     max-width: 850px;
     margin: 18px 0 20px;
@@ -2462,8 +2482,9 @@ html[data-theme="dark"] .community-side-panel section > a {
 }
 
 .post-top-actions button {
-    width: 34px;
+    min-width: 34px;
     height: 34px;
+    padding: 0 8px;
     border: 0;
     background: transparent;
     color: #555555;
@@ -2616,6 +2637,22 @@ html[data-theme="dark"] .community-side-panel section > a {
     font-size: 13px;
 }
 
+.post-action-bar span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.post-action-bar span b {
+    color: #555555;
+    font-weight: 800;
+}
+
+.post-action-bar span strong {
+    color: #555555;
+    font-weight: 800;
+}
+
 .post-action-bar a {
     margin-left: auto;
     font-family: Inter, system-ui, sans-serif;
@@ -2709,6 +2746,72 @@ html[data-theme="dark"] .community-side-panel section > a {
     background: transparent;
     color: #050505;
     border-color: rgba(0, 0, 0, 0.18);
+}
+
+.dancer-profile {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.7fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: stretch;
+    min-height: 520px;
+}
+
+.dancer-profile > img {
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    border-radius: 8px;
+    object-fit: cover;
+    filter: saturate(0.92) contrast(1.05);
+}
+
+.dancer-profile > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.dancer-profile > div > p:first-child {
+    margin: 0 0 16px;
+    color: #d30f46;
+    font-family: "Roboto Mono", monospace;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.dancer-profile h1 {
+    margin: 0;
+    color: #050505;
+    font-family: "Irish Grover", cursive;
+    font-size: clamp(56px, 10vw, 124px);
+    line-height: 0.88;
+}
+
+.dancer-profile span {
+    margin-top: 18px;
+    color: #d30f46;
+    font-family: "Roboto Mono", monospace;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.dancer-profile > div > p:last-of-type {
+    max-width: 560px;
+    margin: 26px 0 0;
+    color: #555555;
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+.dancer-profile a {
+    align-self: flex-start;
+    margin-top: 30px;
+    padding: 12px 18px;
+    border: 1px solid rgba(211, 15, 70, 0.38);
+    border-radius: 999px;
+    color: #d30f46;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 .post-side-list {
@@ -2882,7 +2985,8 @@ html[data-theme="dark"] .post-side-title-row > a {
 }
 
 html[data-theme="dark"] .post-body-copy > p,
-html[data-theme="dark"] .post-comments input {
+html[data-theme="dark"] .post-comments input,
+html[data-theme="dark"] .dancer-profile h1 {
     color: #eeeeee;
 }
 
@@ -2896,6 +3000,23 @@ html[data-theme="dark"] .post-side-author > a {
 html[data-theme="dark"] .instagram-preview-card {
     background: rgba(211, 15, 70, 0.12);
     border-color: rgba(255, 77, 109, 0.32);
+}
+
+html[data-theme="dark"] .post-side-author > a {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.24);
+}
+
+html[data-theme="dark"] .post-action-bar span b,
+html[data-theme="dark"] .post-action-bar span strong,
+html[data-theme="dark"] .post-top-actions button,
+html[data-theme="dark"] .dancer-profile > div > p:last-of-type {
+    color: #c7c7c7;
+}
+
+html[data-theme="dark"] .dancer-profile a {
+    color: #ff4d6d;
+    border-color: rgba(255, 77, 109, 0.36);
 }
 
 .admin-grid {
@@ -3054,6 +3175,15 @@ th {
 
     .dancer-directory {
         grid-template-columns: 1fr;
+    }
+
+    .dancer-profile {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .dancer-profile > img {
+        min-height: 380px;
     }
 }
 

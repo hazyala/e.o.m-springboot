@@ -87,4 +87,11 @@ public class CommunityController {
         model.addAttribute("dancers", communityService.findDancers());
         return "dancers";
     }
+
+    @GetMapping("/dancers/{id}")
+    public String dancerDetail(@PathVariable Long id, Model model) {
+        model.addAttribute("boards", BoardType.values());
+        model.addAttribute("dancer", communityService.findDancer(id));
+        return "dancer-detail";
+    }
 }

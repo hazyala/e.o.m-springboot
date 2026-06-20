@@ -34,7 +34,7 @@
                 </div>
                 <div class="post-top-actions">
                     <button type="button" aria-label="Save post">♡</button>
-                    <button type="button" aria-label="Share post">↗</button>
+                    <button type="button" aria-label="Share post">SHARE</button>
                     <button type="button" aria-label="More actions">…</button>
                 </div>
             </div>
@@ -73,10 +73,10 @@
         </div>
 
         <div class="post-action-bar">
-            <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">0</b></span>
-            <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${post.commentCount}">0</b></span>
-            <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">0</b></span>
-            <a th:href="@{/posts}">☰ 목록으로</a>
+            <span><b>♡</b><strong th:text="${post.likeCount}">0</strong></span>
+            <span><b>댓글</b><strong th:text="${post.commentCount}">0</strong></span>
+            <span><b>조회</b><strong th:text="${post.viewCount}">0</strong></span>
+            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">☰ 목록으로</a>
         </div>
 
         <section class="post-comments">
@@ -101,7 +101,7 @@
                 </div>
             </div>
             <p th:text="${post.author.bio}">Author bio</p>
-            <a th:if="${post.author.instagramUrl}" th:href="${post.author.instagramUrl}" target="_blank" rel="noreferrer">프로필 보기</a>
+            <a th:href="@{/dancers/{id}(id=${post.author.id})}">프로필 보기</a>
         </section>
 
         <section class="post-side-list">

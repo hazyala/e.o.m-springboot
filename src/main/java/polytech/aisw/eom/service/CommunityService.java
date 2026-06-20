@@ -61,6 +61,10 @@ public class CommunityService {
         return userRepository.findByRoleOrderByCreatedAtDesc(UserRole.USER);
     }
 
+    public AppUser findDancer(Long id) {
+        return userRepository.findById(id).orElseThrow();
+    }
+
     public List<String> findTags() {
         Set<String> tags = new LinkedHashSet<>();
         postRepository.findTagTexts().forEach(tagText ->
