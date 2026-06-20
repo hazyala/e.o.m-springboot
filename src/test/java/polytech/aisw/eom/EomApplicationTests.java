@@ -74,8 +74,13 @@ class EomApplicationTests {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")));
 
         mockMvc.perform(get("/activity").with(user("dancer1").roles("USER")))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/boards/all?sort=latest"));
+
+        mockMvc.perform(get("/boards/all").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("LATEST ACTIVITY")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("ALL")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("릴스 기반 코레오 쇼케이스")));
 
         mockMvc.perform(get("/events").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())

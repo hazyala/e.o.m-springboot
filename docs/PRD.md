@@ -47,21 +47,22 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - Today Pick의 `VIEW POST`, Popular/Recent 게시글 제목과 미리보기는 내부 게시글 상세 `/posts/{id}`로 이동
 - Recent 영역은 기본값을 SHOW로 두고 `SHOW`, `CAST`, `HYPE`, `LINK` 탭을 페이지 전체 새로고침 없이 전환
 - Recent 탭은 선택된 보드의 더미데이터 최신 글 10개만 미리보기로 노출
+- Recent의 `ALL` 및 헤더의 SHOW/CAST/HYPE/LINK는 보드별 목록 `/boards/{board}`로 이동
 - Tags는 태그 검색 결과 `/posts?tag={tag}`로 이동
-- Activity는 Recent 탭 선택과 무관한 전체 최신글 목록 `/activity`로 이동
+- Activity의 `ALL`은 별도 Activity 화면이 아니라 전체 게시글 목록 `/boards/all`로 이동
 - Events는 이번 달 HYPE 공식 행사 목록 `/events`로 이동
 - Dancers는 장르별 댄서 탐색 페이지 `/dancers`로 이동
 - 추천 댄서의 Follow는 사용자의 인스타그램 프로필을 새 탭으로 열기
-- 인스타그램, 유튜브 등 외부 미디어 링크는 게시글 상세에서 첨부 링크 또는 미리보기로 다루고, 대시보드 썸네일 자체는 게시글 미리보기 역할만 수행
+- 인스타그램, 유튜브 등 외부 미디어 링크는 게시글 상세에서 새 탭 링크로만 다루고, 대시보드와 목록 썸네일 자체는 내부 게시글 미리보기 역할만 수행
 
 ### 보드
 
-- SHOW: 포트폴리오, 공연 기록, 연습 영상, 안무 쉐어
-- CAST: 강사, 백업댄서, 팀원, 오디션 모집
-- HYPE: 배틀, 워크숍, 행사 홍보
-- LINK: 연습 파트너, 네트워킹, 정보 공유
+- SHOW: 포트폴리오, 공연 기록, 연습 영상, 안무 쉐어 등 나의 활동을 기록하고 보여주는 공간
+- CAST: 강사, 백업댄서, 팀원, 오디션 모집처럼 함께 움직일 사람과 기회를 찾는 공간
+- HYPE: 배틀, 워크숍, 쇼케이스, 파티와 같은 현장의 열기와 일정을 공유하는 공간
+- LINK: 연습 파트너, 촬영 메이트, 공간 공유, 피드백 모임처럼 댄서들이 서로 연결되는 공간
 
-각 보드는 최소한 목록, 상세, 작성 흐름을 가진다.
+전체 목록은 `/boards/all`, 각 보드는 `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK` 목록과 `/posts/{id}` 상세 흐름을 가진다. 목록은 기본 최신순이며 `sort=latest|views|comments|likes`로 최신순, 조회순, 댓글순, 좋아요순 정렬을 지원한다. 작성 흐름은 후속 범위로 둔다.
 
 ### 마이페이지
 
@@ -76,7 +77,8 @@ E.O.M은 댄서들이 이미 쓰는 인스타그램 문화와 연결되면서도
 - 게시글에 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL 첨부
 - MVP에서는 직접 영상 파일 업로드를 지원하지 않음
 - 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용
-- 상세 화면은 이후 `mediaType + mediaUrl` 기반 embed 또는 링크 폴백으로 확장
+- 상세 화면은 `thumbnailUrl` 중심으로 미디어를 보여주고 `mediaType`이 IMAGE가 아니면 외부 미디어임을 표시합니다.
+- `mediaUrl`과 `instagramUrl`은 상세 화면에서 새 탭 링크로 열며, 실제 embed 또는 직접 영상 업로드는 구현하지 않습니다.
 - 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 함
 - 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고, 확인 전에는 위 프로필 URL을 fallback으로 사용한 뒤 실제 릴스/게시물 URL로 교체 예정
 

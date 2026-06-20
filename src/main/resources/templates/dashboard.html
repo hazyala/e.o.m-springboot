@@ -10,26 +10,7 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body class="dashboard-page">
-<header class="dashboard-header">
-    <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
-    <form class="dashboard-search" th:action="@{/posts}" role="search">
-        <span aria-hidden="true">⌕</span>
-        <input type="search" name="tag" placeholder="Search" aria-label="Search">
-    </form>
-    <nav class="dashboard-nav" aria-label="Dashboard navigation">
-        <a class="dashboard-add-button" href="#">Add New<span class="subtitle">새 글을 작성하세요</span></a>
-        <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
-        <a th:href="@{/dashboard(board='SHOW')}">Show<span class="subtitle">당신을 보여주세요</span></a>
-        <a th:href="@{/dashboard(board='CAST')}">Cast<span class="subtitle">공연 기회를 만나세요</span></a>
-        <a th:href="@{/dashboard(board='HYPE')}">Hype<span class="subtitle">움직임에 열광을 더하세요</span></a>
-        <a th:href="@{/dashboard(board='LINK')}">Link<span class="subtitle">세상과 연결되세요</span></a>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin<span class="subtitle">운영 도구</span></a>
-    </nav>
-    <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
-        <button class="dashboard-logout" type="submit">Logout<span class="subtitle">계정에서 나가기</span></button>
-    </form>
-    <button class="dashboard-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">☼</button>
-</header>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <main>
     <span class="dashboard-sr-only">Featured Media</span>
@@ -92,7 +73,7 @@
                         <span></span>
                         <h2>RECENT</h2>
                     </div>
-                    <a data-recent-all th:href="@{/dashboard(board=${selectedBoard})}">ALL →</a>
+                    <a data-recent-all th:href="@{/boards/{board}(board=${selectedBoard.name()})}">ALL →</a>
                 </div>
                 <div class="dashboard-tabs" aria-label="Board filters" data-dashboard-board-tabs>
                     <a th:each="board : ${boards}"
@@ -193,7 +174,7 @@
                         <span></span>
                         <h2>TAGS</h2>
                     </div>
-                    <a th:href="@{/posts}">ALL →</a>
+                    <a th:href="@{/boards/all}">ALL →</a>
                 </div>
                 <div class="dashboard-tags">
                     <a class="dashboard-tag" th:each="tag, stat : ${tags}" th:if="${stat.index < 8}" th:href="@{/posts(tag=${tag})}" th:text="|# ${tag}|"># 힙합</a>
@@ -206,7 +187,7 @@
                         <span></span>
                         <h2>ACTIVITY</h2>
                     </div>
-                    <a th:href="@{/activity}">ALL →</a>
+                    <a th:href="@{/boards/all}">ALL →</a>
                 </div>
                 <ul class="dashboard-activity">
                     <li class="dashboard-activity-item" th:each="post, stat : ${recentPosts}" th:if="${stat.index < 5}">
@@ -280,7 +261,7 @@
                     row.classList.toggle("is-visible", row.dataset.board === board);
                 });
                 if (allLink) {
-                    allLink.href = `/dashboard?board=${board}`;
+                    allLink.href = `/boards/${board}`;
                 }
             });
         });

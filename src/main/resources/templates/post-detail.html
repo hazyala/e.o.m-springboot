@@ -10,41 +10,151 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body class="dashboard-page">
-<header class="dashboard-header">
-    <a class="dashboard-logo" th:href="@{/}">Echo of Movement</a>
-    <form class="dashboard-search" th:action="@{/posts}" role="search">
-        <span aria-hidden="true">⌕</span>
-        <input type="search" name="tag" placeholder="Search" aria-label="Search">
-    </form>
-    <nav class="dashboard-nav" aria-label="Community navigation">
-        <a th:href="@{/dashboard}">Dash<span class="subtitle">오늘의 움직임</span></a>
-        <a th:href="@{/activity}">Activity<span class="subtitle">최신 글 목록</span></a>
-        <a th:href="@{/events}">Events<span class="subtitle">이번 달 공식 행사</span></a>
-        <a th:href="@{/dancers}">Dancers<span class="subtitle">장르별 댄서 탐색</span></a>
-    </nav>
-    <button class="dashboard-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">☼</button>
-</header>
+<div th:replace="~{fragments/header :: header}"></div>
 
-<main class="community-shell">
-    <article class="post-detail-card">
-        <div class="post-detail-media">
-            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-            <span th:if="${post.mediaType.name() != 'IMAGE'}">▶</span>
-        </div>
-        <div class="post-detail-copy">
-            <span class="dashboard-type" th:classappend="| type-${post.boardType.name().toLowerCase()}|" th:text="${post.boardType.label}">SHOW</span>
+<main class="post-page-shell">
+    <article class="post-article">
+        <a class="post-back-link" th:href="${backUrl}">← BACK</a>
+
+        <header class="post-article-head">
+            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
+               class="post-board-pill"
+               th:classappend="| type-${post.boardType.name().toLowerCase()}|"
+               th:text="${post.boardType.label}">SHOW</a>
             <h1 th:text="${post.title}">Post title</h1>
-            <p class="post-detail-meta" th:text="|${post.author.displayName} · ${post.author.crewName} · ${post.location}|">Author · Crew · Location</p>
-            <p th:text="${post.content}">Content</p>
-            <div class="dashboard-quick-stats">
-                <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">0</b></span>
-                <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${post.commentCount}">0</b></span>
-                <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">0</b></span>
+            <div class="post-author-row">
+                <img th:if="${post.author.profileImageUrl}" th:src="${post.author.profileImageUrl}" th:alt="${post.author.displayName}">
+                <span th:unless="${post.author.profileImageUrl}" aria-hidden="true"></span>
+                <div>
+                    <strong th:text="${post.author.displayName}">Author</strong>
+                    <p>
+                        <span th:if="${post.author.crewName}" th:text="${post.author.crewName}">Crew</span>
+                        <span th:text="| · ${post.location}|"> · Location</span>
+                    </p>
+                </div>
+                <div class="post-top-actions">
+                    <button type="button" aria-label="Save post">♡</button>
+                    <button type="button" aria-label="Share post">↗</button>
+                    <button type="button" aria-label="More actions">…</button>
+                </div>
             </div>
-            <a class="dashboard-view-post" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">MEDIA LINK →</a>
+        </header>
+
+        <section class="post-media-frame">
+            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+            <div class="post-media-overlay" th:if="${post.mediaType.name() != 'IMAGE'}">
+                <span aria-hidden="true">▶</span>
+                <strong th:text="${post.mediaType.name() == 'INSTAGRAM'} ? 'INSTAGRAM MEDIA' : 'EXTERNAL MEDIA'">EXTERNAL MEDIA</strong>
+            </div>
+        </section>
+
+        <section class="post-body-copy">
+            <p th:text="${post.content}">Post content</p>
+            <div class="post-info-strip">
+                <span th:text="|Board · ${post.boardType.label}|">Board</span>
+                <span th:if="${post.location}" th:text="|Location · ${post.location}|">Location</span>
+                <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="|Event · ${#temporals.format(post.eventDate, 'yyyy.MM.dd')}|">Event</time>
+                <time th:if="${post.deadline}" th:datetime="${post.deadline}" th:text="|Deadline · ${#temporals.format(post.deadline, 'yyyy.MM.dd')}|">Deadline</time>
+            </div>
+        </section>
+
+        <a class="instagram-preview-card" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">
+            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+            <div>
+                <span th:text="${post.mediaType.name() == 'INSTAGRAM'} ? 'Instagram Preview' : 'External Media Preview'">Instagram Preview</span>
+                <strong th:text="${post.title}">Post title</strong>
+                <p th:text="${post.mediaUrl}">mediaUrl</p>
+            </div>
+            <em>OPEN</em>
+        </a>
+
+        <div class="post-tag-row" th:if="${!postTags.isEmpty()}">
+            <a th:each="tag : ${postTags}" th:href="@{/posts(tag=${tag})}" th:text="|# ${tag}|"># tag</a>
         </div>
+
+        <div class="post-action-bar">
+            <span><b>♡</b><strong th:text="${post.likeCount}">0</strong></span>
+            <span><b>댓글</b><strong th:text="${post.commentCount}">0</strong></span>
+            <span><b>조회</b><strong th:text="${post.viewCount}">0</strong></span>
+            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">☰ 목록으로</a>
+        </div>
+
+        <section class="post-comments">
+            <h2><span></span>COMMENTS <b th:text="${post.commentCount}">0</b></h2>
+            <form>
+                <span class="post-avatar-placeholder" aria-hidden="true"></span>
+                <input type="text" placeholder="댓글을 남겨보세요" aria-label="댓글">
+                <button type="button">등록</button>
+            </form>
+        </section>
     </article>
+
+    <aside class="post-side">
+        <section class="post-side-author">
+            <h2><span></span>WRITTEN BY</h2>
+            <div>
+                <img th:if="${post.author.profileImageUrl}" th:src="${post.author.profileImageUrl}" th:alt="${post.author.displayName}">
+                <span th:unless="${post.author.profileImageUrl}" aria-hidden="true"></span>
+                <div>
+                    <strong th:text="${post.author.displayName}">Author</strong>
+                    <p th:text="|${post.author.crewName ?: 'DANCER'} · ${post.boardType.label}|">DANCER · SHOW</p>
+                </div>
+            </div>
+            <p th:text="${post.author.bio}">Author bio</p>
+            <a th:href="@{/dancers/{id}(id=${post.author.id})}">프로필 보기</a>
+        </section>
+
+        <section class="post-side-list">
+            <h2><span></span>POPULAR</h2>
+            <a th:each="item, stat : ${popularPosts}" th:if="${stat.index < 4}" th:href="@{/posts/{id}(id=${item.id})}">
+                <div>
+                    <span th:classappend="| type-${item.boardType.name().toLowerCase()}|" th:text="${item.boardType.label}">SHOW</span>
+                    <strong th:text="${item.title}">Post title</strong>
+                    <small th:text="|조회 ${item.viewCount}|">조회 0</small>
+                </div>
+                <img th:if="${item.thumbnailUrl}" th:src="${item.thumbnailUrl}" th:alt="${item.title}">
+            </a>
+        </section>
+
+        <section class="post-side-tags" th:if="${!postTags.isEmpty()}">
+            <h2><span></span>TAGS</h2>
+            <div>
+                <a th:each="tag : ${postTags}" th:href="@{/posts(tag=${tag})}" th:text="|# ${tag}|"># tag</a>
+            </div>
+        </section>
+
+        <section class="post-side-list post-side-recent">
+            <div class="post-side-title-row">
+                <h2><span></span><b th:text="|MORE IN ${post.boardType.label}|">MORE IN SHOW</b></h2>
+                <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">ALL →</a>
+            </div>
+            <a th:each="item, stat : ${recentPosts}" th:if="${stat.index < 5}" th:href="@{/posts/{id}(id=${item.id})}">
+                <div>
+                    <strong th:text="${item.title}">Post title</strong>
+                    <small th:text="|${item.author.displayName} · 조회 ${item.viewCount}|">Author · 조회 0</small>
+                </div>
+                <img th:if="${item.thumbnailUrl}" th:src="${item.thumbnailUrl}" th:alt="${item.title}">
+            </a>
+        </section>
+
+        <section class="post-side-promo">
+            <img th:src="@{/assets/source/milad-fakurian-ZI1VF7thzys-unsplash.jpg}" alt="">
+            <div>
+                <strong>WE DON’T JUST<br>MOVE, WE ECHO.</strong>
+                <span>ECHO OF MOVEMENT</span>
+            </div>
+        </section>
+    </aside>
 </main>
+
+<footer class="dashboard-footer">
+    <div>
+        <strong>Echo of Movement</strong>
+        <span>WE DON’T JUST MOVE, WE ECHO.</span>
+    </div>
+    <p>© 2026 E.O.M</p>
+</footer>
+
 <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

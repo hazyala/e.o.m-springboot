@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dancers | E.O.M</title>
+    <title th:text="${dancer.displayName + ' | E.O.M'}">Dancer | E.O.M</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
@@ -13,31 +13,22 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="community-shell">
-    <section class="dancer-hero">
+    <section class="dancer-profile">
+        <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
         <div>
-            <p>DANCERS</p>
-            <h1>Street Genre Directory</h1>
-            <span>crew, style, archive, contact</span>
+            <p>DANCER PROFILE</p>
+            <h1 th:text="${dancer.displayName}">Dancer</h1>
+            <span th:if="${dancer.crewName}" th:text="${dancer.crewName}">Crew</span>
+            <p th:text="${dancer.bio}">Bio</p>
+            <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">INSTAGRAM</a>
         </div>
-    </section>
-
-    <section class="dancer-directory">
-        <article th:each="dancer : ${dancers}">
-            <img th:src="${dancer.profileImageUrl}" th:alt="${dancer.displayName}">
-            <div class="dancer-card-copy">
-                <strong th:text="${dancer.displayName}">Dancer</strong>
-                <span th:if="${dancer.crewName}" th:text="${dancer.crewName}">Crew</span>
-                <p th:text="${dancer.bio}">Bio</p>
-                <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">INSTAGRAM</a>
-            </div>
-        </article>
     </section>
 </main>
 
 <footer class="dashboard-footer">
     <div>
         <strong>Echo of Movement</strong>
-        <span>WE DON'T JUST MOVE, WE ECHO.</span>
+        <span>WE DON’T JUST MOVE, WE ECHO.</span>
     </div>
     <p>© 2026 E.O.M</p>
 </footer>
