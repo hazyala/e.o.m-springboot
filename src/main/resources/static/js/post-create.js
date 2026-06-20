@@ -30,6 +30,11 @@
     const thumbnailOutput = root.querySelector("[data-preview-thumbnail-output]");
     const mediaBadge = root.querySelector("[data-preview-media-badge]");
     const mediaPlay = root.querySelector(".post-preview-play");
+    const linkCard = root.querySelector("[data-preview-link-card]");
+    const linkThumbnail = root.querySelector("[data-preview-link-thumbnail]");
+    const linkLabel = root.querySelector("[data-preview-link-label]");
+    const linkTitle = root.querySelector("[data-preview-link-title]");
+    const linkUrl = root.querySelector("[data-preview-link-url]");
 
     function selectedBoard() {
         return boardInputs.find((input) => input.checked)?.value || "SHOW";
@@ -80,6 +85,12 @@
         return "EXTERNAL MEDIA";
     }
 
+    function resolveLinkLabel(mediaUrl) {
+        return mediaUrl.toLowerCase().includes("instagram.com/")
+            ? "Instagram Preview"
+            : "External Media Preview";
+    }
+
     function syncOptionalFields(board) {
         const needsDate = board !== "SHOW";
         if (dateFields) {
@@ -125,18 +136,37 @@
         deadlineOutput.textContent = deadline;
 
         const thumbnailUrl = thumbnailInput.value.trim();
+        mediaFrame.hidden = !thumbnailUrl;
         thumbnailOutput.hidden = !thumbnailUrl;
         mediaFrame.classList.toggle("has-image", Boolean(thumbnailUrl));
         if (thumbnailUrl) {
             thumbnailOutput.src = thumbnailUrl;
+            linkThumbnail.src = thumbnailUrl;
+            linkThumbnail.hidden = false;
+            linkCard.classList.remove("is-text-only");
         } else {
             thumbnailOutput.removeAttribute("src");
+            linkThumbnail.removeAttribute("src");
+            linkThumbnail.hidden = true;
+            linkCard.classList.add("is-text-only");
         }
 
         const mediaUrl = mediaInput.value.trim();
-        mediaBadge.hidden = !mediaUrl;
+        mediaBadge.hidden = !mediaUrl || !thumbnailUrl;
         mediaBadge.textContent = mediaUrl ? resolveMediaLabel(mediaUrl) : "";
-        mediaPlay.hidden = !mediaUrl;
+        mediaPlay.hidden = !mediaUrl || !thumbnailUrl;
+
+        linkCard.hidden = !mediaUrl;
+        if (mediaUrl) {
+            linkCard.href = mediaUrl;
+            linkLabel.textContent = resolveLinkLabel(mediaUrl);
+            linkTitle.textContent = titleInput.value.trim() || `${board} post media`;
+            linkUrl.textContent = mediaUrl;
+        } else {
+            linkCard.removeAttribute("href");
+            linkTitle.textContent = "";
+            linkUrl.textContent = "";
+        }
 
         if (contentCount) {
             contentCount.textContent = String(contentInput.value.length);

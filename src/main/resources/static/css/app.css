@@ -4752,8 +4752,13 @@ html[data-theme="dark"] .community-event-meta span {
     display: none !important;
 }
 
+.post-live-preview .post-board-pill {
+    display: inline-flex;
+    margin-bottom: 18px;
+}
+
 .post-live-preview h2 {
-    margin: 14px 0 14px;
+    margin: 0 0 16px;
     color: #030303;
     font-size: clamp(28px, 3vw, 38px);
     line-height: 1.08;
@@ -4764,7 +4769,7 @@ html[data-theme="dark"] .community-event-meta span {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 22px;
 }
 
 .post-preview-author > span {
@@ -4875,6 +4880,14 @@ html[data-theme="dark"] .community-event-meta span {
     color: #d30f46;
     font-size: 15px;
     font-weight: 800;
+}
+
+.post-preview-link-card {
+    margin: 20px 0 0;
+}
+
+.post-preview-link-card.is-text-only {
+    grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .post-body-copy {
