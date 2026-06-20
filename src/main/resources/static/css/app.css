@@ -2898,11 +2898,6 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     text-transform: uppercase;
 }
 
-.my-work-grid article {
-    position: relative;
-    min-width: 0;
-}
-
 .my-work-media {
     position: relative;
     display: grid;
@@ -2929,25 +2924,6 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     aspect-ratio: 16 / 10;
 }
 
-.my-work-media i {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 6px 9px;
-    border-radius: 999px;
-    background: #d30f46;
-    color: #ffffff;
-    font-size: 11px;
-    font-style: normal;
-    font-weight: 900;
-}
-
-.my-work-grid h3 {
-    margin: 12px 0 8px;
-    font-size: 18px;
-    line-height: 1.3;
-}
-
 .my-post-actions {
     display: flex;
     flex-wrap: wrap;
@@ -2956,25 +2932,33 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .my-pin-form {
     position: absolute;
-    top: 10px;
+    top: 9px;
+    right: 39px;
+    z-index: 2;
+}
+
+.my-remove-form {
+    position: absolute;
+    top: 9px;
     right: 10px;
     z-index: 2;
 }
 
 .my-pin-button {
-    display: grid;
-    width: 32px;
-    height: 32px;
+    display: inline-grid;
+    width: 22px;
+    height: 22px;
     place-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.72);
+    border: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.84);
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.72);
+    color: #8b8b92;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+    opacity: 0.82;
 }
 
-.my-pin-button span {
+.my-pin-button span,
+.my-icon-action span {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -2984,31 +2968,57 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .my-pin-button::before {
-    width: 9px;
-    height: 13px;
-    border-radius: 7px 7px 7px 0;
-    background: #9a9aa2;
+    width: 7px;
+    height: 7px;
+    border-radius: 50% 50% 50% 0;
+    background: currentColor;
     content: "";
     transform: rotate(-45deg);
 }
 
 .my-pin-button::after {
     width: 2px;
-    height: 8px;
-    margin-top: -4px;
-    background: #9a9aa2;
+    height: 7px;
+    margin-top: -3px;
+    background: currentColor;
     content: "";
     transform: rotate(45deg);
 }
 
-.my-pin-button.is-pinned {
-    background: #d30f46;
-    border-color: #d30f46;
+.my-pin-button:hover,
+.my-icon-action:hover,
+.my-star-form button:hover {
+    opacity: 1;
 }
 
-.my-pin-button.is-pinned::before,
-.my-pin-button.is-pinned::after {
-    background: #ffffff;
+.my-pin-button.is-pinned {
+    background: #d30f46;
+    color: #ffffff;
+    opacity: 1;
+}
+
+.my-icon-action {
+    display: inline-grid;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.72);
+    color: #8b8b92;
+    cursor: pointer;
+    opacity: 0.82;
+}
+
+.my-icon-action::before {
+    content: "×";
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.my-icon-action:hover {
+    color: #d30f46;
 }
 
 .my-post-actions button,
@@ -3025,6 +3035,7 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     gap: 22px;
 }
 
+.my-work-grid article,
 .my-post-card-grid article,
 .my-event-card-grid article {
     position: relative;
@@ -3078,21 +3089,21 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .my-star-form {
     position: absolute;
-    top: 10px;
+    top: 9px;
     right: 10px;
 }
 
 .my-star-form button {
-    display: grid;
-    width: 34px;
-    height: 34px;
+    display: inline-grid;
+    width: 22px;
+    height: 22px;
     place-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.72);
+    border: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.86);
-    color: #9a9aa2;
+    background: rgba(255, 255, 255, 0.72);
+    color: #8b8b92;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+    opacity: 0.82;
 }
 
 .my-star-form button span {
@@ -3107,14 +3118,14 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 .my-star-form button::before {
     color: currentColor;
     content: "☆";
-    font-size: 20px;
+    font-size: 17px;
     line-height: 1;
 }
 
 .my-star-form button.is-selected {
-    border-color: #d30f46;
-    background: #d30f46;
-    color: #ffffff;
+    background: transparent;
+    color: #d30f46;
+    opacity: 1;
 }
 
 .my-star-form button.is-selected::before {

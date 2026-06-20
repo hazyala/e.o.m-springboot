@@ -98,24 +98,32 @@
                         <a class="my-work-media" th:href="@{/posts/{id}(id=${post.id})}">
                             <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
                             <span th:unless="${post.thumbnailUrl}" th:text="${post.boardType.label}">SHOW</span>
-                            <i th:if="${post.portfolioPinned}">PIN</i>
                         </a>
-                        <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Portfolio title</a></h3>
-                        <div class="my-post-actions">
-                            <form class="my-pin-form" th:action="@{/my-page/portfolio/pin}" method="post">
-                                <input type="hidden" name="postId" th:value="${post.id}">
-                                <input type="hidden" name="pinned" th:value="${!post.portfolioPinned}">
-                                <input type="hidden" name="returnTab" value="portfolio">
-                                <button class="my-pin-button" type="submit" th:classappend="${post.portfolioPinned} ? ' is-pinned'" th:title="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}">
-                                    <span th:text="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}">대표 고정</span>
-                                </button>
-                            </form>
-                            <form th:action="@{/my-page/portfolio/select}" method="post">
-                                <input type="hidden" name="postId" th:value="${post.id}">
-                                <input type="hidden" name="selected" value="false">
-                                <input type="hidden" name="returnTab" value="portfolio">
-                                <button class="my-icon-action" type="submit" title="포트폴리오에서 제외">제외</button>
-                            </form>
+                        <form class="my-pin-form" th:action="@{/my-page/portfolio/pin}" method="post">
+                            <input type="hidden" name="postId" th:value="${post.id}">
+                            <input type="hidden" name="pinned" th:value="${!post.portfolioPinned}">
+                            <input type="hidden" name="returnTab" value="portfolio">
+                            <button class="my-pin-button" type="submit" th:classappend="${post.portfolioPinned} ? ' is-pinned'" th:title="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}">
+                                <span th:text="${post.portfolioPinned ? '대표 고정 해제' : '대표 포트폴리오 고정'}">대표 고정</span>
+                            </button>
+                        </form>
+                        <form class="my-remove-form" th:action="@{/my-page/portfolio/select}" method="post">
+                            <input type="hidden" name="postId" th:value="${post.id}">
+                            <input type="hidden" name="selected" value="false">
+                            <input type="hidden" name="returnTab" value="portfolio">
+                            <button class="my-icon-action" type="submit" title="포트폴리오에서 제외">
+                                <span>포트폴리오에서 제외</span>
+                            </button>
+                        </form>
+                        <div class="my-post-card-copy">
+                            <strong th:text="${post.boardType.label}">SHOW</strong>
+                            <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Portfolio title</a></h3>
+                            <p th:text="${#strings.abbreviate(post.content, 86)}">Preview</p>
+                            <div>
+                                <span th:text="|조회 ${post.viewCount}|">조회 0</span>
+                                <span th:text="|댓글 ${post.commentCount}|">댓글 0</span>
+                                <span th:text="|좋아요 ${post.likeCount}|">좋아요 0</span>
+                            </div>
                         </div>
                     </article>
                 </div>
