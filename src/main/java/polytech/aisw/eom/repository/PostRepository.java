@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.domain.MediaType;
 import polytech.aisw.eom.domain.Post;
@@ -61,6 +62,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = "author")
     List<Post> findByTagsContainingIgnoreCase(String tag, Sort sort);
+
+    @EntityGraph(attributePaths = "author")
+    @Query("""
+            select p from Post p
+            join p.author a
+            where lower(p.tags) like lower(concat('%', :query, '%'))
+               or lower(p.title) like lower(concat('%', :query, '%'))
+               or lower(p.content) like lower(concat('%', :query, '%'))
+               or lower(a.displayName) like lower(concat('%', :query, '%'))
+               or lower(a.crewName) like lower(concat('%', :query, '%'))
+            """)
+    List<Post> searchPosts(@Param("query") String query, Sort sort);
 
     @EntityGraph(attributePaths = "author")
     List<Post> findByBoardTypeAndEventDateBetween(

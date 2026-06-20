@@ -40,6 +40,13 @@ public class CommunityService {
         return postRepository.findByTagsContainingIgnoreCase(tag, sortOption.getSort());
     }
 
+    public List<Post> searchPosts(String query, PostSortOption sortOption) {
+        if (query == null || query.isBlank()) {
+            return List.of();
+        }
+        return postRepository.searchPosts(query.trim(), sortOption.getSort());
+    }
+
     public List<Post> findPostsByTag(String tag) {
         return findPostsByTag(tag, PostSortOption.LATEST);
     }

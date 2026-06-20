@@ -41,29 +41,30 @@ public class CommunityController {
 
     @GetMapping("/posts")
     public String posts(
+            @RequestParam(required = false) String q,
             @RequestParam(required = false) String tag,
             @RequestParam(defaultValue = "latest") String sort,
             Model model
     ) {
+        String searchQuery = normalizeSearchTerm(q);
         boolean hasTag = tag != null && !tag.isBlank();
         PostSortOption sortOption = PostSortOption.from(sort);
-        if (!hasTag) {
-            return "redirect:/boards/all?sort=" + sortOption.getKey();
-        }
 
-        model.addAttribute("title", hasTag ? "# " + tag : "ALL");
-        model.addAttribute("eyebrow", hasTag ? "TAG SEARCH" : "COMMUNITY");
-        model.addAttribute("summary", hasTag
-                ? "선택한 태그와 연결된 게시글을 카드형으로 모았습니다."
-                : "SHOW, CAST, HYPE, LINK의 최신 움직임을 한 화면에서 탐색합니다.");
+        String effectiveQuery = hasTag ? tag.trim() : searchQuery;
+        model.addAttribute("title", "SEARCH");
+        model.addAttribute("eyebrow", hasTag ? "TAG SEARCH" : "COMMUNITY SEARCH");
+        model.addAttribute("summary", "태그, 제목, 내용, 작성자, 크루명에서 입력한 움직임을 찾아봅니다.");
+        model.addAttribute("searchQuery", effectiveQuery);
+        model.addAttribute("hasSearchTerm", !effectiveQuery.isBlank());
         model.addAttribute("selectedTag", hasTag ? tag : null);
+        model.addAttribute("isSearchPage", true);
         populatePostListModel(model, sortOption);
         var posts = hasTag
                 ? communityService.findPostsByTag(tag, sortOption)
-                : communityService.findPosts(sortOption);
+                : communityService.searchPosts(searchQuery, sortOption);
         model.addAttribute("posts", posts);
         model.addAttribute("postCount", posts.size());
-        model.addAttribute("sortLinks", buildSortLinks("/posts", hasTag ? tag : null));
+        model.addAttribute("sortLinks", buildSearchSortLinks(hasTag ? null : searchQuery, hasTag ? tag : null));
         return "post-list";
     }
 
@@ -80,6 +81,7 @@ public class CommunityController {
         model.addAttribute("eyebrow", "HYPE EVENTS");
         model.addAttribute("summary", "이번 달 안에 열리는 HYPE 공식 행사와 모집 일정을 모았습니다.");
         model.addAttribute("selectedBoard", BoardType.HYPE);
+        model.addAttribute("isEventsPage", true);
         populatePostListModel(model, sortOption);
         var posts = communityService.findThisMonthEvents(sortOption);
         model.addAttribute("posts", posts);
@@ -131,6 +133,33 @@ public class CommunityController {
         Map<PostSortOption, String> links = new LinkedHashMap<>();
         for (PostSortOption option : PostSortOption.values()) {
             UriComponentsBuilder builder = UriComponentsBuilder.fromPath(basePath);
+            if (tag != null && !tag.isBlank()) {
+                builder.queryParam("tag", tag);
+            }
+            builder.queryParam("sort", option.getKey());
+            links.put(option, builder.build().toUriString());
+        }
+        return links;
+    }
+
+    private String normalizeSearchTerm(String query) {
+        if (query == null || query.isBlank()) {
+            return "";
+        }
+        String normalized = query.trim();
+        while (normalized.startsWith("#")) {
+            normalized = normalized.substring(1).trim();
+        }
+        return normalized;
+    }
+
+    private Map<PostSortOption, String> buildSearchSortLinks(String query, String tag) {
+        Map<PostSortOption, String> links = new LinkedHashMap<>();
+        for (PostSortOption option : PostSortOption.values()) {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/posts");
+            if (query != null && !query.isBlank()) {
+                builder.queryParam("q", query);
+            }
             if (tag != null && !tag.isBlank()) {
                 builder.queryParam("tag", tag);
             }
