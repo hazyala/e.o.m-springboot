@@ -17,10 +17,10 @@
              th:classappend="${selectedBoard != null} ? | board-${selectedBoard.name().toLowerCase()}| : ' board-all'">
         <div class="community-hero-media" aria-hidden="true">
             <img th:if="${selectedBoard == null}" th:src="@{/assets/source/anna-frizen-9UZokKRcdHI-unsplash.jpg}" alt="">
-            <img th:if="${selectedBoard != null and selectedBoard.name() == 'SHOW'}" th:src="@{/assets/source/show.png}" alt="">
-            <img th:if="${selectedBoard != null and selectedBoard.name() == 'CAST'}" th:src="@{/assets/source/cast1.jpg}" alt="">
-            <img th:if="${selectedBoard != null and selectedBoard.name() == 'HYPE'}" th:src="@{/assets/source/hype.jpg}" alt="">
-            <img th:if="${selectedBoard != null and selectedBoard.name() == 'LINK'}" th:src="@{/assets/source/link.png}" alt="">
+            <img th:if="${selectedBoard != null and selectedBoard.name() == 'SHOW'}" th:src="@{/assets/source/jakob-owens-1ua8Ujmfez4-unsplash.jpg}" alt="">
+            <img th:if="${selectedBoard != null and selectedBoard.name() == 'CAST'}" th:src="@{/assets/source/someofakind-lAxv9rMj0pY-unsplash.jpg}" alt="">
+            <img th:if="${selectedBoard != null and selectedBoard.name() == 'HYPE'}" th:src="@{/assets/source/praise-judah-q0CU-yUn_Nc-unsplash.jpg}" alt="">
+            <img th:if="${selectedBoard != null and selectedBoard.name() == 'LINK'}" th:src="@{/assets/source/vale-lVtNDwz1ggc-unsplash.jpg}" alt="">
         </div>
         <strong class="community-board-watermark" th:text="${title}">SHOW</strong>
         <div class="community-hero-copy">
