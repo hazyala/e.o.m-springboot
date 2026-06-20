@@ -1792,7 +1792,7 @@ body.dashboard-page::before {
     gap: 18px;
 }
 
-.dancer-directory article {
+.dancer-directory article:not(.dancer-talent-card) {
     padding: 18px;
     background: rgba(255, 255, 255, 0.72);
     border: 1px solid rgba(0, 0, 0, 0.08);
@@ -2007,7 +2007,7 @@ html[data-theme="dark"] .dashboard-mini-media {
 }
 
 html[data-theme="dark"] .community-list article,
-html[data-theme="dark"] .dancer-directory article {
+html[data-theme="dark"] .dancer-directory article:not(.dancer-talent-card) {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.12);
 }
@@ -3773,103 +3773,135 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .dancer-hero {
-    margin-bottom: 22px;
+    margin-bottom: 58px;
 }
 
-.dancer-filter-panel {
+.dancer-explorer-head {
     display: grid;
-    grid-template-columns: minmax(220px, 0.35fr) minmax(0, 1fr);
-    gap: 18px;
-    align-items: stretch;
-    margin-bottom: 18px;
-    padding: 20px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.76);
-    box-shadow: 0 18px 52px rgba(0, 0, 0, 0.07);
+    gap: 24px;
+    margin-bottom: 28px;
 }
 
-.dancer-filter-panel > div {
+.dancer-section-title {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px;
-    min-width: 0;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
 }
 
-.dancer-filter-panel p {
+.dancer-section-title > div {
+    display: flex;
+    align-items: center;
+}
+
+.dancer-section-title span {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+    border-radius: 3px;
+    background: #d30f46;
+}
+
+.dancer-section-title h2 {
     margin: 0;
-    color: #d30f46;
-    font-family: "Roboto Mono", monospace;
-    font-size: 12px;
-    font-weight: 800;
+    color: #020202;
+    font-size: 44px;
+    line-height: 1;
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9),
+        0 8px 18px rgba(211, 15, 70, 0.24),
+        2px 2px 0 rgba(211, 15, 70, 0.08);
 }
 
-.dancer-filter-panel strong {
-    color: #050505;
-    font-size: 24px;
-    line-height: 1.15;
-}
-
-.dancer-filter-panel span {
+.dancer-section-title p {
+    margin: 0;
     color: #666666;
     font-family: "Roboto Mono", monospace;
     font-size: 12px;
+    font-weight: 800;
 }
 
 .dancer-genre-filter {
     display: flex;
-    align-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .dancer-genre-filter a {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 38px;
-    padding: 9px 13px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.58);
-    color: #333333;
-    font-family: "Roboto Mono", monospace;
-    font-size: 12px;
+    min-height: 32px;
+    padding: 0 0 8px;
+    color: #777777;
+    font-size: 14px;
     font-weight: 800;
+    white-space: nowrap;
+}
+
+.dancer-genre-filter a::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    border-radius: 999px;
+    background: transparent;
+    content: "";
 }
 
 .dancer-genre-filter a.is-active,
 .dancer-genre-filter a:hover {
-    border-color: #050505;
-    background: #050505;
-    color: #ffffff;
+    color: #050505;
+}
+
+.dancer-genre-filter a.is-active::after {
+    background: #d30f46;
 }
 
 .dancer-directory {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;
+    gap: 24px;
     margin-bottom: 70px;
 }
 
-.dancer-talent-card {
+.dancer-directory .dancer-talent-card {
+    position: relative;
     display: grid;
-    grid-template-columns: 184px minmax(0, 1fr);
-    gap: 18px;
-    min-height: 262px;
-    padding: 14px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.74);
-    box-shadow: 0 18px 52px rgba(0, 0, 0, 0.08);
+    grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr);
+    gap: 24px;
+    min-height: 286px;
+    padding: 0 0 28px;
+    border: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.dancer-talent-card::before {
+    position: absolute;
+    top: 12px;
+    bottom: 40px;
+    left: 170px;
+    width: 1px;
+    background: rgba(211, 15, 70, 0.22);
+    content: "";
 }
 
 .dancer-card-media {
     display: grid;
     place-items: center;
     width: 100%;
-    min-height: 234px;
+    height: 286px;
+    min-height: 286px;
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     background: #111111;
     color: #ffffff;
     font-family: "Irish Grover", cursive;
@@ -3879,19 +3911,25 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 .dancer-card-media img {
     width: 100%;
     height: 100%;
-    min-height: 234px;
+    min-height: 286px;
     margin: 0;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    filter: saturate(0.98) contrast(1.04);
+    filter: saturate(0.94) contrast(1.05);
+    transition: transform 0.35s ease, filter 0.35s ease;
+}
+
+.dancer-talent-card:hover .dancer-card-media img {
+    transform: scale(1.04);
+    filter: saturate(1.06) contrast(1.08);
 }
 
 .dancer-card-copy {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 18px;
     min-width: 0;
-    padding: 6px 4px 4px 0;
+    padding: 18px 0 0;
 }
 
 .dancer-card-head {
@@ -3916,8 +3954,8 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 .dancer-card-head strong {
     display: block;
     color: #050505;
-    font-size: 28px;
-    line-height: 1.05;
+    font-size: clamp(30px, 4vw, 46px);
+    line-height: 0.95;
     word-break: keep-all;
 }
 
@@ -3929,54 +3967,40 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 }
 
 .dancer-card-meta {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    padding: 0 0 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.dancer-card-meta div {
-    min-width: 0;
-    padding: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: rgba(255, 255, 255, 0.56);
-}
-
-.dancer-card-meta dt {
-    margin-bottom: 5px;
-    color: #888888;
+.dancer-card-meta span,
+.dancer-card-meta a {
+    color: #666666;
     font-family: "Roboto Mono", monospace;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 800;
-    text-transform: uppercase;
 }
 
-.dancer-card-meta dd {
-    margin: 0;
-    overflow: hidden;
-    color: #222222;
-    font-size: 13px;
-    font-weight: 800;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.dancer-card-meta a {
+    color: #d30f46;
 }
 
 .dancer-card-copy > p {
     display: -webkit-box;
-    min-height: 48px;
+    min-height: 54px;
     margin: 0;
     overflow: hidden;
     color: #555555;
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.7;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
 }
 
 .dancer-card-actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    justify-content: flex-end;
     margin-top: auto;
 }
 
@@ -3985,19 +4009,19 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 40px;
-    padding: 10px 13px;
-    border: 1px solid rgba(211, 15, 70, 0.28);
-    border-radius: 999px;
-    color: #d30f46;
-    font-size: 12px;
+    min-height: 34px;
+    padding: 0;
+    border: 0;
+    color: #050505;
+    font-size: 13px;
     font-weight: 800;
+    transition: color 0.25s ease, transform 0.25s ease;
 }
 
-.dancer-card-actions a:last-child {
-    border-color: #050505;
-    background: #050505;
-    color: #ffffff;
+.dancer-card-actions a:hover,
+.dancer-empty-state a:hover {
+    color: #d30f46;
+    transform: translateX(4px);
 }
 
 .dancer-empty-state {
@@ -4020,41 +4044,50 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 html[data-theme="dark"] .community-post-card,
 html[data-theme="dark"] .community-side-panel section,
-html[data-theme="dark"] .dancer-filter-panel,
-html[data-theme="dark"] .dancer-talent-card,
 html[data-theme="dark"] .dancer-empty-state {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.12);
     box-shadow: 0 18px 52px rgba(0, 0, 0, 0.2);
 }
 
-html[data-theme="dark"] .dancer-filter-panel strong,
+html[data-theme="dark"] .dancer-directory .dancer-talent-card {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: none;
+}
+
+html[data-theme="dark"] .dancer-section-title h2,
 html[data-theme="dark"] .dancer-card-head strong,
-html[data-theme="dark"] .dancer-card-meta dd,
 html[data-theme="dark"] .dancer-empty-state strong {
     color: #ffffff;
 }
 
-html[data-theme="dark"] .dancer-filter-panel span,
+html[data-theme="dark"] .dancer-section-title p,
 html[data-theme="dark"] .dancer-card-head small,
+html[data-theme="dark"] .dancer-card-meta span,
 html[data-theme="dark"] .dancer-card-copy > p,
 html[data-theme="dark"] .dancer-empty-state p {
     color: rgba(255, 255, 255, 0.68);
 }
 
-html[data-theme="dark"] .dancer-genre-filter a,
-html[data-theme="dark"] .dancer-card-meta div {
-    border-color: rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.07);
+html[data-theme="dark"] .dancer-genre-filter,
+html[data-theme="dark"] .dancer-card-meta,
+html[data-theme="dark"] .dancer-talent-card {
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+html[data-theme="dark"] .dancer-genre-filter a {
     color: rgba(255, 255, 255, 0.82);
 }
 
 html[data-theme="dark"] .dancer-genre-filter a.is-active,
 html[data-theme="dark"] .dancer-genre-filter a:hover,
-html[data-theme="dark"] .dancer-card-actions a:last-child {
-    border-color: #ffffff;
-    background: #ffffff;
-    color: #121212;
+html[data-theme="dark"] .dancer-card-actions a {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .dancer-card-actions a:hover {
+    color: #ff4d6d;
 }
 
 html[data-theme="dark"] .community-card-topline > span,
@@ -4894,8 +4927,9 @@ th {
         padding: 18px;
     }
 
-    .dancer-filter-panel {
-        grid-template-columns: 1fr;
+    .dancer-section-title {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }
 
@@ -5378,28 +5412,32 @@ th {
         grid-template-columns: 1fr;
     }
 
-    .dancer-filter-panel {
-        padding: 16px;
-    }
-
     .dancer-genre-filter {
         flex-wrap: nowrap;
         overflow-x: auto;
-        padding-bottom: 4px;
+        gap: 22px;
+        padding-bottom: 10px;
     }
 
-    .dancer-talent-card {
-        gap: 14px;
+    .dancer-directory .dancer-talent-card {
+        grid-template-columns: 1fr;
+        gap: 16px;
         min-height: 0;
-        padding: 12px;
+        padding: 0 0 28px;
+    }
+
+    .dancer-talent-card::before {
+        display: none;
+    }
+
+    .dancer-card-media,
+    .dancer-card-media img {
+        height: 320px;
+        min-height: 320px;
     }
 
     .dancer-card-head {
         flex-direction: column;
-    }
-
-    .dancer-card-meta {
-        grid-template-columns: 1fr;
     }
 
     .dancer-directory img {

@@ -89,11 +89,11 @@ class EomApplicationTests {
         mockMvc.perform(get("/dancers").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Street Genre Directory")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("GENRE FILTER")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Dancers")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("전체보기")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/dancers?genres=")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Instagram")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("프로필 보기")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("visit profile")));
     }
 
     @Test

@@ -21,11 +21,13 @@
         </div>
     </section>
 
-    <section class="dancer-filter-panel" aria-label="장르 필터">
-        <div>
-            <p>GENRE FILTER</p>
-            <strong th:text="${#lists.isEmpty(selectedGenres) ? '전체 댄서 탐색' : #strings.listJoin(selectedGenres, ' · ')}">전체 댄서 탐색</strong>
-            <span th:text="|${#lists.size(dancers)} dancers|">0 dancers</span>
+    <section class="dancer-explorer-head" aria-label="장르 필터">
+        <div class="dancer-section-title">
+            <div>
+                <span aria-hidden="true"></span>
+                <h2 th:text="${#lists.isEmpty(selectedGenres) ? 'Dancers' : #strings.listJoin(selectedGenres, ' · ')}">Dancers</h2>
+            </div>
+            <p th:text="|${#lists.size(dancers)} profiles|">0 profiles</p>
         </div>
         <nav class="dancer-genre-filter" aria-label="댄서 장르 선택">
             <a th:href="@{/dancers}" th:classappend="${#lists.isEmpty(selectedGenres)} ? ' is-active'">전체보기</a>
@@ -50,20 +52,14 @@
                     </div>
                     <small th:text="|@${dancer.username}|">@dancer</small>
                 </div>
-                <dl class="dancer-card-meta">
-                    <div>
-                        <dt>Crew</dt>
-                        <dd th:text="${dancer.crewName ?: 'Solo'}">Crew</dd>
-                    </div>
-                    <div>
-                        <dt>Contact</dt>
-                        <dd th:text="${dancer.instagramUrl} ? 'Instagram' : 'Profile only'">Instagram</dd>
-                    </div>
-                </dl>
+                <div class="dancer-card-meta">
+                    <span th:text="${dancer.crewName ?: 'Solo'}">Crew</span>
+                    <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">Instagram ↗</a>
+                    <span th:unless="${dancer.instagramUrl}">Profile only</span>
+                </div>
                 <p th:text="${dancer.bio}">Bio</p>
                 <div class="dancer-card-actions">
-                    <a th:if="${dancer.instagramUrl}" th:href="${dancer.instagramUrl}" target="_blank" rel="noreferrer">Instagram</a>
-                    <a th:href="@{/dancers/{id}(id=${dancer.id})}">프로필 보기</a>
+                    <a th:href="@{/dancers/{id}(id=${dancer.id})}">visit profile →</a>
                 </div>
             </div>
         </article>
