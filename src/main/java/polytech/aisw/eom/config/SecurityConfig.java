@@ -23,8 +23,14 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
+                .rememberMe(remember -> remember
+                        .key("eom-remember-me")
+                        .tokenValiditySeconds(60 * 60 * 24 * 14)
+                        .rememberMeParameter("remember-me")
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
+                        .deleteCookies("JSESSIONID", "remember-me")
                         .logoutSuccessUrl("/")
                 );
 
@@ -39,4 +45,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
