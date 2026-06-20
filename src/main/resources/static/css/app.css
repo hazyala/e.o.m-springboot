@@ -3584,8 +3584,16 @@ html[data-theme="dark"] .community-grid-card:hover {
     gap: 14px;
 }
 
+.post-author-avatar-link {
+    display: inline-flex;
+    flex: 0 0 auto;
+    border-radius: 50%;
+}
+
 .post-author-row img,
 .post-author-row > span,
+.post-author-avatar-link img,
+.post-author-avatar-link > span,
 .post-side-author img,
 .post-side-author > div > span,
 .post-avatar-placeholder {
@@ -3596,6 +3604,10 @@ html[data-theme="dark"] .community-grid-card:hover {
     border-radius: 50%;
     background: #dedee6;
     object-fit: cover;
+}
+
+.post-author-name-link {
+    display: inline-flex;
 }
 
 .post-author-row strong,
