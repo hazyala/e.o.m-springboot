@@ -4,7 +4,7 @@
 
 현재 주요 Service:
 - `DashboardService`: Today Pick, Popular, Recent, Tags, Events, Dancers 미리보기 조립
-- `CommunityService`: 보드 목록, 태그 검색, 통합 검색, Events, Dancers 조회
+- `CommunityService`: 보드 목록, HYPE 관리자 승인 행사 필터, 태그 검색, 통합 검색, Dancers 조회
 - `MyPageService`: 프로필/계정 수정, 포트폴리오 선택/고정, 참여 이벤트 CRUD, 활동 이력 조립
 - `AdminService`: 관리자 조회 데이터 조립
 

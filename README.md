@@ -19,7 +19,7 @@ E.O.M은 인스타그램, DM, 오픈채팅, 지인 추천에 흩어진 댄서들
 - 대시보드 Today Pick, Popular, Recent, Tags, Events, Dancers 미리보기
 - 보드별 게시글 목록과 상세
 - `/posts?q=` 통합 검색과 `/posts?tag=` 태그 검색
-- 이번 달 HYPE 행사 탐색 `/events`
+- HYPE 관리자 승인 행사 탐색 `/boards/HYPE?officialEvents=true` (`/events`는 호환 리다이렉트)
 - 마이페이지 프로필/계정 수정, 포트폴리오 선택, 참여 행사 기록
 - 인스타그램 프로필 링크와 게시물 URL 기반 외부 미디어 연결
 - 라이트/다크 모드
