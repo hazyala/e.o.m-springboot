@@ -49,6 +49,9 @@ public class AppUser {
     @Column(nullable = false, length = 20)
     private UserRole role;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean blocked;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -94,6 +97,7 @@ public class AppUser {
         this.crewName = crewName;
         this.primaryGenre = primaryGenre;
         this.role = role;
+        this.blocked = false;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -141,6 +145,10 @@ public class AppUser {
         return role;
     }
 
+    public boolean isBlocked() {
+        return blocked;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -166,5 +174,9 @@ public class AppUser {
     public void updateAccount(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 }

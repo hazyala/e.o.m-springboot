@@ -1,5 +1,7 @@
 package polytech.aisw.eom;
 
+import java.time.LocalDate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import polytech.aisw.eom.domain.AppUser;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.domain.Comment;
+import polytech.aisw.eom.domain.MediaType;
 import polytech.aisw.eom.domain.Post;
 import polytech.aisw.eom.repository.CommentRepository;
 import polytech.aisw.eom.repository.PostRepository;
@@ -51,13 +54,36 @@ class EomApplicationTests {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @AfterEach
+    void resetModerationState() {
+        jdbcTemplate.update("update app_users set blocked = false");
+        jdbcTemplate.update("update posts set hidden_by_admin = false, report_count = 0, latest_report_reason = ''");
+    }
+
     @Test
     void publicPagesLoad() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/login"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("data-signup-action=\"/signup\"")));
+    }
+
+    @Test
+    void signupCreatesUserAndAllowsLogin() throws Exception {
+        mockMvc.perform(post("/signup")
+                        .with(csrf())
+                        .param("displayName", "New Dancer")
+                        .param("username", "new.dancer")
+                        .param("password", "1234")
+                        .param("passwordConfirm", "1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+
+        mockMvc.perform(formLogin().user("new.dancer").password("1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/dashboard"));
     }
 
     @Test
@@ -180,7 +206,10 @@ class EomApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("owner edited title")))
                 .andExpect(content().string(containsString("EDIT")))
-                .andExpect(content().string(containsString("DELETE")));
+                .andExpect(content().string(containsString("DELETE")))
+                .andExpect(content().string(containsString("data-more-actions-toggle")))
+                .andExpect(content().string(containsString("링크 복사")))
+                .andExpect(content().string(containsString("게시판으로 이동")));
     }
 
     @Test
@@ -679,6 +708,174 @@ class EomApplicationTests {
                 .andExpect(redirectedUrlPattern("**/login"));
     }
 
+    @Test
+    void userCanReportPostAndAdminCanHideOrRestoreIt() throws Exception {
+        Post post = saveTestPost("reported moderation target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/report", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("reason", "스팸 홍보"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post reportedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(reportedPost.getReportCount()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(reportedPost.getLatestReportReason()).isEqualTo("스팸 홍보");
+
+        mockMvc.perform(get("/admin").with(user("admin").roles("ADMIN")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Reports")))
+                .andExpect(content().string(containsString("reported moderation target")))
+                .andExpect(content().string(containsString("스팸 홍보")));
+
+        mockMvc.perform(post("/admin/posts/{id}/visibility", post.getId())
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("hidden", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+
+        mockMvc.perform(get("/boards/all").with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("reported moderation target"))));
+
+        mockMvc.perform(get("/posts/{id}", post.getId()).with(user("mina.flow").roles("USER")))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/boards/all"));
+
+        mockMvc.perform(get("/posts/{id}", post.getId()).with(user("admin").roles("ADMIN")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("reported moderation target")));
+
+        mockMvc.perform(post("/admin/posts/{id}/visibility", post.getId())
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("hidden", "false"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+
+        mockMvc.perform(get("/boards/all").with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("reported moderation target")));
+    }
+
+    @Test
+    void adminCanApproveHypeEventNotice() throws Exception {
+        Post hypePost = saveEventPost("hype approval target", "stage.host", BoardType.HYPE);
+
+        mockMvc.perform(get("/boards/HYPE")
+                        .param("officialEvents", "true")
+                        .with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("hype approval target"))));
+
+        mockMvc.perform(post("/admin/posts/{id}/hype-approval", hypePost.getId())
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("approved", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+
+        org.assertj.core.api.Assertions.assertThat(postRepository.findById(hypePost.getId()).orElseThrow().isAdminApprovedEvent())
+                .isTrue();
+
+        mockMvc.perform(get("/boards/HYPE")
+                        .param("officialEvents", "true")
+                        .with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("hype approval target")));
+    }
+
+    @Test
+    void adminCanBlockUserAndBlockedUserCannotLoginOrAppearInCommunity() throws Exception {
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+        Post minaPost = saveTestPost("blocked user hidden target", "mina.flow");
+
+        mockMvc.perform(post("/admin/users/{id}/block", minaId)
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("blocked", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+
+        org.assertj.core.api.Assertions.assertThat(userRepository.findById(minaId).orElseThrow().isBlocked()).isTrue();
+
+        mockMvc.perform(formLogin().user("mina.flow").password("1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login?error"));
+
+        mockMvc.perform(get("/boards/all").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("blocked user hidden target"))));
+
+        mockMvc.perform(get("/dancers").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("MINA FLOW"))));
+
+        mockMvc.perform(post("/admin/users/{id}/block", minaId)
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("blocked", "false"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+
+        org.assertj.core.api.Assertions.assertThat(postRepository.findById(minaPost.getId()).orElseThrow().isVisibleInCommunity()).isTrue();
+    }
+
+    @Test
+    void blockedExistingSessionCannotCreateOrReactToCommunityContent() throws Exception {
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+        Post post = saveTestPost("blocked existing session target", "dancer1");
+
+        mockMvc.perform(post("/admin/users/{id}/block", minaId)
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("blocked", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+
+        mockMvc.perform(post("/posts/new")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("boardType", "SHOW")
+                        .param("title", "blocked user should not create")
+                        .param("content", "blocked user should not create content"))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("content", "blocked comment"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void nonAdminEditPreservesExistingHypeEventApproval() throws Exception {
+        Post hypePost = saveEventPost("approved hype preserved target", "stage.host", BoardType.HYPE);
+        hypePost.setAdminApprovedEvent(true);
+        postRepository.save(hypePost);
+
+        mockMvc.perform(post("/posts/{id}/edit", hypePost.getId())
+                        .with(user("stage.host").roles("USER"))
+                        .with(csrf())
+                        .param("boardType", "HYPE")
+                        .param("title", "approved hype preserved edited")
+                        .param("content", "approved hype preserved edited content")
+                        .param("eventDate", LocalDate.now().plusDays(8).toString())
+                        .param("deadline", LocalDate.now().plusDays(4).toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + hypePost.getId()));
+
+        Post editedPost = postRepository.findById(hypePost.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(editedPost.isAdminApprovedEvent()).isTrue();
+    }
+
     private Post saveTestPost(String title, String authorUsername) {
         return saveTestPost(title, authorUsername, BoardType.SHOW);
     }
@@ -689,6 +886,29 @@ class EomApplicationTests {
                 boardType,
                 title,
                 "테스트 게시글 본문입니다.",
+                "",
+                "",
+                author
+        );
+        return postRepository.save(post);
+    }
+
+    private Post saveEventPost(String title, String authorUsername, BoardType boardType) {
+        AppUser author = userRepository.findByUsername(authorUsername).orElseThrow();
+        Post post = new Post(
+                boardType,
+                title,
+                "테스트 행사 게시글 본문입니다.",
+                "",
+                "",
+                0,
+                0,
+                0,
+                "행사,승인",
+                "서울",
+                LocalDate.now().plusDays(7),
+                LocalDate.now().plusDays(3),
+                MediaType.IMAGE,
                 "",
                 "",
                 author

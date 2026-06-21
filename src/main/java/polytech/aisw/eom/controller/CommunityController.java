@@ -172,6 +172,8 @@ public class CommunityController {
         try {
             communityService.createComment(id, commentCreateRequest, principal.getName());
             redirectAttributes.addFlashAttribute("postNotice", "댓글이 등록되었습니다.");
+        } catch (AccessDeniedException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("commentError", "댓글을 등록할 수 없습니다.");
         }
@@ -187,6 +189,8 @@ public class CommunityController {
         try {
             boolean liked = communityService.togglePostLike(id, principal.getName());
             redirectAttributes.addFlashAttribute("postNotice", liked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다.");
+        } catch (AccessDeniedException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("postError", "좋아요를 처리할 수 없습니다.");
         }
@@ -202,8 +206,29 @@ public class CommunityController {
         try {
             boolean saved = communityService.togglePostSave(id, principal.getName());
             redirectAttributes.addFlashAttribute("postNotice", saved ? "게시글을 저장했습니다." : "저장을 취소했습니다.");
+        } catch (AccessDeniedException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("postError", "저장을 처리할 수 없습니다.");
+        }
+        return "redirect:/posts/" + id;
+    }
+
+    @PostMapping("/posts/{id}/report")
+    public String reportPost(
+            @PathVariable Long id,
+            @RequestParam(required = false) String reason,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            communityService.reportPost(id, reason, principal.getName());
+            redirectAttributes.addFlashAttribute("postNotice", "신고가 접수되었습니다. 운영자가 확인합니다.");
+        } catch (AccessDeniedException exception) {
+            redirectAttributes.addFlashAttribute("postError", exception.getMessage());
+            return "redirect:/boards/all";
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("postError", "신고를 접수할 수 없습니다.");
         }
         return "redirect:/posts/" + id;
     }
@@ -235,8 +260,8 @@ public class CommunityController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            var post = communityService.findPost(id);
             String username = principal == null ? null : principal.getName();
+            var post = communityService.findPostForViewer(id, username);
             var comments = communityService.findComments(id);
             Set<Long> deletableCommentIds = comments.stream()
                     .filter(comment -> communityService.canDeleteComment(comment, username))
@@ -257,6 +282,9 @@ public class CommunityController {
             model.addAttribute("likedByCurrentUser", communityService.hasLikedPost(id, username));
             model.addAttribute("savedByCurrentUser", communityService.hasSavedPost(id, username));
             return "post-detail";
+        } catch (AccessDeniedException exception) {
+            redirectAttributes.addFlashAttribute("postError", exception.getMessage());
+            return "redirect:/boards/all";
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
             return "redirect:/boards/all";
@@ -436,12 +464,17 @@ public class CommunityController {
 
     @GetMapping("/dancers/{id}")
     public String dancerDetail(@PathVariable Long id, Principal principal, Model model) {
-        String viewerUsername = principal == null ? null : principal.getName();
-        var myPage = myPageService.findProfilePage(id, viewerUsername);
-        model.addAttribute("boards", BoardType.values());
-        model.addAttribute("myPage", myPage);
-        model.addAttribute("isOwner", myPage.user().getUsername().equals(viewerUsername));
-        return "my-page";
+        try {
+            communityService.findDancer(id);
+            String viewerUsername = principal == null ? null : principal.getName();
+            var myPage = myPageService.findProfilePage(id, viewerUsername);
+            model.addAttribute("boards", BoardType.values());
+            model.addAttribute("myPage", myPage);
+            model.addAttribute("isOwner", myPage.user().getUsername().equals(viewerUsername));
+            return "my-page";
+        } catch (AccessDeniedException exception) {
+            return "redirect:/dancers";
+        }
     }
 
     private String resolveBackUrl(HttpServletRequest request) {

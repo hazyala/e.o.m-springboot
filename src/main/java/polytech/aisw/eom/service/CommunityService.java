@@ -76,12 +76,20 @@ public class CommunityService {
         return postRepository.findById(id).orElseThrow();
     }
 
+    public Post findPostForViewer(Long id, String username) {
+        Post post = findPost(id);
+        if (post.isVisibleInCommunity() || canViewModeratedPost(post, username)) {
+            return post;
+        }
+        throw new AccessDeniedException("숨김 처리된 게시글입니다.");
+    }
+
     public AppUser findUser(String username) {
         return userRepository.findByUsername(username).orElseThrow();
     }
 
     public boolean canEditPost(Post post, String username) {
-        return username != null && post.isAuthoredBy(username);
+        return username != null && !findUser(username).isBlocked() && post.isAuthoredBy(username);
     }
 
     public boolean canDeletePost(Post post, String username) {
@@ -89,22 +97,33 @@ public class CommunityService {
             return false;
         }
         AppUser user = findUser(username);
+        if (user.isBlocked()) {
+            return false;
+        }
         return post.isAuthoredBy(username) || user.getRole() == UserRole.ADMIN;
     }
 
     public boolean canDeleteComment(Comment comment, String username) {
-        return username != null && comment.isAuthoredBy(username);
+        return username != null && !findUser(username).isBlocked() && comment.isAuthoredBy(username);
     }
 
     public Post findEditablePost(Long id, String username) {
+        assertUserActive(username);
         Post post = findPost(id);
         assertCanEdit(post, username);
         return post;
     }
 
     @Transactional
+    public void reportPost(Long id, String reason, String username) {
+        assertUserActive(username);
+        Post post = findPostForViewer(id, username);
+        post.report(normalizeReportReason(reason));
+    }
+
+    @Transactional
     public Post createPost(PostCreateRequest request, String username) {
-        AppUser author = findUser(username);
+        AppUser author = findActiveUser(username);
         String mediaUrl = normalizeText(request.getMediaUrl());
         String thumbnailUrl = normalizeText(request.getThumbnailUrl());
         MediaType mediaType = resolveMediaType(mediaUrl);
@@ -136,6 +155,7 @@ public class CommunityService {
 
     @Transactional
     public Post updatePost(Long id, PostCreateRequest request, String username) {
+        assertUserActive(username);
         Post post = findPost(id);
         assertCanEdit(post, username);
         AppUser editor = findUser(username);
@@ -145,6 +165,7 @@ public class CommunityService {
 
     @Transactional
     public void deletePost(Long id, String username) {
+        assertUserActive(username);
         Post post = findPost(id);
         if (!canDeletePost(post, username)) {
             throw new AccessDeniedException("게시글을 삭제할 권한이 없습니다.");
@@ -157,6 +178,7 @@ public class CommunityService {
 
     @Transactional
     public boolean togglePostLike(Long postId, String username) {
+        assertUserActive(username);
         Post post = findPost(postId);
         AppUser user = findUser(username);
         return postLikeRepository.findByPostIdAndUserUsername(postId, username)
@@ -174,6 +196,7 @@ public class CommunityService {
 
     @Transactional
     public boolean togglePostSave(Long postId, String username) {
+        assertUserActive(username);
         Post post = findPost(postId);
         AppUser user = findUser(username);
         return postSaveRepository.findByPostIdAndUserUsername(postId, username)
@@ -201,6 +224,7 @@ public class CommunityService {
 
     @Transactional
     public Comment createComment(Long postId, CommentCreateRequest request, String username) {
+        assertUserActive(username);
         Post post = findPost(postId);
         AppUser author = findUser(username);
         Comment comment = commentRepository.save(new Comment(post, author, request.getContent().trim()));
@@ -210,6 +234,7 @@ public class CommunityService {
 
     @Transactional
     public void deleteComment(Long postId, Long commentId, String username) {
+        assertUserActive(username);
         Comment comment = commentRepository.findById(commentId).orElseThrow();
         if (!comment.getPost().getId().equals(postId)) {
             throw new IllegalArgumentException("게시글과 댓글이 일치하지 않습니다.");
@@ -222,7 +247,7 @@ public class CommunityService {
     }
 
     public List<Post> findPosts(PostSortOption sortOption) {
-        return postRepository.findAll(sortOption.getSort());
+        return visiblePosts(postRepository.findAll(sortOption.getSort()));
     }
 
     public List<Post> findLatestPosts() {
@@ -230,14 +255,14 @@ public class CommunityService {
     }
 
     public List<Post> findPostsByTag(String tag, PostSortOption sortOption) {
-        return postRepository.findByTagsContainingIgnoreCase(tag, sortOption.getSort());
+        return visiblePosts(postRepository.findByTagsContainingIgnoreCase(tag, sortOption.getSort()));
     }
 
     public List<Post> searchPosts(String query, PostSortOption sortOption) {
         if (query == null || query.isBlank()) {
             return List.of();
         }
-        return postRepository.searchPosts(query.trim(), sortOption.getSort());
+        return visiblePosts(postRepository.searchPosts(query.trim(), sortOption.getSort()));
     }
 
     public List<Post> findPostsByTag(String tag) {
@@ -245,11 +270,11 @@ public class CommunityService {
     }
 
     public List<Post> findPostsByBoard(BoardType boardType, PostSortOption sortOption) {
-        return postRepository.findByBoardType(boardType, sortOption.getSort());
+        return visiblePosts(postRepository.findByBoardType(boardType, sortOption.getSort()));
     }
 
     public List<Post> findOfficialEventPosts(PostSortOption sortOption) {
-        return postRepository.findByBoardTypeAndAdminApprovedEventTrue(BoardType.HYPE, sortOption.getSort());
+        return visiblePosts(postRepository.findByBoardTypeAndAdminApprovedEventTrue(BoardType.HYPE, sortOption.getSort()));
     }
 
     public List<Post> findPostsByBoard(BoardType boardType) {
@@ -257,15 +282,15 @@ public class CommunityService {
     }
 
     public List<Post> findPopularPosts() {
-        return postRepository.findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc();
+        return visiblePosts(postRepository.findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc());
     }
 
     public List<Post> findRecentPostsByBoard(BoardType boardType) {
-        return postRepository.findTop10ByBoardTypeOrderByCreatedAtDesc(boardType);
+        return visiblePosts(postRepository.findTop10ByBoardTypeOrderByCreatedAtDesc(boardType));
     }
 
     public List<AppUser> findDancers() {
-        return userRepository.findByRoleOrderByCreatedAtDesc(UserRole.USER);
+        return userRepository.findByRoleAndBlockedFalseOrderByCreatedAtDesc(UserRole.USER);
     }
 
     public List<AppUser> findDancers(List<String> selectedGenres) {
@@ -274,7 +299,7 @@ public class CommunityService {
             return findDancers();
         }
 
-        return userRepository.findByRoleOrderByCreatedAtDesc(UserRole.USER)
+        return userRepository.findByRoleAndBlockedFalseOrderByCreatedAtDesc(UserRole.USER)
                 .stream()
                 .filter(dancer -> matchesAnyGenre(dancer.getPrimaryGenre(), normalizedGenres))
                 .toList();
@@ -285,7 +310,11 @@ public class CommunityService {
     }
 
     public AppUser findDancer(Long id) {
-        return userRepository.findById(id).orElseThrow();
+        AppUser dancer = userRepository.findById(id).orElseThrow();
+        if (dancer.isBlocked()) {
+            throw new AccessDeniedException("차단된 사용자입니다.");
+        }
+        return dancer;
     }
 
     public List<String> findTags() {
@@ -331,7 +360,7 @@ public class CommunityService {
         String mediaUrl = normalizeText(request.getMediaUrl());
         String thumbnailUrl = normalizeText(request.getThumbnailUrl());
         MediaType mediaType = resolveMediaType(mediaUrl);
-        boolean adminApprovedEvent = canApproveOfficialEvent(request, editor);
+        boolean adminApprovedEvent = resolveAdminApprovedEvent(post, request, editor);
         post.updateDetails(
                 request.getBoardType(),
                 request.getTitle().trim(),
@@ -356,10 +385,56 @@ public class CommunityService {
                 && request.getEventDate() != null;
     }
 
+    private boolean resolveAdminApprovedEvent(Post post, PostCreateRequest request, AppUser editor) {
+        if (editor.getRole() == UserRole.ADMIN) {
+            return canApproveOfficialEvent(request, editor);
+        }
+        return post.isAdminApprovedEvent()
+                && request.getBoardType() == BoardType.HYPE
+                && request.getEventDate() != null;
+    }
+
     private void assertCanEdit(Post post, String username) {
         if (!canEditPost(post, username)) {
             throw new AccessDeniedException("게시글을 수정할 권한이 없습니다.");
         }
+    }
+
+    private void assertUserActive(String username) {
+        findActiveUser(username);
+    }
+
+    private AppUser findActiveUser(String username) {
+        AppUser user = findUser(username);
+        if (user.isBlocked()) {
+            throw new AccessDeniedException("차단된 사용자입니다.");
+        }
+        return user;
+    }
+
+    private boolean canViewModeratedPost(Post post, String username) {
+        if (username == null) {
+            return false;
+        }
+        AppUser user = findUser(username);
+        if (user.isBlocked()) {
+            return false;
+        }
+        return post.isAuthoredBy(username) || user.getRole() == UserRole.ADMIN;
+    }
+
+    private List<Post> visiblePosts(List<Post> posts) {
+        return posts.stream()
+                .filter(Post::isVisibleInCommunity)
+                .toList();
+    }
+
+    private String normalizeReportReason(String reason) {
+        String normalized = normalizeText(reason);
+        if (normalized.isBlank()) {
+            return "기타";
+        }
+        return normalized.length() > 300 ? normalized.substring(0, 300) : normalized;
     }
 
     private String normalizeTags(String tagText) {

@@ -4512,6 +4512,49 @@ html[data-theme="dark"] .community-event-meta span {
     color: #d30f46;
 }
 
+.post-more-actions {
+    position: relative;
+}
+
+.post-more-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 20;
+    display: grid;
+    min-width: 150px;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+}
+
+.post-top-actions .post-more-menu a,
+.post-top-actions .post-more-menu button {
+    justify-content: flex-start;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 6px;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.post-top-actions .post-more-menu form {
+    margin: 0;
+}
+
+.post-top-actions .post-more-menu a:hover,
+.post-top-actions .post-more-menu button:hover {
+    background: rgba(211, 15, 70, 0.08);
+}
+
 .post-top-actions a,
 .post-top-actions form button {
     border: 1px solid rgba(0, 0, 0, 0.14);
@@ -5510,6 +5553,22 @@ html[data-theme="dark"] .post-top-actions button {
     color: #c7c7c7;
 }
 
+html[data-theme="dark"] .post-more-menu {
+    background: #171717;
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+}
+
+html[data-theme="dark"] .post-top-actions .post-more-menu a,
+html[data-theme="dark"] .post-top-actions .post-more-menu button {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .post-top-actions .post-more-menu a:hover,
+html[data-theme="dark"] .post-top-actions .post-more-menu button:hover {
+    background: rgba(255, 77, 109, 0.14);
+}
+
 html[data-theme="dark"] .post-top-actions a,
 html[data-theme="dark"] .post-top-actions form button,
 html[data-theme="dark"] .post-alert {
@@ -5571,6 +5630,78 @@ html[data-theme="dark"] .dancer-profile a {
 .admin-grid article {
     overflow-x: auto;
     padding: 24px;
+}
+
+.admin-notice {
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid rgba(104, 160, 99, 0.35);
+    border-radius: 8px;
+    background: rgba(104, 160, 99, 0.12);
+    color: #315e2d;
+    font-weight: 800;
+}
+
+.admin-notice.is-error {
+    border-color: rgba(243, 58, 106, 0.35);
+    background: rgba(243, 58, 106, 0.12);
+    color: #ff8ba5;
+}
+
+.admin-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--sub-text-color);
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.admin-status.is-ok {
+    background: rgba(104, 160, 99, 0.14);
+    color: #68a063;
+}
+
+.admin-status.is-danger {
+    background: rgba(243, 58, 106, 0.14);
+    color: #ff4d6d;
+}
+
+.admin-status.is-pending {
+    background: rgba(255, 201, 87, 0.16);
+    color: #ffc957;
+}
+
+.admin-actions,
+.admin-grid td:last-child {
+    min-width: 150px;
+}
+
+.admin-grid form {
+    display: inline-flex;
+    margin: 0 6px 6px 0;
+}
+
+.admin-grid button {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.admin-grid a {
+    color: var(--text-color);
+    font-weight: 800;
 }
 
 table {
