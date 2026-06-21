@@ -172,6 +172,8 @@ public class CommunityController {
         try {
             communityService.createComment(id, commentCreateRequest, principal.getName());
             redirectAttributes.addFlashAttribute("postNotice", "댓글이 등록되었습니다.");
+        } catch (AccessDeniedException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("commentError", "댓글을 등록할 수 없습니다.");
         }
@@ -187,6 +189,8 @@ public class CommunityController {
         try {
             boolean liked = communityService.togglePostLike(id, principal.getName());
             redirectAttributes.addFlashAttribute("postNotice", liked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다.");
+        } catch (AccessDeniedException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("postError", "좋아요를 처리할 수 없습니다.");
         }
@@ -202,6 +206,8 @@ public class CommunityController {
         try {
             boolean saved = communityService.togglePostSave(id, principal.getName());
             redirectAttributes.addFlashAttribute("postNotice", saved ? "게시글을 저장했습니다." : "저장을 취소했습니다.");
+        } catch (AccessDeniedException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("postError", "저장을 처리할 수 없습니다.");
         }

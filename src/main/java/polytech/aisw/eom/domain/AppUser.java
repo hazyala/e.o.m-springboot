@@ -49,7 +49,7 @@ public class AppUser {
     @Column(nullable = false, length = 20)
     private UserRole role;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean blocked;
 
     @Column(nullable = false)

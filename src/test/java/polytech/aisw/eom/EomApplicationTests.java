@@ -1,6 +1,7 @@
 package polytech.aisw.eom;
 
 import java.time.LocalDate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -51,6 +52,12 @@ class EomApplicationTests {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @AfterEach
+    void resetModerationState() {
+        jdbcTemplate.update("update app_users set blocked = false");
+        jdbcTemplate.update("update posts set hidden_by_admin = false, report_count = 0, latest_report_reason = ''");
     }
 
     @Test
@@ -814,6 +821,59 @@ class EomApplicationTests {
                 .andExpect(redirectedUrl("/admin"));
 
         org.assertj.core.api.Assertions.assertThat(postRepository.findById(minaPost.getId()).orElseThrow().isVisibleInCommunity()).isTrue();
+    }
+
+    @Test
+    void blockedExistingSessionCannotCreateOrReactToCommunityContent() throws Exception {
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+        Post post = saveTestPost("blocked existing session target", "dancer1");
+
+        mockMvc.perform(post("/admin/users/{id}/block", minaId)
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("blocked", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+
+        mockMvc.perform(post("/posts/new")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("boardType", "SHOW")
+                        .param("title", "blocked user should not create")
+                        .param("content", "blocked user should not create content"))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("content", "blocked comment"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void nonAdminEditPreservesExistingHypeEventApproval() throws Exception {
+        Post hypePost = saveEventPost("approved hype preserved target", "stage.host", BoardType.HYPE);
+        hypePost.setAdminApprovedEvent(true);
+        postRepository.save(hypePost);
+
+        mockMvc.perform(post("/posts/{id}/edit", hypePost.getId())
+                        .with(user("stage.host").roles("USER"))
+                        .with(csrf())
+                        .param("boardType", "HYPE")
+                        .param("title", "approved hype preserved edited")
+                        .param("content", "approved hype preserved edited content")
+                        .param("eventDate", LocalDate.now().plusDays(8).toString())
+                        .param("deadline", LocalDate.now().plusDays(4).toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + hypePost.getId()));
+
+        Post editedPost = postRepository.findById(hypePost.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(editedPost.isAdminApprovedEvent()).isTrue();
     }
 
     private Post saveTestPost(String title, String authorUsername) {

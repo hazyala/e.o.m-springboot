@@ -75,13 +75,13 @@ public class Post {
     @Column(nullable = false)
     private boolean adminApprovedEvent;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean hiddenByAdmin;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private int reportCount;
 
-    @Column(length = 300)
+    @Column(length = 300, columnDefinition = "varchar(300) default ''")
     private String latestReportReason;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
