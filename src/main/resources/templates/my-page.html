@@ -101,7 +101,7 @@
         <a href="#posts" data-my-tab="posts">Posts</a>
         <a href="#joined-events" data-my-tab="joined-events">Events</a>
         <a href="#likes" data-my-tab="likes">Likes</a>
-        <a href="#saves" data-my-tab="saves">Saves</a>
+        <a th:if="${isOwner}" href="#saves" data-my-tab="saves">Saves</a>
         <a href="#comments" data-my-tab="comments">Comments</a>
     </nav>
 
@@ -248,7 +248,7 @@
                 <p class="my-empty-state" th:if="${myPage.likedPosts.isEmpty()}">아직 좋아요한 게시물이 없습니다.</p>
             </section>
 
-            <section class="my-page-section my-tab-panel" data-my-panel="saves">
+            <section class="my-page-section my-tab-panel" data-my-panel="saves" th:if="${isOwner}">
                 <div class="my-section-heading">
                     <h2>Saves</h2>
                     <span th:text="|${myPage.savedPosts.size()} saves|">0 saves</span>

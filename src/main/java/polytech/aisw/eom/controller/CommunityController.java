@@ -436,10 +436,11 @@ public class CommunityController {
 
     @GetMapping("/dancers/{id}")
     public String dancerDetail(@PathVariable Long id, Principal principal, Model model) {
-        var myPage = myPageService.findProfilePage(id);
+        String viewerUsername = principal == null ? null : principal.getName();
+        var myPage = myPageService.findProfilePage(id, viewerUsername);
         model.addAttribute("boards", BoardType.values());
         model.addAttribute("myPage", myPage);
-        model.addAttribute("isOwner", principal != null && myPage.user().getUsername().equals(principal.getName()));
+        model.addAttribute("isOwner", myPage.user().getUsername().equals(viewerUsername));
         return "my-page";
     }
 

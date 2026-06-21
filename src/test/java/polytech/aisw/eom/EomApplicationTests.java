@@ -432,6 +432,28 @@ class EomApplicationTests {
     }
 
     @Test
+    void savedPostsAreHiddenOnOtherUsersPublicProfile() throws Exception {
+        Post post = saveTestPost("private saved bookmark target", "dancer1");
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        mockMvc.perform(get("/dancers/{id}", minaId).with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("Saves"))))
+                .andExpect(content().string(not(containsString("private saved bookmark target"))));
+
+        mockMvc.perform(get("/dancers/{id}", minaId).with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Saves")))
+                .andExpect(content().string(containsString("private saved bookmark target")));
+    }
+
+    @Test
     void myPageLikesReflectPostLikeRows() throws Exception {
         Post post = saveTestPost("reaction my likes target", "dancer1");
 

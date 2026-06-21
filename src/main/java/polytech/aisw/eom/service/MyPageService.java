@@ -52,16 +52,16 @@ public class MyPageService {
     @Transactional(readOnly = true)
     public MyPageView findMyPage(String username) {
         AppUser user = findUser(username);
-        return buildMyPageView(user);
+        return buildMyPageView(user, true);
     }
 
     @Transactional(readOnly = true)
-    public MyPageView findProfilePage(Long userId) {
+    public MyPageView findProfilePage(Long userId, String viewerUsername) {
         AppUser user = userRepository.findById(userId).orElseThrow();
-        return buildMyPageView(user);
+        return buildMyPageView(user, user.getUsername().equals(viewerUsername));
     }
 
-    private MyPageView buildMyPageView(AppUser user) {
+    private MyPageView buildMyPageView(AppUser user, boolean includeSavedPosts) {
         String username = user.getUsername();
         List<Post> posts = postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
         List<Post> portfolioPosts = postRepository
@@ -69,9 +69,11 @@ public class MyPageService {
         List<Post> likedPosts = postLikeRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
                 .map(like -> like.getPost())
                 .toList();
-        List<Post> savedPosts = postSaveRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
-                .map(save -> save.getPost())
-                .toList();
+        List<Post> savedPosts = includeSavedPosts
+                ? postSaveRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
+                        .map(save -> save.getPost())
+                        .toList()
+                : List.of();
         List<Comment> comments = commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
         List<JoinedEvent> joinedEvents = joinedEventRepository.findByUserUsernameOrderByEventDateDescCreatedAtDesc(username);
         List<ActivityItem> activityItems = buildActivity(posts, comments);
