@@ -17,9 +17,10 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(@RequestParam(defaultValue = "SHOW") BoardType board, Model model) {
+    public String dashboard(@RequestParam(defaultValue = "SHOW") String board, Model model) {
+        BoardType selectedBoard = resolveBoardType(board);
         model.addAttribute("boards", BoardType.values());
-        model.addAttribute("selectedBoard", board);
+        model.addAttribute("selectedBoard", selectedBoard);
         model.addAttribute("todayPick", dashboardService.findTodayPick());
         model.addAttribute("showRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.SHOW));
         model.addAttribute("castRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.CAST));
@@ -32,5 +33,16 @@ public class DashboardController {
         model.addAttribute("featuredMediaPosts", dashboardService.findFeaturedMediaPosts());
         model.addAttribute("tags", dashboardService.findTags());
         return "dashboard";
+    }
+
+    private BoardType resolveBoardType(String board) {
+        if (board == null || board.isBlank()) {
+            return BoardType.SHOW;
+        }
+        try {
+            return BoardType.valueOf(board.trim().toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            return BoardType.SHOW;
+        }
     }
 }

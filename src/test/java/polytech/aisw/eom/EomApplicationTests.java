@@ -127,6 +127,10 @@ class EomApplicationTests {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/boards/HYPE?officialEvents=true")));
 
+        mockMvc.perform(get("/dashboard?board=not-a-board").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("data-board=\"SHOW\" class=\" is-active\"")));
+
         mockMvc.perform(get("/activity").with(user("dancer1").roles("USER")))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/boards/all?sort=latest"));
