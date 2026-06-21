@@ -15,6 +15,8 @@ import polytech.aisw.eom.domain.MediaType;
 import polytech.aisw.eom.domain.Post;
 import polytech.aisw.eom.domain.UserRole;
 import polytech.aisw.eom.dto.PostCreateRequest;
+import polytech.aisw.eom.repository.CommentRepository;
+import polytech.aisw.eom.repository.PostLikeRepository;
 import polytech.aisw.eom.repository.PostRepository;
 import polytech.aisw.eom.repository.UserRepository;
 
@@ -47,10 +49,19 @@ public class CommunityService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final PostLikeRepository postLikeRepository;
 
-    public CommunityService(PostRepository postRepository, UserRepository userRepository) {
+    public CommunityService(
+            PostRepository postRepository,
+            UserRepository userRepository,
+            CommentRepository commentRepository,
+            PostLikeRepository postLikeRepository
+    ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
+        this.postLikeRepository = postLikeRepository;
     }
 
     public Post findPost(Long id) {
@@ -104,7 +115,7 @@ public class CommunityService {
                 author
         );
 
-        if (request.isAdminApprovedEvent() && author.getRole() == UserRole.ADMIN) {
+        if (canApproveOfficialEvent(request, author)) {
             post.approveAsOfficialEvent();
         }
 
@@ -126,6 +137,8 @@ public class CommunityService {
         if (!canDeletePost(post, username)) {
             throw new AccessDeniedException("게시글을 삭제할 권한이 없습니다.");
         }
+        commentRepository.deleteByPostId(post.getId());
+        postLikeRepository.deleteByPostId(post.getId());
         postRepository.delete(post);
     }
 
@@ -239,7 +252,7 @@ public class CommunityService {
         String mediaUrl = normalizeText(request.getMediaUrl());
         String thumbnailUrl = normalizeText(request.getThumbnailUrl());
         MediaType mediaType = resolveMediaType(mediaUrl);
-        boolean adminApprovedEvent = request.isAdminApprovedEvent() && editor.getRole() == UserRole.ADMIN;
+        boolean adminApprovedEvent = canApproveOfficialEvent(request, editor);
         post.updateDetails(
                 request.getBoardType(),
                 request.getTitle().trim(),
@@ -255,6 +268,13 @@ public class CommunityService {
                 thumbnailUrl,
                 adminApprovedEvent
         );
+    }
+
+    private boolean canApproveOfficialEvent(PostCreateRequest request, AppUser user) {
+        return request.isAdminApprovedEvent()
+                && user.getRole() == UserRole.ADMIN
+                && request.getBoardType() == BoardType.HYPE
+                && request.getEventDate() != null;
     }
 
     private void assertCanEdit(Post post, String username) {

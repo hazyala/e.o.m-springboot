@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import polytech.aisw.eom.domain.AppUser;
 import polytech.aisw.eom.domain.BoardType;
@@ -30,12 +31,19 @@ class EomApplicationTests {
     private final MockMvc mockMvc;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    EomApplicationTests(MockMvc mockMvc, PostRepository postRepository, UserRepository userRepository) {
+    EomApplicationTests(
+            MockMvc mockMvc,
+            PostRepository postRepository,
+            UserRepository userRepository,
+            JdbcTemplate jdbcTemplate
+    ) {
         this.mockMvc = mockMvc;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Test
@@ -172,6 +180,7 @@ class EomApplicationTests {
     @Test
     void authorCanDeleteOwnPost() throws Exception {
         Post post = saveTestPost("owner delete target", "dancer1");
+        attachCommentAndLike(post, "mina.flow");
 
         mockMvc.perform(post("/posts/{id}/delete", post.getId())
                         .with(user("dancer1").roles("USER"))
@@ -180,6 +189,7 @@ class EomApplicationTests {
                 .andExpect(redirectedUrl("/boards/all"));
 
         org.assertj.core.api.Assertions.assertThat(postRepository.findById(post.getId())).isEmpty();
+        assertNoChildEngagement(post.getId());
     }
 
     @Test
@@ -217,6 +227,7 @@ class EomApplicationTests {
     @Test
     void adminCanDeleteButCannotEditOtherUsersPost() throws Exception {
         Post post = saveTestPost("admin policy target", "dancer1");
+        attachCommentAndLike(post, "mina.flow");
 
         mockMvc.perform(get("/posts/{id}", post.getId()).with(user("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
@@ -242,6 +253,25 @@ class EomApplicationTests {
                 .andExpect(redirectedUrl("/boards/all"));
 
         org.assertj.core.api.Assertions.assertThat(postRepository.findById(post.getId())).isEmpty();
+        assertNoChildEngagement(post.getId());
+    }
+
+    @Test
+    void forgedAdminApprovalParameterDoesNotApproveNonHypePostOnEdit() throws Exception {
+        Post post = saveTestPost("admin own show target", "admin");
+
+        mockMvc.perform(post("/posts/{id}/edit", post.getId())
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("boardType", "SHOW")
+                        .param("title", "admin own show edited")
+                        .param("content", "admin own show edited content")
+                        .param("adminApprovedEvent", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post editedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(editedPost.isAdminApprovedEvent()).isFalse();
     }
 
     @Test
@@ -276,5 +306,35 @@ class EomApplicationTests {
                 author
         );
         return postRepository.save(post);
+    }
+
+    private void attachCommentAndLike(Post post, String username) {
+        AppUser user = userRepository.findByUsername(username).orElseThrow();
+        jdbcTemplate.update(
+                "insert into comments (post_id, author_id, content, created_at) values (?, ?, ?, current_timestamp)",
+                post.getId(),
+                user.getId(),
+                "삭제 정리 검증 댓글"
+        );
+        jdbcTemplate.update(
+                "insert into post_likes (post_id, user_id, created_at) values (?, ?, current_timestamp)",
+                post.getId(),
+                user.getId()
+        );
+    }
+
+    private void assertNoChildEngagement(Long postId) {
+        Integer commentCount = jdbcTemplate.queryForObject(
+                "select count(*) from comments where post_id = ?",
+                Integer.class,
+                postId
+        );
+        Integer likeCount = jdbcTemplate.queryForObject(
+                "select count(*) from post_likes where post_id = ?",
+                Integer.class,
+                postId
+        );
+        org.assertj.core.api.Assertions.assertThat(commentCount).isZero();
+        org.assertj.core.api.Assertions.assertThat(likeCount).isZero();
     }
 }
