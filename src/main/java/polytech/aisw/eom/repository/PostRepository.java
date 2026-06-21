@@ -99,6 +99,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             List<MediaType> mediaTypes
     );
 
-    @Query("select p.tags from Post p where p.tags is not null and p.tags <> ''")
+    @Query("""
+            select p.tags from Post p
+            join p.author a
+            where p.tags is not null
+              and p.tags <> ''
+              and p.hiddenByAdmin = false
+              and a.blocked = false
+            """)
     List<String> findTagTexts();
 }

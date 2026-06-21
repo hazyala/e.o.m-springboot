@@ -351,7 +351,12 @@ public class CommunityController {
             return "post-list";
         }
 
-        BoardType boardType = BoardType.valueOf(board.toUpperCase());
+        Optional<BoardType> resolvedBoardType = resolveBoardType(board);
+        if (resolvedBoardType.isEmpty()) {
+            return "redirect:/boards/all";
+        }
+
+        BoardType boardType = resolvedBoardType.get();
         boolean officialEventsOnly = boardType == BoardType.HYPE && officialEvents;
         PostSortOption effectiveSortOption = officialEventsOnly ? PostSortOption.LATEST : sortOption;
         model.addAttribute("title", boardType.getLabel());

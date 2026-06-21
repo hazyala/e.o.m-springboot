@@ -89,7 +89,10 @@ public class MyPageService {
                         .filter(Post::isVisibleInCommunity)
                         .toList()
                 : List.of();
-        List<Comment> comments = commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
+        List<Comment> comments = filterVisibleComments(
+                commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username),
+                includePrivateTabs
+        );
         List<JoinedEvent> joinedEvents = joinedEventRepository.findByUserUsernameOrderByEventDateDescCreatedAtDesc(username);
         List<ActivityItem> activityItems = buildActivity(posts, comments);
 
@@ -107,7 +110,7 @@ public class MyPageService {
 
     @Transactional
     public AccountUpdateResult updateAccount(String username, AccountUpdateRequest request) {
-        AppUser user = findUser(username);
+        AppUser user = findActiveUser(username);
         String nextUsername = cleanRequired(request.username(), username);
         if (!nextUsername.equals(username) && userRepository.findByUsername(nextUsername).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
@@ -127,7 +130,7 @@ public class MyPageService {
 
     @Transactional
     public void updateProfile(String username, ProfileUpdateRequest request) {
-        AppUser user = findUser(username);
+        AppUser user = findActiveUser(username);
         user.updateProfile(
                 cleanRequired(request.displayName(), user.getDisplayName()),
                 clean(request.crewName()),
@@ -141,6 +144,7 @@ public class MyPageService {
 
     @Transactional
     public void updatePortfolioSelection(String username, Long postId, boolean selected) {
+        assertUserActive(username);
         Post post = findOwnedPost(username, postId);
         if (!post.isPortfolioCandidate()) {
             post.setPortfolioSelected(false);
@@ -151,6 +155,7 @@ public class MyPageService {
 
     @Transactional
     public void updatePortfolioPin(String username, Long postId, boolean pinned) {
+        assertUserActive(username);
         Post post = findOwnedPost(username, postId);
         if (!post.isPortfolioCandidate()) {
             post.setPortfolioPinned(false);
@@ -166,7 +171,7 @@ public class MyPageService {
 
     @Transactional
     public void addJoinedEvent(String username, LocalDate eventDate, String eventName, String result) {
-        AppUser user = findUser(username);
+        AppUser user = findActiveUser(username);
         joinedEventRepository.save(new JoinedEvent(
                 user,
                 eventDate,
@@ -177,6 +182,7 @@ public class MyPageService {
 
     @Transactional
     public void updateJoinedEvent(String username, Long eventId, LocalDate eventDate, String eventName, String result) {
+        assertUserActive(username);
         JoinedEvent joinedEvent = findOwnedJoinedEvent(username, eventId);
         joinedEvent.update(
                 eventDate,
@@ -187,12 +193,25 @@ public class MyPageService {
 
     @Transactional
     public void deleteJoinedEvent(String username, Long eventId) {
+        assertUserActive(username);
         JoinedEvent joinedEvent = findOwnedJoinedEvent(username, eventId);
         joinedEventRepository.delete(joinedEvent);
     }
 
     private AppUser findUser(String username) {
         return userRepository.findByUsername(username).orElseThrow();
+    }
+
+    private void assertUserActive(String username) {
+        findActiveUser(username);
+    }
+
+    private AppUser findActiveUser(String username) {
+        AppUser user = findUser(username);
+        if (user.isBlocked()) {
+            throw new AccessDeniedException("차단된 사용자입니다.");
+        }
+        return user;
     }
 
     private Post findOwnedPost(String username, Long postId) {
@@ -237,6 +256,15 @@ public class MyPageService {
         }
         return posts.stream()
                 .filter(Post::isVisibleInCommunity)
+                .toList();
+    }
+
+    private List<Comment> filterVisibleComments(List<Comment> comments, boolean includePrivateTabs) {
+        if (includePrivateTabs) {
+            return comments;
+        }
+        return comments.stream()
+                .filter(comment -> comment.getPost().isVisibleInCommunity())
                 .toList();
     }
 

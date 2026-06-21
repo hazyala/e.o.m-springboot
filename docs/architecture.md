@@ -188,13 +188,14 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 
 - `/dashboard`: 로그인 후 첫 화면. Today Pick, Popular, Recent, Tags, Activity, Events, Dancers 미리보기를 렌더링합니다.
 - `/`: 공개 index입니다. 인증 상태에 따라 Login/My Page 링크를 전환하고, SHOW/CAST/HYPE/LINK CTA는 비로그인 상태에서 `/login`, 로그인 상태에서 `/boards/{board}`로 이동합니다.
-- `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
+- `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 잘못된 `board` 값은 SHOW로 보정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
 - `/boards/all`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 대시보드 Activity `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
-- `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다. HYPE는 `officialEvents=true` 쿼리로 관리자 승인 행사만 최신순 고정 필터링할 수 있습니다.
+- `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다. 잘못된 보드 path는 `/boards/all`로 되돌립니다. HYPE는 `officialEvents=true` 쿼리로 관리자 승인 행사만 최신순 고정 필터링할 수 있습니다.
 - `/posts`: 헤더 검색과 대시보드 Tags `ALL` 목적지입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
 - `/posts` 검색어 정규화: `q`가 `#왁킹`처럼 들어오면 앞의 `#`를 제거합니다. 태그 클릭은 `/posts?tag={tag}`를 사용하고 `findByTagsContainingIgnoreCase`로 조회합니다.
 - `/posts/new`: 로그인 사용자 게시글 작성 폼입니다. `PostCreateRequest`를 받아 Service에서 작성자를 조회하고 `PostRepository.save`로 저장한 뒤 생성된 `/posts/{id}`로 이동합니다. `board=SHOW|CAST|HYPE|LINK` 쿼리를 받으면 작성 탭 기본값으로 사용합니다. 보드/제목/본문/태그/위치/Instagram 또는 외부 미디어 URL/`thumbnailUrl`/일정 필드를 받으며 파일 업로드와 embed는 제공하지 않습니다. HYPE 관리자 승인 행사는 ADMIN 작성자에게만 저장됩니다.
 - `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다. 작성자에게 Edit/Delete, ADMIN에게 Delete 액션을 노출합니다.
+- `/posts/{id}/like`, `/posts/{id}/save`, `/posts/{id}/comments`: 로그인 사용자의 좋아요, 저장, 댓글 POST 액션입니다. 숨김 게시글 또는 차단 작성자 게시글은 상세 조회와 같은 가시성 검사를 통과해야 하며, 일반 사용자는 직접 POST로 우회할 수 없습니다.
 - `/posts/{id}/report`: 로그인 사용자가 게시글을 신고하는 POST 경로입니다. 신고 수와 최신 사유는 관리자 화면에서 검토합니다.
 - `/posts/{id}/edit`: 작성자 본인만 접근할 수 있는 게시글 수정 폼입니다. ADMIN도 작성자가 아니면 수정할 수 없습니다.
 - `/posts/{id}/delete`: 작성자 본인 또는 ADMIN만 실행할 수 있는 삭제 POST 경로입니다. 권한 정책은 `CommunityService`에서 판단합니다.
@@ -203,17 +204,19 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/dancers`: 장르별 댄서 탐색 목록입니다. `genres` 다중 쿼리 파라미터를 지원하며, 선택된 장르 중 하나라도 `primaryGenre`에 매칭되는 USER 역할 댄서를 카드형 목록으로 보여줍니다.
 - `/dancers/{id}`: 기존 작성자/댄서 프로필 이동 흐름을 유지하며 `my-page.html` 프로필 화면을 렌더링합니다.
 - `/my-page`, `/me`: 로그인한 사용자의 프로필, 포트폴리오, 작성 게시글, 참여 이벤트, 좋아요한 게시글, 작성 댓글, 자동 활동 이력을 렌더링합니다. admin도 본인 마이페이지에 접근할 수 있습니다.
-- `/my-page/profile`: 프로필 히어로에 쓰는 이름, 크루, 주 장르, 소개, 인스타그램 URL, 프로필 이미지 URL, 헤더 이미지 URL을 저장합니다.
+- `/my-page/profile`: 프로필 히어로에 쓰는 이름, 크루, 주 장르, 소개, 인스타그램 URL, 프로필 이미지 URL, 헤더 이미지 URL을 저장합니다. 차단된 기존 세션은 저장할 수 없습니다.
 - `/my-page/account`: 아이디와 비밀번호를 변경합니다. 현재 비밀번호 검증을 통과해야 하며, 저장 후 로그아웃되어 `/login`으로 이동합니다.
-- `/my-page/portfolio/select`: 내가 쓴 게시글을 포트폴리오 탭에 포함하거나 제외합니다.
-- `/my-page/portfolio/pin`: 선택된 포트폴리오 중 상단 고정 상태를 저장하며 최대 3개로 제한합니다.
-- `/my-page/joined-events`: 날짜, 행사명, 결과로 구성된 참여 이벤트 이력을 사용자가 직접 추가합니다.
-- `/my-page/joined-events/update`, `/my-page/joined-events/delete`: 본인 참여 이벤트 이력만 수정/삭제합니다.
+- `/my-page/portfolio/select`: 내가 쓴 게시글을 포트폴리오 탭에 포함하거나 제외합니다. 차단된 기존 세션은 변경할 수 없습니다.
+- `/my-page/portfolio/pin`: 선택된 포트폴리오 중 상단 고정 상태를 저장하며 최대 3개로 제한합니다. 차단된 기존 세션은 변경할 수 없습니다.
+- `/my-page/joined-events`: 날짜, 행사명, 결과로 구성된 참여 이벤트 이력을 사용자가 직접 추가합니다. 차단된 기존 세션은 추가할 수 없습니다.
+- `/my-page/joined-events/update`, `/my-page/joined-events/delete`: 본인 참여 이벤트 이력만 수정/삭제합니다. 차단된 기존 세션은 수정/삭제할 수 없습니다.
 - `/admin`: ADMIN 전용 운영 화면입니다. 사용자 차단/해제, 게시글 숨김/복구, 신고 검토, HYPE 행사 승인/취소를 수행합니다.
 - `/admin/users/{id}/block`: USER 계정 차단 상태를 바꾸는 POST 경로입니다. 차단 사용자는 로그인과 커뮤니티 쓰기 액션이 제한됩니다.
 - `/admin/posts/{id}/visibility`: 게시글 숨김 상태를 바꾸는 POST 경로입니다. 숨김 글은 일반 커뮤니티 목록과 상세에서 제외됩니다.
 - `/admin/posts/{id}/hype-approval`: 행사일이 있는 HYPE 게시글의 관리자 승인 행사 상태를 바꾸는 POST 경로입니다.
 - 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 `OPEN MEDIA`/`INSTAGRAM` 링크에서만 새 탭으로 열며, 대시보드와 목록 썸네일은 내부 게시글 미리보기로 취급합니다.
+
+운영 가시성 정책은 `Post.isVisibleInCommunity()` 기준을 공유합니다. 숨김 게시글과 차단 작성자 게시글은 일반 목록, 대시보드, 검색, 태그 추천, 공개 프로필 댓글/활동에서 제외하고, 상세 조회와 좋아요/저장/댓글 POST 액션도 같은 검사를 통과해야 합니다.
 - 직접 영상 업로드와 실제 embed는 현재 MVC 범위에 포함하지 않습니다. 기존 `mediaType + mediaUrl + thumbnailUrl` 필드를 유지합니다.
 
 ## 9. 배포 구조
