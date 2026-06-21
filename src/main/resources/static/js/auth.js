@@ -8,6 +8,8 @@
     var form = document.querySelector('[data-login-form]');
     var titleLink = document.querySelector('[data-login-title]');
     var passwordInputs = document.querySelectorAll('[data-password-input], [data-password-confirm]');
+    var displayNameInput = document.querySelector('input[name="displayName"]');
+    var passwordConfirmInput = document.querySelector('input[name="passwordConfirm"]');
 
     var fullTitle = 'Echo of Movement';
     var index = 0;
@@ -32,6 +34,13 @@
         submitButton.textContent = isSignup ? '회원가입' : '로그인';
         toggleCopy.textContent = isSignup ? '이미 계정이 있으신가요?' : '계정이 없으신가요?';
         toggle.textContent = isSignup ? '로그인' : '회원가입';
+        form.action = isSignup ? form.dataset.signupAction : form.dataset.loginAction;
+        if (displayNameInput) {
+            displayNameInput.required = isSignup;
+        }
+        if (passwordConfirmInput) {
+            passwordConfirmInput.required = isSignup;
+        }
     }
 
     if (toggle && page) {
@@ -49,12 +58,15 @@
     });
 
     if (form) {
+        setMode(window.location.search.indexOf('signup') !== -1);
         form.addEventListener('submit', function (event) {
             if (page.classList.contains('is-signup')) {
-                event.preventDefault();
-                window.alert('회원가입 기능은 다음 단계에서 연결됩니다. 지금은 데모 계정으로 로그인해주세요.');
+                var password = document.querySelector('[data-password-input]');
+                if (password && passwordConfirmInput && password.value !== passwordConfirmInput.value) {
+                    event.preventDefault();
+                    window.alert('비밀번호 확인이 일치하지 않습니다.');
+                }
             }
         });
     }
 })();
-

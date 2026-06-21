@@ -53,8 +53,15 @@
                                 th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '게시글 저장'}"
                                 th:text="${savedByCurrentUser ? '▣' : '▢'}">▢</button>
                     </form>
-                    <button type="button" aria-label="Share post">↗</button>
-                    <button type="button" aria-label="More actions">…</button>
+                    <button type="button" aria-label="Share post" data-share-post>↗</button>
+                    <div class="post-more-actions" data-post-more-actions>
+                        <button type="button" aria-label="More actions" aria-expanded="false" data-more-actions-toggle>…</button>
+                        <div class="post-more-menu" data-more-actions-menu hidden>
+                            <button type="button" data-copy-post-link>링크 복사</button>
+                            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">게시판으로 이동</a>
+                            <a th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">미디어 열기</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -218,6 +225,59 @@
 
 <script th:src="@{/js/theme.js}"></script>
 <script>
+    const copyPostLink = async () => {
+        await navigator.clipboard.writeText(window.location.href);
+    };
+
+    const showTemporaryLabel = (button, label, originalLabel) => {
+        button.textContent = label;
+        window.setTimeout(() => {
+            button.textContent = originalLabel;
+        }, 1600);
+    };
+
+    const shareButton = document.querySelector("[data-share-post]");
+    if (shareButton) {
+        shareButton.addEventListener("click", async () => {
+            const shareUrl = window.location.href;
+            if (navigator.share) {
+                await navigator.share({title: document.title, url: shareUrl});
+                return;
+            }
+            await copyPostLink();
+            showTemporaryLabel(shareButton, "COPIED", "↗");
+        });
+    }
+
+    const moreActions = document.querySelector("[data-post-more-actions]");
+    const moreToggle = document.querySelector("[data-more-actions-toggle]");
+    const moreMenu = document.querySelector("[data-more-actions-menu]");
+    const copyPostLinkButton = document.querySelector("[data-copy-post-link]");
+    if (moreActions && moreToggle && moreMenu) {
+        moreToggle.addEventListener("click", () => {
+            const isOpen = moreToggle.getAttribute("aria-expanded") === "true";
+            moreToggle.setAttribute("aria-expanded", String(!isOpen));
+            moreMenu.hidden = isOpen;
+        });
+        document.addEventListener("click", (event) => {
+            if (!moreActions.contains(event.target)) {
+                moreToggle.setAttribute("aria-expanded", "false");
+                moreMenu.hidden = true;
+            }
+        });
+    }
+
+    if (copyPostLinkButton) {
+        copyPostLinkButton.addEventListener("click", async () => {
+            await copyPostLink();
+            showTemporaryLabel(copyPostLinkButton, "복사 완료", "링크 복사");
+            if (moreToggle && moreMenu) {
+                moreToggle.setAttribute("aria-expanded", "false");
+                moreMenu.hidden = true;
+            }
+        });
+    }
+
     document.querySelectorAll("form[data-confirm-message]").forEach((form) => {
         form.addEventListener("submit", (event) => {
             if (!window.confirm(form.dataset.confirmMessage)) {

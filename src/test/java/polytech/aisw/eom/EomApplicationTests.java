@@ -57,7 +57,24 @@ class EomApplicationTests {
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/login"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("data-signup-action=\"/signup\"")));
+    }
+
+    @Test
+    void signupCreatesUserAndAllowsLogin() throws Exception {
+        mockMvc.perform(post("/signup")
+                        .with(csrf())
+                        .param("displayName", "New Dancer")
+                        .param("username", "new.dancer")
+                        .param("password", "1234")
+                        .param("passwordConfirm", "1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+
+        mockMvc.perform(formLogin().user("new.dancer").password("1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/dashboard"));
     }
 
     @Test
@@ -180,7 +197,10 @@ class EomApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("owner edited title")))
                 .andExpect(content().string(containsString("EDIT")))
-                .andExpect(content().string(containsString("DELETE")));
+                .andExpect(content().string(containsString("DELETE")))
+                .andExpect(content().string(containsString("data-more-actions-toggle")))
+                .andExpect(content().string(containsString("링크 복사")))
+                .andExpect(content().string(containsString("게시판으로 이동")));
     }
 
     @Test
