@@ -182,6 +182,13 @@ class EomApplicationTests {
     }
 
     @Test
+    void invalidBoardPathRedirectsToAllBoard() throws Exception {
+        mockMvc.perform(get("/boards/not-a-board").with(user("dancer1").roles("USER")))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/boards/all"));
+    }
+
+    @Test
     void authorCanEditOwnPost() throws Exception {
         Post post = saveTestPost("owner edit target", "dancer1");
 
@@ -761,6 +768,36 @@ class EomApplicationTests {
     }
 
     @Test
+    void hiddenPostCannotReceiveDirectEngagementFromNonViewer() throws Exception {
+        Post post = saveTestPost("hidden direct engagement target", "dancer1");
+        post.setHiddenByAdmin(true);
+        postRepository.save(post);
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("content", "hidden direct comment"))
+                .andExpect(status().isForbidden());
+
+        Post unchangedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(unchangedPost.getLikeCount()).isZero();
+        org.assertj.core.api.Assertions.assertThat(unchangedPost.getCommentCount()).isZero();
+        org.assertj.core.api.Assertions.assertThat(countRows("post_likes", post.getId())).isZero();
+        org.assertj.core.api.Assertions.assertThat(countRows("post_saves", post.getId())).isZero();
+        org.assertj.core.api.Assertions.assertThat(commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId())).isEmpty();
+    }
+
+    @Test
     void adminCanApproveHypeEventNotice() throws Exception {
         Post hypePost = saveEventPost("hype approval target", "stage.host", BoardType.HYPE);
 
@@ -853,6 +890,56 @@ class EomApplicationTests {
                         .with(csrf())
                         .param("content", "blocked comment"))
                 .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void blockedExistingSessionCannotUpdateMyPageContent() throws Exception {
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+        Post post = saveTestPost("blocked my page target", "mina.flow", BoardType.SHOW);
+
+        mockMvc.perform(post("/admin/users/{id}/block", minaId)
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("blocked", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+
+        mockMvc.perform(post("/my-page/profile")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("displayName", "Blocked Rename"))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/my-page/portfolio/pin")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("postId", post.getId().toString())
+                        .param("pinned", "true")
+                        .param("returnTab", "portfolio"))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/my-page/joined-events")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("eventDate", LocalDate.now().toString())
+                        .param("eventName", "Blocked Event")
+                        .param("result", "참여"))
+                .andExpect(status().isForbidden());
+
+        AppUser unchangedUser = userRepository.findById(minaId).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(unchangedUser.getDisplayName()).isEqualTo("MINA FLOW");
+        org.assertj.core.api.Assertions.assertThat(postRepository.findById(post.getId()).orElseThrow().isPortfolioPinned()).isFalse();
+        Integer joinedEventCount = jdbcTemplate.queryForObject(
+                "select count(*) from joined_events where user_id = ?",
+                Integer.class,
+                minaId
+        );
+        org.assertj.core.api.Assertions.assertThat(joinedEventCount).isZero();
     }
 
     @Test
@@ -934,6 +1021,15 @@ class EomApplicationTests {
                 post.getId(),
                 user.getId()
         );
+    }
+
+    private int countRows(String tableName, Long postId) {
+        Integer count = jdbcTemplate.queryForObject(
+                "select count(*) from " + tableName + " where post_id = ?",
+                Integer.class,
+                postId
+        );
+        return count == null ? 0 : count;
     }
 
     private Comment createComment(Post post, String username, String content) {

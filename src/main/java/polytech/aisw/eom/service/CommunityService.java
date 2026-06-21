@@ -179,7 +179,7 @@ public class CommunityService {
     @Transactional
     public boolean togglePostLike(Long postId, String username) {
         assertUserActive(username);
-        Post post = findPost(postId);
+        Post post = findPostForViewer(postId, username);
         AppUser user = findUser(username);
         return postLikeRepository.findByPostIdAndUserUsername(postId, username)
                 .map(postLike -> {
@@ -197,7 +197,7 @@ public class CommunityService {
     @Transactional
     public boolean togglePostSave(Long postId, String username) {
         assertUserActive(username);
-        Post post = findPost(postId);
+        Post post = findPostForViewer(postId, username);
         AppUser user = findUser(username);
         return postSaveRepository.findByPostIdAndUserUsername(postId, username)
                 .map(postSave -> {
@@ -225,7 +225,7 @@ public class CommunityService {
     @Transactional
     public Comment createComment(Long postId, CommentCreateRequest request, String username) {
         assertUserActive(username);
-        Post post = findPost(postId);
+        Post post = findPostForViewer(postId, username);
         AppUser author = findUser(username);
         Comment comment = commentRepository.save(new Comment(post, author, request.getContent().trim()));
         post.increaseCommentCount();
