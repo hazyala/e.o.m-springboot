@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.domain.UserRole;
+import polytech.aisw.eom.dto.CommentCreateRequest;
 import polytech.aisw.eom.dto.PostCreateRequest;
 import polytech.aisw.eom.service.CommunityService;
 import polytech.aisw.eom.service.MyPageService;
@@ -153,6 +156,46 @@ public class CommunityController {
         }
     }
 
+    @PostMapping("/posts/{id}/comments")
+    public String createComment(
+            @PathVariable Long id,
+            @Valid @ModelAttribute CommentCreateRequest commentCreateRequest,
+            BindingResult bindingResult,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("commentError", "댓글은 1자 이상 500자 이하로 입력해주세요.");
+            return "redirect:/posts/" + id;
+        }
+
+        try {
+            communityService.createComment(id, commentCreateRequest, principal.getName());
+            redirectAttributes.addFlashAttribute("postNotice", "댓글이 등록되었습니다.");
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("commentError", "댓글을 등록할 수 없습니다.");
+        }
+        return "redirect:/posts/" + id;
+    }
+
+    @PostMapping("/posts/{postId}/comments/{commentId}/delete")
+    public String deleteComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            communityService.deleteComment(postId, commentId, principal.getName());
+            redirectAttributes.addFlashAttribute("postNotice", "댓글이 삭제되었습니다.");
+        } catch (AccessDeniedException exception) {
+            redirectAttributes.addFlashAttribute("commentError", exception.getMessage());
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("commentError", "댓글을 삭제할 수 없습니다.");
+        }
+        return "redirect:/posts/" + postId;
+    }
+
     @GetMapping("/posts/{id}")
     public String postDetail(
             @PathVariable Long id,
@@ -164,7 +207,16 @@ public class CommunityController {
         try {
             var post = communityService.findPost(id);
             String username = principal == null ? null : principal.getName();
+            var comments = communityService.findComments(id);
+            Set<Long> deletableCommentIds = comments.stream()
+                    .filter(comment -> communityService.canDeleteComment(comment, username))
+                    .map(comment -> comment.getId())
+                    .collect(Collectors.toSet());
             model.addAttribute("post", post);
+            model.addAttribute("comments", comments);
+            model.addAttribute("commentCount", comments.size());
+            model.addAttribute("commentCreateRequest", new CommentCreateRequest());
+            model.addAttribute("deletableCommentIds", deletableCommentIds);
             model.addAttribute("backUrl", resolveBackUrl(request));
             model.addAttribute("boards", BoardType.values());
             model.addAttribute("postTags", communityService.parseTags(post.getTags()));
