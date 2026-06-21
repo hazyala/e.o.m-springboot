@@ -96,11 +96,11 @@
         <strong class="my-profile-watermark" th:text="${myPage.user.displayName}">E.O.M</strong>
     </section>
 
-    <nav class="my-page-tabs" aria-label="My page sections" data-my-page-tabs>
+    <nav class="my-page-tabs" th:aria-label="${isOwner ? 'My page sections' : 'Profile sections'}" data-my-page-tabs>
         <a class="is-active" href="#portfolio" data-my-tab="portfolio">Portfolio</a>
         <a href="#posts" data-my-tab="posts">Posts</a>
         <a href="#joined-events" data-my-tab="joined-events">Events</a>
-        <a href="#likes" data-my-tab="likes">Likes</a>
+        <a th:if="${isOwner}" href="#likes" data-my-tab="likes">Likes</a>
         <a th:if="${isOwner}" href="#saves" data-my-tab="saves">Saves</a>
         <a href="#comments" data-my-tab="comments">Comments</a>
     </nav>
@@ -127,6 +127,7 @@
                                 <span th:text="|조회 ${post.viewCount}|">조회 0</span>
                                 <span th:text="|댓글 ${post.commentCount}|">댓글 0</span>
                                 <span th:text="|좋아요 ${post.likeCount}|">좋아요 0</span>
+                                <span th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd')}">2026.06.21</span>
                                 <details class="my-card-menu" th:if="${isOwner}">
                                     <summary aria-label="게시물 메뉴"><span></span></summary>
                                     <div>
@@ -167,10 +168,11 @@
                             <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post title</a></h3>
                             <p th:text="${#strings.abbreviate(post.content, 86)}">Preview</p>
                             <div class="my-card-meta">
+                                <span th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd')}">2026.06.21</span>
                                 <span th:text="|조회 ${post.viewCount}|">조회 0</span>
                                 <span th:text="|댓글 ${post.commentCount}|">댓글 0</span>
                                 <span th:text="|좋아요 ${post.likeCount}|">좋아요 0</span>
-                                <details class="my-card-menu" th:if="${isOwner}">
+                                <details class="my-card-menu" th:if="${isOwner and post.portfolioCandidate}">
                                     <summary aria-label="게시물 메뉴"><span></span></summary>
                                     <div>
                                         <form th:action="@{/my-page/portfolio/select}" method="post">
@@ -234,7 +236,7 @@
                 <p class="my-empty-state" th:if="${myPage.joinedEvents.isEmpty()}">직접 기입한 참여 행사가 없습니다.</p>
             </section>
 
-            <section class="my-page-section my-tab-panel" data-my-panel="likes">
+            <section class="my-page-section my-tab-panel" data-my-panel="likes" th:if="${isOwner}">
                 <div class="my-section-heading">
                     <h2>Likes</h2>
                     <span th:text="|${myPage.likedPosts.size()} likes|">0 likes</span>
@@ -325,7 +327,11 @@
         const panels = [...document.querySelectorAll("[data-my-panel]")];
         const menus = [...document.querySelectorAll(".my-card-menu")];
         const showTab = (tabId) => {
-            const nextTab = panels.some((panel) => panel.dataset.myPanel === tabId) ? tabId : "portfolio";
+            const firstTab = tabs[0]?.dataset.myTab || panels[0]?.dataset.myPanel || "portfolio";
+            const nextTab = tabs.some((tab) => tab.dataset.myTab === tabId)
+                && panels.some((panel) => panel.dataset.myPanel === tabId)
+                    ? tabId
+                    : firstTab;
             tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.myTab === nextTab));
             panels.forEach((panel) => panel.classList.toggle("is-visible", panel.dataset.myPanel === nextTab));
             menus.forEach((menu) => menu.removeAttribute("open"));

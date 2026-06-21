@@ -86,9 +86,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByAuthorUsernameOrderByCreatedAtDesc(String username);
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findByAuthorUsernameAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(String username);
+    List<Post> findByAuthorUsernameAndBoardTypeAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(
+            String username,
+            BoardType boardType
+    );
 
-    long countByAuthorUsernameAndPortfolioPinnedTrue(String username);
+    long countByAuthorUsernameAndBoardTypeAndPortfolioPinnedTrue(String username, BoardType boardType);
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByBoardTypeAndMediaTypeInOrderByLikeCountDescCreatedAtDesc(

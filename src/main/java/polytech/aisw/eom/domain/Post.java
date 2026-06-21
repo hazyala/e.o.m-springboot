@@ -227,6 +227,10 @@ public class Post {
         return portfolioPinned;
     }
 
+    public boolean isPortfolioCandidate() {
+        return boardType == BoardType.SHOW;
+    }
+
     public boolean isAdminApprovedEvent() {
         return adminApprovedEvent;
     }
@@ -287,7 +291,7 @@ public class Post {
         this.mediaUrl = mediaUrl;
         this.thumbnailUrl = thumbnailUrl;
         this.adminApprovedEvent = adminApprovedEvent;
-        if (boardType == BoardType.SHOW) {
+        if (isPortfolioCandidate()) {
             this.portfolioSelected = true;
         } else {
             this.portfolioSelected = false;
@@ -296,16 +300,16 @@ public class Post {
     }
 
     public void setPortfolioSelected(boolean portfolioSelected) {
-        this.portfolioSelected = portfolioSelected;
+        this.portfolioSelected = portfolioSelected && isPortfolioCandidate();
         if (!portfolioSelected) {
             this.portfolioPinned = false;
         }
     }
 
     public void setPortfolioPinned(boolean portfolioPinned) {
-        if (portfolioPinned) {
+        if (portfolioPinned && isPortfolioCandidate()) {
             this.portfolioSelected = true;
         }
-        this.portfolioPinned = portfolioPinned;
+        this.portfolioPinned = portfolioPinned && isPortfolioCandidate();
     }
 }
