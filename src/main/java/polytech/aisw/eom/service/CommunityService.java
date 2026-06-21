@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import polytech.aisw.eom.domain.AppUser;
@@ -14,6 +15,8 @@ import polytech.aisw.eom.domain.MediaType;
 import polytech.aisw.eom.domain.Post;
 import polytech.aisw.eom.domain.UserRole;
 import polytech.aisw.eom.dto.PostCreateRequest;
+import polytech.aisw.eom.repository.CommentRepository;
+import polytech.aisw.eom.repository.PostLikeRepository;
 import polytech.aisw.eom.repository.PostRepository;
 import polytech.aisw.eom.repository.UserRepository;
 
@@ -46,10 +49,19 @@ public class CommunityService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final PostLikeRepository postLikeRepository;
 
-    public CommunityService(PostRepository postRepository, UserRepository userRepository) {
+    public CommunityService(
+            PostRepository postRepository,
+            UserRepository userRepository,
+            CommentRepository commentRepository,
+            PostLikeRepository postLikeRepository
+    ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
+        this.postLikeRepository = postLikeRepository;
     }
 
     public Post findPost(Long id) {
@@ -58,6 +70,24 @@ public class CommunityService {
 
     public AppUser findUser(String username) {
         return userRepository.findByUsername(username).orElseThrow();
+    }
+
+    public boolean canEditPost(Post post, String username) {
+        return username != null && post.isAuthoredBy(username);
+    }
+
+    public boolean canDeletePost(Post post, String username) {
+        if (username == null) {
+            return false;
+        }
+        AppUser user = findUser(username);
+        return post.isAuthoredBy(username) || user.getRole() == UserRole.ADMIN;
+    }
+
+    public Post findEditablePost(Long id, String username) {
+        Post post = findPost(id);
+        assertCanEdit(post, username);
+        return post;
     }
 
     @Transactional
@@ -85,11 +115,31 @@ public class CommunityService {
                 author
         );
 
-        if (request.isAdminApprovedEvent() && author.getRole() == UserRole.ADMIN) {
+        if (canApproveOfficialEvent(request, author)) {
             post.approveAsOfficialEvent();
         }
 
         return postRepository.save(post);
+    }
+
+    @Transactional
+    public Post updatePost(Long id, PostCreateRequest request, String username) {
+        Post post = findPost(id);
+        assertCanEdit(post, username);
+        AppUser editor = findUser(username);
+        applyPostDetails(post, request, editor);
+        return post;
+    }
+
+    @Transactional
+    public void deletePost(Long id, String username) {
+        Post post = findPost(id);
+        if (!canDeletePost(post, username)) {
+            throw new AccessDeniedException("게시글을 삭제할 권한이 없습니다.");
+        }
+        commentRepository.deleteByPostId(post.getId());
+        postLikeRepository.deleteByPostId(post.getId());
+        postRepository.delete(post);
     }
 
     public List<Post> findPosts(PostSortOption sortOption) {
@@ -196,6 +246,41 @@ public class CommunityService {
             return MediaType.VIDEO_LINK;
         }
         return MediaType.EXTERNAL_LINK;
+    }
+
+    private void applyPostDetails(Post post, PostCreateRequest request, AppUser editor) {
+        String mediaUrl = normalizeText(request.getMediaUrl());
+        String thumbnailUrl = normalizeText(request.getThumbnailUrl());
+        MediaType mediaType = resolveMediaType(mediaUrl);
+        boolean adminApprovedEvent = canApproveOfficialEvent(request, editor);
+        post.updateDetails(
+                request.getBoardType(),
+                request.getTitle().trim(),
+                request.getContent().trim(),
+                mediaType == MediaType.INSTAGRAM ? mediaUrl : "",
+                thumbnailUrl,
+                normalizeTags(request.getTags()),
+                normalizeText(request.getLocation()),
+                request.getEventDate(),
+                request.getDeadline(),
+                mediaType,
+                mediaUrl,
+                thumbnailUrl,
+                adminApprovedEvent
+        );
+    }
+
+    private boolean canApproveOfficialEvent(PostCreateRequest request, AppUser user) {
+        return request.isAdminApprovedEvent()
+                && user.getRole() == UserRole.ADMIN
+                && request.getBoardType() == BoardType.HYPE
+                && request.getEventDate() != null;
+    }
+
+    private void assertCanEdit(Post post, String username) {
+        if (!canEditPost(post, username)) {
+            throw new AccessDeniedException("게시글을 수정할 권한이 없습니다.");
+        }
     }
 
     private String normalizeTags(String tagText) {

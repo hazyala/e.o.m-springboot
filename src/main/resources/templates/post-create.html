@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create Post | E.O.M</title>
+    <title th:text="${formMode == 'edit'} ? 'Edit Post | E.O.M' : 'Create Post | E.O.M'">Create Post | E.O.M</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
@@ -14,10 +14,14 @@
 
 <main class="post-create-shell" th:attr="data-author=${currentUser.displayName}">
     <section class="post-create-editor" aria-labelledby="post-create-title">
-        <div class="post-create-kicker"><span></span>CREATE POST</div>
-        <h1 id="post-create-title">TELL US WHAT MOVES YOU.</h1>
+        <div class="post-create-kicker"><span></span><b th:text="${formMode == 'edit'} ? 'EDIT POST' : 'CREATE POST'">CREATE POST</b></div>
+        <h1 id="post-create-title" th:text="${formMode == 'edit'} ? 'REFINE WHAT MOVES YOU.' : 'TELL US WHAT MOVES YOU.'">TELL US WHAT MOVES YOU.</h1>
 
-        <form class="post-create-form" th:action="@{/posts/new}" th:object="${postCreateRequest}" method="post" novalidate>
+        <form class="post-create-form"
+              th:action="${formMode == 'edit'} ? @{/posts/{id}/edit(id=${post.id})} : @{/posts/new}"
+              th:object="${postCreateRequest}"
+              method="post"
+              novalidate>
             <section class="post-create-section">
                 <p class="post-create-label">CHOOSE BOARD</p>
                 <div class="post-board-tabs" role="radiogroup" aria-label="Choose board">
@@ -82,7 +86,10 @@
                 </label>
             </section>
 
-            <button class="post-create-publish" type="submit">PUBLISH <span aria-hidden="true">→</span></button>
+            <button class="post-create-publish" type="submit">
+                <span th:text="${formMode == 'edit'} ? 'UPDATE' : 'PUBLISH'">PUBLISH</span>
+                <span aria-hidden="true">→</span>
+            </button>
             <p class="post-create-footnote">WE DON’T JUST MOVE, WE ECHO.</p>
         </form>
     </section>

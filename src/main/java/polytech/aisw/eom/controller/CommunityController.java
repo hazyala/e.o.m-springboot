@@ -9,9 +9,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -67,16 +69,114 @@ public class CommunityController {
         return "redirect:/posts/" + post.getId();
     }
 
+    @GetMapping("/posts/{id}/edit")
+    public String editPost(
+            @PathVariable Long id,
+            Model model,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            var post = communityService.findEditablePost(id, principal.getName());
+            if (!model.containsAttribute("postCreateRequest")) {
+                model.addAttribute("postCreateRequest", PostCreateRequest.from(post));
+            }
+            populatePostCreateModel(model, principal);
+            model.addAttribute("post", post);
+            model.addAttribute("formMode", "edit");
+            model.addAttribute("formAction", "/posts/" + id + "/edit");
+            return "post-create";
+        } catch (AccessDeniedException exception) {
+            redirectAttributes.addFlashAttribute("postError", exception.getMessage());
+            return "redirect:/posts/" + id;
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
+            return "redirect:/boards/all";
+        }
+    }
+
+    @PostMapping("/posts/{id}/edit")
+    public String updatePost(
+            @PathVariable Long id,
+            @Valid @ModelAttribute PostCreateRequest postCreateRequest,
+            BindingResult bindingResult,
+            Model model,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (bindingResult.hasErrors()) {
+            try {
+                var post = communityService.findEditablePost(id, principal.getName());
+                populatePostCreateModel(model, principal);
+                model.addAttribute("post", post);
+                model.addAttribute("formMode", "edit");
+                model.addAttribute("formAction", "/posts/" + id + "/edit");
+                return "post-create";
+            } catch (AccessDeniedException exception) {
+                redirectAttributes.addFlashAttribute("postError", exception.getMessage());
+                return "redirect:/posts/" + id;
+            } catch (RuntimeException exception) {
+                redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
+                return "redirect:/boards/all";
+            }
+        }
+
+        try {
+            var post = communityService.updatePost(id, postCreateRequest, principal.getName());
+            redirectAttributes.addFlashAttribute("postNotice", "게시글이 수정되었습니다.");
+            return "redirect:/posts/" + post.getId();
+        } catch (AccessDeniedException exception) {
+            redirectAttributes.addFlashAttribute("postError", exception.getMessage());
+            return "redirect:/posts/" + id;
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
+            return "redirect:/boards/all";
+        }
+    }
+
+    @PostMapping("/posts/{id}/delete")
+    public String deletePost(
+            @PathVariable Long id,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            communityService.deletePost(id, principal.getName());
+            redirectAttributes.addFlashAttribute("postNotice", "게시글이 삭제되었습니다.");
+            return "redirect:/boards/all";
+        } catch (AccessDeniedException exception) {
+            redirectAttributes.addFlashAttribute("postError", exception.getMessage());
+            return "redirect:/posts/" + id;
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
+            return "redirect:/boards/all";
+        }
+    }
+
     @GetMapping("/posts/{id}")
-    public String postDetail(@PathVariable Long id, HttpServletRequest request, Model model) {
-        var post = communityService.findPost(id);
-        model.addAttribute("post", post);
-        model.addAttribute("backUrl", resolveBackUrl(request));
-        model.addAttribute("boards", BoardType.values());
-        model.addAttribute("postTags", communityService.parseTags(post.getTags()));
-        model.addAttribute("popularPosts", communityService.findPopularPosts());
-        model.addAttribute("recentPosts", communityService.findRecentPostsByBoard(post.getBoardType()));
-        return "post-detail";
+    public String postDetail(
+            @PathVariable Long id,
+            HttpServletRequest request,
+            Model model,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            var post = communityService.findPost(id);
+            String username = principal == null ? null : principal.getName();
+            model.addAttribute("post", post);
+            model.addAttribute("backUrl", resolveBackUrl(request));
+            model.addAttribute("boards", BoardType.values());
+            model.addAttribute("postTags", communityService.parseTags(post.getTags()));
+            model.addAttribute("popularPosts", communityService.findPopularPosts());
+            model.addAttribute("recentPosts", communityService.findRecentPostsByBoard(post.getBoardType()));
+            model.addAttribute("canEditPost", communityService.canEditPost(post, username));
+            model.addAttribute("canDeletePost", communityService.canDeletePost(post, username));
+            return "post-detail";
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
+            return "redirect:/boards/all";
+        }
     }
 
     @GetMapping("/posts")

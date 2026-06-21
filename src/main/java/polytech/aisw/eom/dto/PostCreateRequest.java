@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import polytech.aisw.eom.domain.BoardType;
+import polytech.aisw.eom.domain.Post;
 
 public class PostCreateRequest {
 
@@ -36,6 +37,21 @@ public class PostCreateRequest {
     private LocalDate deadline;
 
     private boolean adminApprovedEvent;
+
+    public static PostCreateRequest from(Post post) {
+        PostCreateRequest request = new PostCreateRequest();
+        request.setBoardType(post.getBoardType());
+        request.setTitle(post.getTitle());
+        request.setContent(post.getContent());
+        request.setTags(post.getTags());
+        request.setLocation(post.getLocation());
+        request.setMediaUrl(post.getMediaUrl());
+        request.setThumbnailUrl(post.getThumbnailUrl());
+        request.setEventDate(post.getEventDate());
+        request.setDeadline(post.getDeadline());
+        request.setAdminApprovedEvent(post.isAdminApprovedEvent());
+        return request;
+    }
 
     public BoardType getBoardType() {
         return boardType;
