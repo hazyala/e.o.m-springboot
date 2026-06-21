@@ -194,7 +194,9 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/posts`: 헤더 검색과 대시보드 Tags `ALL` 목적지입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
 - `/posts` 검색어 정규화: `q`가 `#왁킹`처럼 들어오면 앞의 `#`를 제거합니다. 태그 클릭은 `/posts?tag={tag}`를 사용하고 `findByTagsContainingIgnoreCase`로 조회합니다.
 - `/posts/new`: 로그인 사용자 게시글 작성 폼입니다. `PostCreateRequest`를 받아 Service에서 작성자를 조회하고 `PostRepository.save`로 저장한 뒤 생성된 `/posts/{id}`로 이동합니다. `board=SHOW|CAST|HYPE|LINK` 쿼리를 받으면 작성 탭 기본값으로 사용합니다. 보드/제목/본문/태그/위치/Instagram 또는 외부 미디어 URL/`thumbnailUrl`/일정 필드를 받으며 파일 업로드와 embed는 제공하지 않습니다. HYPE 관리자 승인 행사는 ADMIN 작성자에게만 저장됩니다.
-- `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다.
+- `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다. 작성자에게 Edit/Delete, ADMIN에게 Delete 액션을 노출합니다.
+- `/posts/{id}/edit`: 작성자 본인만 접근할 수 있는 게시글 수정 폼입니다. ADMIN도 작성자가 아니면 수정할 수 없습니다.
+- `/posts/{id}/delete`: 작성자 본인 또는 ADMIN만 실행할 수 있는 삭제 POST 경로입니다. 권한 정책은 `CommunityService`에서 판단합니다.
 - `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록이며, 검색 결과 화면의 목록형 UI를 공유합니다.
 - `/events`: 기존 링크 호환 경로이며 `/boards/HYPE?officialEvents=true`로 리다이렉트합니다.
 - `/dancers`: 장르별 댄서 탐색 목록입니다. `genres` 다중 쿼리 파라미터를 지원하며, 선택된 장르 중 하나라도 `primaryGenre`에 매칭되는 USER 역할 댄서를 카드형 목록으로 보여줍니다.

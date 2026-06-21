@@ -239,6 +239,42 @@ public class Post {
         return author.getUsername().equals(username);
     }
 
+    public void updateDetails(
+            BoardType boardType,
+            String title,
+            String content,
+            String instagramUrl,
+            String imageUrl,
+            String tags,
+            String location,
+            LocalDate eventDate,
+            LocalDate deadline,
+            MediaType mediaType,
+            String mediaUrl,
+            String thumbnailUrl,
+            boolean adminApprovedEvent
+    ) {
+        this.boardType = boardType;
+        this.title = title;
+        this.content = content;
+        this.instagramUrl = instagramUrl;
+        this.imageUrl = imageUrl;
+        this.tags = tags;
+        this.location = location;
+        this.eventDate = eventDate;
+        this.deadline = deadline;
+        this.mediaType = mediaType;
+        this.mediaUrl = mediaUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.adminApprovedEvent = adminApprovedEvent;
+        if (boardType == BoardType.SHOW) {
+            this.portfolioSelected = true;
+        } else {
+            this.portfolioSelected = false;
+            this.portfolioPinned = false;
+        }
+    }
+
     public void setPortfolioSelected(boolean portfolioSelected) {
         this.portfolioSelected = portfolioSelected;
         if (!portfolioSelected) {

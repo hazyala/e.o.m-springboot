@@ -4463,7 +4463,34 @@ html[data-theme="dark"] .community-event-meta span {
     margin-left: auto;
 }
 
+.post-alert {
+    margin: 14px 0 0;
+    padding: 12px 14px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.post-alert.is-success {
+    background: rgba(104, 160, 99, 0.12);
+    color: #315e2d;
+}
+
+.post-alert.is-error {
+    background: rgba(243, 58, 106, 0.12);
+    color: #9b1638;
+}
+
+.post-top-actions form {
+    margin: 0;
+}
+
+.post-top-actions a,
 .post-top-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-width: 34px;
     height: 34px;
     padding: 0 8px;
@@ -4473,6 +4500,16 @@ html[data-theme="dark"] .community-event-meta span {
     cursor: pointer;
     font: inherit;
     font-size: 20px;
+}
+
+.post-top-actions a,
+.post-top-actions form button {
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    border-radius: 8px;
+    color: #111111;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0;
 }
 
 .post-media-frame {
@@ -5374,8 +5411,16 @@ html[data-theme="dark"] .instagram-preview-card p,
 html[data-theme="dark"] .post-action-bar,
 html[data-theme="dark"] .post-info-strip span,
 html[data-theme="dark"] .post-info-strip time,
-html[data-theme="dark"] .post-side-title-row > a {
+html[data-theme="dark"] .post-side-title-row > a,
+html[data-theme="dark"] .post-top-actions button {
     color: #c7c7c7;
+}
+
+html[data-theme="dark"] .post-top-actions a,
+html[data-theme="dark"] .post-top-actions form button,
+html[data-theme="dark"] .post-alert {
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
 }
 
 html[data-theme="dark"] .post-body-copy > p,

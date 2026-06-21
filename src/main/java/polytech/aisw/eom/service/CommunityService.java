@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import polytech.aisw.eom.domain.AppUser;
@@ -60,6 +61,24 @@ public class CommunityService {
         return userRepository.findByUsername(username).orElseThrow();
     }
 
+    public boolean canEditPost(Post post, String username) {
+        return username != null && post.isAuthoredBy(username);
+    }
+
+    public boolean canDeletePost(Post post, String username) {
+        if (username == null) {
+            return false;
+        }
+        AppUser user = findUser(username);
+        return post.isAuthoredBy(username) || user.getRole() == UserRole.ADMIN;
+    }
+
+    public Post findEditablePost(Long id, String username) {
+        Post post = findPost(id);
+        assertCanEdit(post, username);
+        return post;
+    }
+
     @Transactional
     public Post createPost(PostCreateRequest request, String username) {
         AppUser author = findUser(username);
@@ -90,6 +109,24 @@ public class CommunityService {
         }
 
         return postRepository.save(post);
+    }
+
+    @Transactional
+    public Post updatePost(Long id, PostCreateRequest request, String username) {
+        Post post = findPost(id);
+        assertCanEdit(post, username);
+        AppUser editor = findUser(username);
+        applyPostDetails(post, request, editor);
+        return post;
+    }
+
+    @Transactional
+    public void deletePost(Long id, String username) {
+        Post post = findPost(id);
+        if (!canDeletePost(post, username)) {
+            throw new AccessDeniedException("게시글을 삭제할 권한이 없습니다.");
+        }
+        postRepository.delete(post);
     }
 
     public List<Post> findPosts(PostSortOption sortOption) {
@@ -196,6 +233,34 @@ public class CommunityService {
             return MediaType.VIDEO_LINK;
         }
         return MediaType.EXTERNAL_LINK;
+    }
+
+    private void applyPostDetails(Post post, PostCreateRequest request, AppUser editor) {
+        String mediaUrl = normalizeText(request.getMediaUrl());
+        String thumbnailUrl = normalizeText(request.getThumbnailUrl());
+        MediaType mediaType = resolveMediaType(mediaUrl);
+        boolean adminApprovedEvent = request.isAdminApprovedEvent() && editor.getRole() == UserRole.ADMIN;
+        post.updateDetails(
+                request.getBoardType(),
+                request.getTitle().trim(),
+                request.getContent().trim(),
+                mediaType == MediaType.INSTAGRAM ? mediaUrl : "",
+                thumbnailUrl,
+                normalizeTags(request.getTags()),
+                normalizeText(request.getLocation()),
+                request.getEventDate(),
+                request.getDeadline(),
+                mediaType,
+                mediaUrl,
+                thumbnailUrl,
+                adminApprovedEvent
+        );
+    }
+
+    private void assertCanEdit(Post post, String username) {
+        if (!canEditPost(post, username)) {
+            throw new AccessDeniedException("게시글을 수정할 권한이 없습니다.");
+        }
     }
 
     private String normalizeTags(String tagText) {

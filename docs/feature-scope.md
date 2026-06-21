@@ -52,18 +52,26 @@
 - Joined Events 추가/수정/삭제
 - 좋아요/댓글/활동 이력 목록 조회
 - `/posts/new` 게시글 작성 폼
+- `/posts/{id}/edit` 작성자 본인 게시글 수정
+- `/posts/{id}/delete` 작성자 본인 또는 ADMIN 게시글 삭제
+- 게시글 상세 권한별 Edit/Delete 액션 노출과 삭제 확인 UX
 - 작성 폼 좌측 입력/우측 Live Preview 2컬럼 UI
 - 보드, 제목, 본문, 태그, 위치, Instagram/외부 미디어 URL, `thumbnailUrl`, 일정 입력 저장
 - admin 전용 HYPE 관리자 승인 행사 체크 저장
+
+## 게시글 운영 정책
+
+- 게시글 수정은 작성자 본인만 가능합니다. ADMIN도 작성자 본인이 아닌 글은 수정할 수 없습니다.
+- 게시글 삭제는 작성자 본인 또는 ADMIN만 가능합니다.
+- 상세 화면은 권한이 있는 사용자에게만 Edit/Delete 액션을 노출하고, 삭제는 확인 후 `POST /posts/{id}/delete`로 처리합니다.
+- 수정/삭제 권한 정책은 Controller에 분산하지 않고 Service 계층에서 관리합니다.
 
 ## SHOULD
 
 가능하면 구현합니다.
 
-- 게시글 삭제 액션
 - 댓글 작성
 - 좋아요 토글
-- 관리자 삭제/관리 액션
 - 이미지 URL 유효성 검증
 - 외부 미디어 URL 유효성 검증
 
