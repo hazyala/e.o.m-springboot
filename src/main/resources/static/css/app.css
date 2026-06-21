@@ -5153,6 +5153,71 @@ html[data-theme="dark"] .community-event-meta span {
     font-weight: 800;
 }
 
+.post-comment-list {
+    display: grid;
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.post-comment-list article {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: start;
+    padding: 18px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.post-comment-list header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: baseline;
+}
+
+.post-comment-list header a {
+    color: #050505;
+    font-weight: 800;
+}
+
+.post-comment-list time {
+    color: #777777;
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+}
+
+.post-comment-list p {
+    margin: 8px 0 0;
+    color: #333333;
+    font-size: 15px;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.post-comment-list form {
+    margin: 0;
+}
+
+.post-comment-list form button {
+    min-height: 32px;
+    padding: 0 12px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    border-radius: 8px;
+    background: transparent;
+    color: #555555;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.post-comment-empty {
+    margin: 24px 0 0;
+    color: #777777;
+    font-size: 14px;
+    font-weight: 700;
+}
+
 .post-side {
     display: grid;
     align-content: start;
@@ -5389,7 +5454,8 @@ html[data-theme="dark"] .community-event-meta span {
 html[data-theme="dark"] .post-article-head,
 html[data-theme="dark"] .post-action-bar,
 html[data-theme="dark"] .post-side > section,
-html[data-theme="dark"] .post-side-list > a {
+html[data-theme="dark"] .post-side-list > a,
+html[data-theme="dark"] .post-comment-list article {
     border-color: rgba(255, 255, 255, 0.12);
 }
 
@@ -5399,7 +5465,8 @@ html[data-theme="dark"] .instagram-preview-card strong,
 html[data-theme="dark"] .post-comments h2,
 html[data-theme="dark"] .post-side h2,
 html[data-theme="dark"] .post-side-author strong,
-html[data-theme="dark"] .post-side-list strong {
+html[data-theme="dark"] .post-side-list strong,
+html[data-theme="dark"] .post-comment-list header a {
     color: #ffffff;
 }
 
@@ -5425,6 +5492,7 @@ html[data-theme="dark"] .post-alert {
 
 html[data-theme="dark"] .post-body-copy > p,
 html[data-theme="dark"] .post-comments input,
+html[data-theme="dark"] .post-comment-list p,
 html[data-theme="dark"] .dancer-profile h1 {
     color: #eeeeee;
 }
@@ -5432,7 +5500,8 @@ html[data-theme="dark"] .dancer-profile h1 {
 html[data-theme="dark"] .post-info-strip span,
 html[data-theme="dark"] .post-info-strip time,
 html[data-theme="dark"] .post-comments input,
-html[data-theme="dark"] .post-side-author > a {
+html[data-theme="dark"] .post-side-author > a,
+html[data-theme="dark"] .post-comment-list form button {
     border-color: rgba(255, 255, 255, 0.16);
 }
 
@@ -5878,6 +5947,14 @@ th {
 
     .post-comments button {
         margin-left: 56px;
+    }
+
+    .post-comment-list article {
+        grid-template-columns: 40px minmax(0, 1fr);
+    }
+
+    .post-comment-list form {
+        grid-column: 2;
     }
 
     .post-side {

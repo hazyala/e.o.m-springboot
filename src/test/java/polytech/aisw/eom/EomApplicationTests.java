@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import polytech.aisw.eom.domain.AppUser;
 import polytech.aisw.eom.domain.BoardType;
+import polytech.aisw.eom.domain.Comment;
 import polytech.aisw.eom.domain.Post;
+import polytech.aisw.eom.repository.CommentRepository;
 import polytech.aisw.eom.repository.PostRepository;
 import polytech.aisw.eom.repository.UserRepository;
 
@@ -30,6 +32,7 @@ class EomApplicationTests {
 
     private final MockMvc mockMvc;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final JdbcTemplate jdbcTemplate;
 
@@ -37,11 +40,13 @@ class EomApplicationTests {
     EomApplicationTests(
             MockMvc mockMvc,
             PostRepository postRepository,
+            CommentRepository commentRepository,
             UserRepository userRepository,
             JdbcTemplate jdbcTemplate
     ) {
         this.mockMvc = mockMvc;
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -91,7 +96,7 @@ class EomApplicationTests {
         mockMvc.perform(get("/dashboard?board=CAST").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("홍대 쇼케이스 백업댄서 모집")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("LINK에 새 글")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("SHOW에 새 글")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/boards/HYPE?officialEvents=true")));
 
@@ -193,6 +198,93 @@ class EomApplicationTests {
     }
 
     @Test
+    void loggedInUserCanCreateCommentAndDetailShowsCommentList() throws Exception {
+        Post post = saveTestPost("comment create target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("content", "첫 댓글입니다."))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post commentedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(commentedPost.getCommentCount()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId()))
+                .extracting(Comment::getContent)
+                .containsExactly("첫 댓글입니다.");
+
+        mockMvc.perform(get("/posts/{id}", post.getId()).with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("첫 댓글입니다.")))
+                .andExpect(content().string(containsString("href=\"/dancers/")))
+                .andExpect(content().string(containsString("COMMENTS <b>1</b>")));
+    }
+
+    @Test
+    void emptyOrTooLongCommentIsRejected() throws Exception {
+        Post post = saveTestPost("comment validation target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("dancer1").roles("USER"))
+                        .with(csrf())
+                        .param("content", "   "))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("dancer1").roles("USER"))
+                        .with(csrf())
+                        .param("content", "a".repeat(501)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post unchangedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(unchangedPost.getCommentCount()).isZero();
+        org.assertj.core.api.Assertions.assertThat(commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId())).isEmpty();
+    }
+
+    @Test
+    void commentAuthorCanDeleteOwnCommentAndCountDecreases() throws Exception {
+        Post post = saveTestPost("comment delete target", "dancer1");
+        createComment(post, "mina.flow", "삭제할 댓글입니다.");
+        Long commentId = commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId()).get(0).getId();
+
+        mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId)
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post updatedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(updatedPost.getCommentCount()).isZero();
+        org.assertj.core.api.Assertions.assertThat(commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId())).isEmpty();
+    }
+
+    @Test
+    void otherUserAndAdminCannotDeleteSomeoneElsesComment() throws Exception {
+        Post post = saveTestPost("comment delete blocked target", "dancer1");
+        createComment(post, "dancer1", "남이 지울 수 없는 댓글입니다.");
+        Long commentId = commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId()).get(0).getId();
+
+        mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId)
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId)
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post unchangedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(unchangedPost.getCommentCount()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId())).hasSize(1);
+    }
+
+    @Test
     void otherUserCannotEditOrDeletePost() throws Exception {
         Post post = saveTestPost("other blocked target", "dancer1");
 
@@ -275,6 +367,24 @@ class EomApplicationTests {
     }
 
     @Test
+    void adminApprovalParameterRequiresHypePostWithEventDateOnEdit() throws Exception {
+        Post post = saveTestPost("admin own hype target", "admin");
+
+        mockMvc.perform(post("/posts/{id}/edit", post.getId())
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .param("boardType", "HYPE")
+                        .param("title", "admin own hype edited")
+                        .param("content", "admin own hype edited content")
+                        .param("adminApprovedEvent", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post editedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(editedPost.isAdminApprovedEvent()).isFalse();
+    }
+
+    @Test
     void anonymousUserCannotAccessEditOrDeleteActions() throws Exception {
         Post post = saveTestPost("anonymous blocked target", "dancer1");
 
@@ -291,6 +401,18 @@ class EomApplicationTests {
                 .andExpect(redirectedUrlPattern("**/login"));
 
         mockMvc.perform(post("/posts/{id}/delete", post.getId()).with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(csrf())
+                        .param("content", "anonymous comment"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+
+        createComment(post, "dancer1", "anonymous delete blocked comment");
+        Long commentId = commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId()).get(0).getId();
+        mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId).with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/login"));
     }
@@ -321,6 +443,13 @@ class EomApplicationTests {
                 post.getId(),
                 user.getId()
         );
+    }
+
+    private Comment createComment(Post post, String username, String content) {
+        AppUser user = userRepository.findByUsername(username).orElseThrow();
+        post.increaseCommentCount();
+        postRepository.save(post);
+        return commentRepository.save(new Comment(post, user, content));
     }
 
     private void assertNoChildEngagement(Long postId) {

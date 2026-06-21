@@ -39,6 +39,7 @@
 - 대시보드 링크 목적지 연결: 게시글 상세, 태그 검색, 최신글 Activity, HYPE 관리자 승인 행사 필터, Dancers 디렉터리
 - `/boards/all`, `/boards/SHOW`, `/boards/CAST`, `/boards/HYPE`, `/boards/LINK` 보드 탐색 목록
 - `/posts/{id}` 게시글 상세와 외부 미디어 새 탭 링크
+- `/posts/{id}` 댓글 작성/목록/본인 댓글 삭제
 - `/posts?q=` 통합 검색: tags, title, content, author.displayName, author.crewName
 - `/posts?tag=` 태그 검색 호환 경로
 - 빈 `/posts`와 빈 검색어에서 전체 목록 노출 방지
@@ -65,12 +66,15 @@
 - 게시글 삭제는 작성자 본인 또는 ADMIN만 가능합니다.
 - 상세 화면은 권한이 있는 사용자에게만 Edit/Delete 액션을 노출하고, 삭제는 확인 후 `POST /posts/{id}/delete`로 처리합니다.
 - 수정/삭제 권한 정책은 Controller에 분산하지 않고 Service 계층에서 관리합니다.
+- 댓글 목록은 오래된순으로 표시해 대화 흐름을 위에서 아래로 읽게 합니다.
+- 댓글 작성은 로그인 사용자만 가능하며 1자 이상 500자 이하로 제한합니다.
+- 댓글 삭제는 작성자 본인만 가능하고, ADMIN 삭제 예외는 이번 범위에서 제외합니다.
+- 댓글 작성/삭제 시 게시글 `commentCount`를 증감하고, 상세 화면의 댓글 수는 실제 조회된 댓글 목록 기준으로 표시합니다.
 
 ## SHOULD
 
 가능하면 구현합니다.
 
-- 댓글 작성
 - 좋아요 토글
 - 이미지 URL 유효성 검증
 - 외부 미디어 URL 유효성 검증

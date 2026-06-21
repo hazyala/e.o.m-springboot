@@ -221,6 +221,16 @@ public class Post {
         return adminApprovedEvent;
     }
 
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+
+    public void decreaseCommentCount() {
+        if (commentCount > 0) {
+            this.commentCount--;
+        }
+    }
+
     public void approveAsOfficialEvent() {
         if (boardType == BoardType.HYPE && eventDate != null) {
             this.adminApprovedEvent = true;

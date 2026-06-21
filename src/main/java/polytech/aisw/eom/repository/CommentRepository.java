@@ -13,6 +13,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @EntityGraph(attributePaths = {"author", "post", "post.author"})
     List<Comment> findByAuthorUsernameOrderByCreatedAtDesc(String username);
 
+    @EntityGraph(attributePaths = {"author"})
+    List<Comment> findByPostIdOrderByCreatedAtAsc(Long postId);
+
     @Modifying
     @Query("delete from Comment c where c.post.id = :postId")
     void deleteByPostId(@Param("postId") Long postId);

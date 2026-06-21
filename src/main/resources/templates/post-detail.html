@@ -87,18 +87,41 @@
 
         <div class="post-action-bar">
             <span><b>♡</b><strong th:text="${post.likeCount}">0</strong></span>
-            <span><b>댓글</b><strong th:text="${post.commentCount}">0</strong></span>
+            <span><b>댓글</b><strong th:text="${commentCount}">0</strong></span>
             <span><b>조회</b><strong th:text="${post.viewCount}">0</strong></span>
             <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">☰ 목록으로</a>
         </div>
 
         <section class="post-comments">
-            <h2><span></span>COMMENTS <b th:text="${post.commentCount}">0</b></h2>
-            <form>
+            <h2><span></span>COMMENTS <b th:text="${commentCount}">0</b></h2>
+            <p class="post-alert is-error" th:if="${commentError}" th:text="${commentError}">댓글을 처리할 수 없습니다.</p>
+            <form th:action="@{/posts/{id}/comments(id=${post.id})}" th:object="${commentCreateRequest}" method="post">
                 <span class="post-avatar-placeholder" aria-hidden="true"></span>
-                <input type="text" placeholder="댓글을 남겨보세요" aria-label="댓글">
-                <button type="button">등록</button>
+                <input type="text" th:field="*{content}" maxlength="500" required placeholder="댓글을 남겨보세요" aria-label="댓글">
+                <button type="submit">등록</button>
             </form>
+            <div class="post-comment-list" th:if="${!comments.isEmpty()}">
+                <article th:each="comment : ${comments}">
+                    <a class="post-author-avatar-link" th:href="@{/dancers/{id}(id=${comment.author.id})}" aria-label="댓글 작성자 프로필 보기">
+                        <img th:if="${comment.author.profileImageUrl}" th:src="${comment.author.profileImageUrl}" th:alt="${comment.author.displayName}">
+                        <span th:unless="${comment.author.profileImageUrl}" aria-hidden="true"></span>
+                    </a>
+                    <div>
+                        <header>
+                            <a th:href="@{/dancers/{id}(id=${comment.author.id})}" th:text="${comment.author.displayName}">Author</a>
+                            <time th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}">2026.06.21 10:00</time>
+                        </header>
+                        <p th:text="${comment.content}">댓글 내용</p>
+                    </div>
+                    <form th:if="${deletableCommentIds.contains(comment.id)}"
+                          th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}"
+                          method="post"
+                          th:attr="data-confirm-message='댓글을 삭제할까요?'">
+                        <button type="submit">삭제</button>
+                    </form>
+                </article>
+            </div>
+            <p class="post-comment-empty" th:if="${comments.isEmpty()}">첫 댓글을 남겨보세요.</p>
         </section>
     </article>
 

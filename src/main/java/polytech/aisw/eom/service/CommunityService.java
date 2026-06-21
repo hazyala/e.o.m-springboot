@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import polytech.aisw.eom.domain.AppUser;
 import polytech.aisw.eom.domain.BoardType;
+import polytech.aisw.eom.domain.Comment;
 import polytech.aisw.eom.domain.MediaType;
 import polytech.aisw.eom.domain.Post;
 import polytech.aisw.eom.domain.UserRole;
+import polytech.aisw.eom.dto.CommentCreateRequest;
 import polytech.aisw.eom.dto.PostCreateRequest;
 import polytech.aisw.eom.repository.CommentRepository;
 import polytech.aisw.eom.repository.PostLikeRepository;
@@ -84,6 +86,10 @@ public class CommunityService {
         return post.isAuthoredBy(username) || user.getRole() == UserRole.ADMIN;
     }
 
+    public boolean canDeleteComment(Comment comment, String username) {
+        return username != null && comment.isAuthoredBy(username);
+    }
+
     public Post findEditablePost(Long id, String username) {
         Post post = findPost(id);
         assertCanEdit(post, username);
@@ -140,6 +146,32 @@ public class CommunityService {
         commentRepository.deleteByPostId(post.getId());
         postLikeRepository.deleteByPostId(post.getId());
         postRepository.delete(post);
+    }
+
+    public List<Comment> findComments(Long postId) {
+        return commentRepository.findByPostIdOrderByCreatedAtAsc(postId);
+    }
+
+    @Transactional
+    public Comment createComment(Long postId, CommentCreateRequest request, String username) {
+        Post post = findPost(postId);
+        AppUser author = findUser(username);
+        Comment comment = commentRepository.save(new Comment(post, author, request.getContent().trim()));
+        post.increaseCommentCount();
+        return comment;
+    }
+
+    @Transactional
+    public void deleteComment(Long postId, Long commentId, String username) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow();
+        if (!comment.getPost().getId().equals(postId)) {
+            throw new IllegalArgumentException("게시글과 댓글이 일치하지 않습니다.");
+        }
+        if (!canDeleteComment(comment, username)) {
+            throw new AccessDeniedException("댓글을 삭제할 권한이 없습니다.");
+        }
+        comment.getPost().decreaseCommentCount();
+        commentRepository.delete(comment);
     }
 
     public List<Post> findPosts(PostSortOption sortOption) {
