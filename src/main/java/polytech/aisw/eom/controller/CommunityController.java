@@ -178,6 +178,36 @@ public class CommunityController {
         return "redirect:/posts/" + id;
     }
 
+    @PostMapping("/posts/{id}/like")
+    public String togglePostLike(
+            @PathVariable Long id,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            boolean liked = communityService.togglePostLike(id, principal.getName());
+            redirectAttributes.addFlashAttribute("postNotice", liked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다.");
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("postError", "좋아요를 처리할 수 없습니다.");
+        }
+        return "redirect:/posts/" + id;
+    }
+
+    @PostMapping("/posts/{id}/save")
+    public String togglePostSave(
+            @PathVariable Long id,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            boolean saved = communityService.togglePostSave(id, principal.getName());
+            redirectAttributes.addFlashAttribute("postNotice", saved ? "게시글을 저장했습니다." : "저장을 취소했습니다.");
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("postError", "저장을 처리할 수 없습니다.");
+        }
+        return "redirect:/posts/" + id;
+    }
+
     @PostMapping("/posts/{postId}/comments/{commentId}/delete")
     public String deleteComment(
             @PathVariable Long postId,
@@ -224,6 +254,8 @@ public class CommunityController {
             model.addAttribute("recentPosts", communityService.findRecentPostsByBoard(post.getBoardType()));
             model.addAttribute("canEditPost", communityService.canEditPost(post, username));
             model.addAttribute("canDeletePost", communityService.canDeletePost(post, username));
+            model.addAttribute("likedByCurrentUser", communityService.hasLikedPost(id, username));
+            model.addAttribute("savedByCurrentUser", communityService.hasSavedPost(id, username));
             return "post-detail";
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
@@ -404,10 +436,11 @@ public class CommunityController {
 
     @GetMapping("/dancers/{id}")
     public String dancerDetail(@PathVariable Long id, Principal principal, Model model) {
-        var myPage = myPageService.findProfilePage(id);
+        String viewerUsername = principal == null ? null : principal.getName();
+        var myPage = myPageService.findProfilePage(id, viewerUsername);
         model.addAttribute("boards", BoardType.values());
         model.addAttribute("myPage", myPage);
-        model.addAttribute("isOwner", principal != null && myPage.user().getUsername().equals(principal.getName()));
+        model.addAttribute("isOwner", myPage.user().getUsername().equals(viewerUsername));
         return "my-page";
     }
 

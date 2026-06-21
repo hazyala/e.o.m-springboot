@@ -14,12 +14,15 @@ import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.domain.Comment;
 import polytech.aisw.eom.domain.MediaType;
 import polytech.aisw.eom.domain.Post;
+import polytech.aisw.eom.domain.PostLike;
+import polytech.aisw.eom.domain.PostSave;
 import polytech.aisw.eom.domain.UserRole;
 import polytech.aisw.eom.dto.CommentCreateRequest;
 import polytech.aisw.eom.dto.PostCreateRequest;
 import polytech.aisw.eom.repository.CommentRepository;
 import polytech.aisw.eom.repository.PostLikeRepository;
 import polytech.aisw.eom.repository.PostRepository;
+import polytech.aisw.eom.repository.PostSaveRepository;
 import polytech.aisw.eom.repository.UserRepository;
 
 @Service
@@ -53,17 +56,20 @@ public class CommunityService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final PostLikeRepository postLikeRepository;
+    private final PostSaveRepository postSaveRepository;
 
     public CommunityService(
             PostRepository postRepository,
             UserRepository userRepository,
             CommentRepository commentRepository,
-            PostLikeRepository postLikeRepository
+            PostLikeRepository postLikeRepository,
+            PostSaveRepository postSaveRepository
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.postLikeRepository = postLikeRepository;
+        this.postSaveRepository = postSaveRepository;
     }
 
     public Post findPost(Long id) {
@@ -145,7 +151,48 @@ public class CommunityService {
         }
         commentRepository.deleteByPostId(post.getId());
         postLikeRepository.deleteByPostId(post.getId());
+        postSaveRepository.deleteByPostId(post.getId());
         postRepository.delete(post);
+    }
+
+    @Transactional
+    public boolean togglePostLike(Long postId, String username) {
+        Post post = findPost(postId);
+        AppUser user = findUser(username);
+        return postLikeRepository.findByPostIdAndUserUsername(postId, username)
+                .map(postLike -> {
+                    postLikeRepository.delete(postLike);
+                    post.decreaseLikeCount();
+                    return false;
+                })
+                .orElseGet(() -> {
+                    postLikeRepository.save(new PostLike(post, user));
+                    post.increaseLikeCount();
+                    return true;
+                });
+    }
+
+    @Transactional
+    public boolean togglePostSave(Long postId, String username) {
+        Post post = findPost(postId);
+        AppUser user = findUser(username);
+        return postSaveRepository.findByPostIdAndUserUsername(postId, username)
+                .map(postSave -> {
+                    postSaveRepository.delete(postSave);
+                    return false;
+                })
+                .orElseGet(() -> {
+                    postSaveRepository.save(new PostSave(post, user));
+                    return true;
+                });
+    }
+
+    public boolean hasLikedPost(Long postId, String username) {
+        return username != null && postLikeRepository.existsByPostIdAndUserUsername(postId, username);
+    }
+
+    public boolean hasSavedPost(Long postId, String username) {
+        return username != null && postSaveRepository.existsByPostIdAndUserUsername(postId, username);
     }
 
     public List<Comment> findComments(Long postId) {

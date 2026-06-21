@@ -181,6 +181,16 @@ public class Post {
         return commentCount;
     }
 
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        if (likeCount > 0) {
+            this.likeCount--;
+        }
+    }
+
     public String getTags() {
         return tags;
     }

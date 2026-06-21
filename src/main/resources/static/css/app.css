@@ -4482,7 +4482,8 @@ html[data-theme="dark"] .community-event-meta span {
     color: #9b1638;
 }
 
-.post-top-actions form {
+.post-top-actions form,
+.post-action-bar form {
     margin: 0;
 }
 
@@ -4500,6 +4501,11 @@ html[data-theme="dark"] .community-event-meta span {
     cursor: pointer;
     font: inherit;
     font-size: 20px;
+}
+
+.post-top-actions button.is-active,
+.post-action-bar button.is-active {
+    color: #d30f46;
 }
 
 .post-top-actions a,
@@ -5068,20 +5074,37 @@ html[data-theme="dark"] .community-event-meta span {
     font-size: 13px;
 }
 
-.post-action-bar span {
+.post-action-bar span,
+.post-action-bar button {
     display: inline-flex;
     align-items: center;
     gap: 7px;
 }
 
-.post-action-bar span b {
+.post-action-bar button {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: #555555;
+    cursor: pointer;
+    font: inherit;
+}
+
+.post-action-bar span b,
+.post-action-bar button b {
     color: #555555;
     font-weight: 800;
 }
 
-.post-action-bar span strong {
+.post-action-bar span strong,
+.post-action-bar button strong {
     color: #555555;
     font-weight: 800;
+}
+
+.post-action-bar button.is-active b,
+.post-action-bar button.is-active strong {
+    color: #d30f46;
 }
 
 .post-action-bar a {
@@ -5517,9 +5540,18 @@ html[data-theme="dark"] .post-side-author > a {
 
 html[data-theme="dark"] .post-action-bar span b,
 html[data-theme="dark"] .post-action-bar span strong,
+html[data-theme="dark"] .post-action-bar button b,
+html[data-theme="dark"] .post-action-bar button strong,
 html[data-theme="dark"] .post-top-actions button,
 html[data-theme="dark"] .dancer-profile > div > p:last-of-type {
     color: #c7c7c7;
+}
+
+html[data-theme="dark"] .post-top-actions button.is-active,
+html[data-theme="dark"] .post-action-bar button.is-active,
+html[data-theme="dark"] .post-action-bar button.is-active b,
+html[data-theme="dark"] .post-action-bar button.is-active strong {
+    color: #ff4d6d;
 }
 
 html[data-theme="dark"] .dancer-profile a {

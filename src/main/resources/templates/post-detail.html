@@ -46,7 +46,13 @@
                           th:attr="data-confirm-message=|정말 '${post.title}' 게시글을 삭제할까요? 삭제 후에는 되돌릴 수 없습니다.|">
                         <button type="submit" aria-label="Delete post">DELETE</button>
                     </form>
-                    <button type="button" aria-label="Save post">♡</button>
+                    <form th:action="@{/posts/{id}/save(id=${post.id})}" method="post">
+                        <button class="post-icon-action"
+                                type="submit"
+                                th:classappend="${savedByCurrentUser} ? ' is-active' : ''"
+                                th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '게시글 저장'}"
+                                th:text="${savedByCurrentUser ? '▣' : '▢'}">▢</button>
+                    </form>
                     <button type="button" aria-label="Share post">↗</button>
                     <button type="button" aria-label="More actions">…</button>
                 </div>
@@ -86,7 +92,22 @@
         </div>
 
         <div class="post-action-bar">
-            <span><b>♡</b><strong th:text="${post.likeCount}">0</strong></span>
+            <form th:action="@{/posts/{id}/like(id=${post.id})}" method="post">
+                <button type="submit"
+                        th:classappend="${likedByCurrentUser} ? ' is-active' : ''"
+                        th:attr="aria-label=${likedByCurrentUser ? '좋아요 취소' : '좋아요'}">
+                    <b th:text="${likedByCurrentUser ? '♥' : '♡'}">♡</b>
+                    <strong th:text="${post.likeCount}">0</strong>
+                </button>
+            </form>
+            <form th:action="@{/posts/{id}/save(id=${post.id})}" method="post">
+                <button type="submit"
+                        th:classappend="${savedByCurrentUser} ? ' is-active' : ''"
+                        th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '저장'}">
+                    <b th:text="${savedByCurrentUser ? '▣' : '▢'}">▢</b>
+                    <strong th:text="${savedByCurrentUser ? '저장됨' : '저장'}">저장</strong>
+                </button>
+            </form>
             <span><b>댓글</b><strong th:text="${commentCount}">0</strong></span>
             <span><b>조회</b><strong th:text="${post.viewCount}">0</strong></span>
             <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">☰ 목록으로</a>

@@ -349,6 +349,137 @@ class EomApplicationTests {
     }
 
     @Test
+    void loggedInUserCanToggleLikeAndCountChangesWithoutDuplicates() throws Exception {
+        Post post = saveTestPost("reaction like target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post likedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(likedPost.getLikeCount()).isEqualTo(1);
+        assertTableCount("post_likes", post.getId(), 1);
+
+        mockMvc.perform(get("/posts/{id}", post.getId()).with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("♥")))
+                .andExpect(content().string(containsString("reaction like target")));
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post unlikedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(unlikedPost.getLikeCount()).isZero();
+        assertTableCount("post_likes", post.getId(), 0);
+    }
+
+    @Test
+    void likeCancelDoesNotMakeCountNegative() throws Exception {
+        Post post = saveTestPost("reaction negative guard target", "dancer1");
+        AppUser user = userRepository.findByUsername("mina.flow").orElseThrow();
+        jdbcTemplate.update(
+                "insert into post_likes (post_id, user_id, created_at) values (?, ?, current_timestamp)",
+                post.getId(),
+                user.getId()
+        );
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        Post unlikedPost = postRepository.findById(post.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(unlikedPost.getLikeCount()).isZero();
+        assertTableCount("post_likes", post.getId(), 0);
+    }
+
+    @Test
+    void loggedInUserCanToggleSaveAndMyPageReflectsIt() throws Exception {
+        Post post = saveTestPost("reaction save target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        assertTableCount("post_saves", post.getId(), 1);
+        mockMvc.perform(get("/posts/{id}", post.getId()).with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("저장됨")));
+
+        mockMvc.perform(get("/my-page").with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Saves")))
+                .andExpect(content().string(containsString("reaction save target")));
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        assertTableCount("post_saves", post.getId(), 0);
+        mockMvc.perform(get("/my-page").with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("reaction save target"))));
+    }
+
+    @Test
+    void savedPostsAreHiddenOnOtherUsersPublicProfile() throws Exception {
+        Post post = saveTestPost("private saved bookmark target", "dancer1");
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        mockMvc.perform(get("/dancers/{id}", minaId).with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("Saves"))))
+                .andExpect(content().string(not(containsString("private saved bookmark target"))));
+
+        mockMvc.perform(get("/dancers/{id}", minaId).with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Saves")))
+                .andExpect(content().string(containsString("private saved bookmark target")));
+    }
+
+    @Test
+    void myPageLikesReflectPostLikeRows() throws Exception {
+        Post post = saveTestPost("reaction my likes target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        mockMvc.perform(get("/my-page").with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Likes")))
+                .andExpect(content().string(containsString("reaction my likes target")));
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        mockMvc.perform(get("/my-page").with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("reaction my likes target"))));
+    }
+
+    @Test
     void forgedAdminApprovalParameterDoesNotApproveNonHypePostOnEdit() throws Exception {
         Post post = saveTestPost("admin own show target", "admin");
 
@@ -410,6 +541,14 @@ class EomApplicationTests {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/login"));
 
+        mockMvc.perform(post("/posts/{id}/like", post.getId()).with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId()).with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+
         createComment(post, "dancer1", "anonymous delete blocked comment");
         Long commentId = commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId()).get(0).getId();
         mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId).with(csrf()))
@@ -443,6 +582,11 @@ class EomApplicationTests {
                 post.getId(),
                 user.getId()
         );
+        jdbcTemplate.update(
+                "insert into post_saves (post_id, user_id, created_at) values (?, ?, current_timestamp)",
+                post.getId(),
+                user.getId()
+        );
     }
 
     private Comment createComment(Post post, String username, String content) {
@@ -463,7 +607,22 @@ class EomApplicationTests {
                 Integer.class,
                 postId
         );
+        Integer saveCount = jdbcTemplate.queryForObject(
+                "select count(*) from post_saves where post_id = ?",
+                Integer.class,
+                postId
+        );
         org.assertj.core.api.Assertions.assertThat(commentCount).isZero();
         org.assertj.core.api.Assertions.assertThat(likeCount).isZero();
+        org.assertj.core.api.Assertions.assertThat(saveCount).isZero();
+    }
+
+    private void assertTableCount(String tableName, Long postId, int expectedCount) {
+        Integer rowCount = jdbcTemplate.queryForObject(
+                "select count(*) from " + tableName + " where post_id = ?",
+                Integer.class,
+                postId
+        );
+        org.assertj.core.api.Assertions.assertThat(rowCount).isEqualTo(expectedCount);
     }
 }
