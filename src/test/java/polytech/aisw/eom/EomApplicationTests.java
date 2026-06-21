@@ -193,6 +193,23 @@ class EomApplicationTests {
     }
 
     @Test
+    void recommendedTagsOnlyUseVisibleCommunityPosts() throws Exception {
+        Post hiddenTaggedPost = saveTaggedPost("hidden recommended tag target", "dancer1", "hidden-recommended-tag");
+        hiddenTaggedPost.setHiddenByAdmin(true);
+        postRepository.save(hiddenTaggedPost);
+        saveTaggedPost("blocked author recommended tag target", "mina.flow", "blocked-author-tag");
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+        jdbcTemplate.update("update app_users set blocked = true where id = ?", minaId);
+        saveTaggedPost("visible recommended tag target", "dancer1", "visible-recommended-tag");
+
+        mockMvc.perform(get("/posts").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("visible-recommended-tag")))
+                .andExpect(content().string(not(containsString("hidden-recommended-tag"))))
+                .andExpect(content().string(not(containsString("blocked-author-tag"))));
+    }
+
+    @Test
     void authorCanEditOwnPost() throws Exception {
         Post post = saveTestPost("owner edit target", "dancer1");
 
@@ -1019,6 +1036,29 @@ class EomApplicationTests {
                 "서울",
                 LocalDate.now().plusDays(7),
                 LocalDate.now().plusDays(3),
+                MediaType.IMAGE,
+                "",
+                "",
+                author
+        );
+        return postRepository.save(post);
+    }
+
+    private Post saveTaggedPost(String title, String authorUsername, String tags) {
+        AppUser author = userRepository.findByUsername(authorUsername).orElseThrow();
+        Post post = new Post(
+                BoardType.SHOW,
+                title,
+                "테스트 태그 게시글 본문입니다.",
+                "",
+                "",
+                0,
+                0,
+                0,
+                tags,
+                "서울",
+                null,
+                null,
                 MediaType.IMAGE,
                 "",
                 "",
