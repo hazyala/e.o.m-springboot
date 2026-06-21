@@ -135,7 +135,7 @@ src/main/resources/static/assets/source
 - 브랜드 무드와 로그인 폼의 대비
 - 현재 Spring Security 로그인 폼과 연결 완료
 - 로그인 상태 유지는 기본 체크 상태로 두어 사용자가 index를 왕복해도 인증 흐름이 끊기지 않게 합니다.
-- 회원가입 슬라이드 UI는 시각만 유지하며 실제 가입 기능은 다음 단계에서 연결
+- 회원가입 슬라이드 UI는 `/signup`과 연결되어 이름, 아이디, 비밀번호, 비밀번호 확인을 받아 USER 계정을 생성합니다.
 
 ### Dashboard
 
@@ -178,6 +178,13 @@ src/main/resources/static/assets/source
 - 별도 Events 목록 화면 대신 HYPE 보드 안의 `관리자 승인 행사` 뷰로 공식 행사, 배틀, 공연 글을 최신순으로 탐색합니다.
 - 필터가 켜진 HYPE 목록도 기존 카드 그리드 톤을 유지하며 `thumbnailUrl`, `boardType`, `mediaType`, `title`, 본문 미리보기, `eventDate`, `location`, `author.displayName`을 노출합니다.
 - `/events`는 기존 링크 호환을 위해 필터가 켜진 HYPE 보드로 이동합니다.
+
+### Moderation
+
+- 게시글 상세의 더보기 메뉴는 링크 복사, 게시판 이동, 미디어 열기, 신고하기 액션을 제공합니다.
+- 신고된 게시글은 관리자 화면의 Reports 섹션에 신고 수와 최신 사유를 표시합니다.
+- 관리자는 게시글 숨김/복구, HYPE 행사 승인/취소, USER 계정 차단/차단 해제를 수행합니다.
+- 숨김 게시글과 차단 사용자 글은 일반 커뮤니티 목록과 대시보드에서 제외됩니다.
 
 ### Dancers
 
