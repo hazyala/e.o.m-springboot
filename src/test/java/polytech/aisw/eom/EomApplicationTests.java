@@ -549,6 +549,26 @@ class EomApplicationTests {
     }
 
     @Test
+    void publicProfileHidesCommentsAndActivityForHiddenPosts() throws Exception {
+        Post hiddenPost = saveTestPost("hidden profile comment target", "dancer1");
+        createComment(hiddenPost, "mina.flow", "hidden profile comment body");
+        hiddenPost.setHiddenByAdmin(true);
+        postRepository.save(hiddenPost);
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+
+        mockMvc.perform(get("/dancers/{id}", minaId).with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("hidden profile comment target"))))
+                .andExpect(content().string(not(containsString("hidden profile comment body"))))
+                .andExpect(content().string(not(containsString("/posts/" + hiddenPost.getId()))));
+
+        mockMvc.perform(get("/my-page").with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("hidden profile comment target")))
+                .andExpect(content().string(containsString("hidden profile comment body")));
+    }
+
+    @Test
     void myPageLikesReflectPostLikeRows() throws Exception {
         Post post = saveTestPost("reaction my likes target", "dancer1");
 

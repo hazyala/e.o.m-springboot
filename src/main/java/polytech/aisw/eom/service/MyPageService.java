@@ -89,7 +89,10 @@ public class MyPageService {
                         .filter(Post::isVisibleInCommunity)
                         .toList()
                 : List.of();
-        List<Comment> comments = commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
+        List<Comment> comments = filterVisibleComments(
+                commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username),
+                includePrivateTabs
+        );
         List<JoinedEvent> joinedEvents = joinedEventRepository.findByUserUsernameOrderByEventDateDescCreatedAtDesc(username);
         List<ActivityItem> activityItems = buildActivity(posts, comments);
 
@@ -253,6 +256,15 @@ public class MyPageService {
         }
         return posts.stream()
                 .filter(Post::isVisibleInCommunity)
+                .toList();
+    }
+
+    private List<Comment> filterVisibleComments(List<Comment> comments, boolean includePrivateTabs) {
+        if (includePrivateTabs) {
+            return comments;
+        }
+        return comments.stream()
+                .filter(comment -> comment.getPost().isVisibleInCommunity())
                 .toList();
     }
 
