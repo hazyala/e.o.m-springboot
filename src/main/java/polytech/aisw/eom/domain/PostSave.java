@@ -11,10 +11,10 @@ import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "post_likes", uniqueConstraints = {
+@Table(name = "post_saves", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"post_id", "user_id"})
 })
-public class PostLike {
+public class PostSave {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +28,10 @@ public class PostLike {
 
     private LocalDateTime createdAt;
 
-    protected PostLike() {
+    protected PostSave() {
     }
 
-    public PostLike(Post post, AppUser user) {
+    public PostSave(Post post, AppUser user) {
         this.post = post;
         this.user = user;
         this.createdAt = LocalDateTime.now();

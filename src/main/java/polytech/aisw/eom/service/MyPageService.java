@@ -15,6 +15,7 @@ import polytech.aisw.eom.repository.CommentRepository;
 import polytech.aisw.eom.repository.JoinedEventRepository;
 import polytech.aisw.eom.repository.PostLikeRepository;
 import polytech.aisw.eom.repository.PostRepository;
+import polytech.aisw.eom.repository.PostSaveRepository;
 import polytech.aisw.eom.repository.UserRepository;
 
 @Service
@@ -25,6 +26,7 @@ public class MyPageService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
+    private final PostSaveRepository postSaveRepository;
     private final CommentRepository commentRepository;
     private final JoinedEventRepository joinedEventRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,6 +35,7 @@ public class MyPageService {
             UserRepository userRepository,
             PostRepository postRepository,
             PostLikeRepository postLikeRepository,
+            PostSaveRepository postSaveRepository,
             CommentRepository commentRepository,
             JoinedEventRepository joinedEventRepository,
             PasswordEncoder passwordEncoder
@@ -40,6 +43,7 @@ public class MyPageService {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
+        this.postSaveRepository = postSaveRepository;
         this.commentRepository = commentRepository;
         this.joinedEventRepository = joinedEventRepository;
         this.passwordEncoder = passwordEncoder;
@@ -65,6 +69,9 @@ public class MyPageService {
         List<Post> likedPosts = postLikeRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
                 .map(like -> like.getPost())
                 .toList();
+        List<Post> savedPosts = postSaveRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
+                .map(save -> save.getPost())
+                .toList();
         List<Comment> comments = commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
         List<JoinedEvent> joinedEvents = joinedEventRepository.findByUserUsernameOrderByEventDateDescCreatedAtDesc(username);
         List<ActivityItem> activityItems = buildActivity(posts, comments);
@@ -74,6 +81,7 @@ public class MyPageService {
                 posts,
                 portfolioPosts,
                 likedPosts,
+                savedPosts,
                 comments,
                 joinedEvents,
                 activityItems
@@ -214,6 +222,7 @@ public class MyPageService {
             List<Post> posts,
             List<Post> portfolioPosts,
             List<Post> likedPosts,
+            List<Post> savedPosts,
             List<Comment> comments,
             List<JoinedEvent> joinedEvents,
             List<ActivityItem> activityItems
