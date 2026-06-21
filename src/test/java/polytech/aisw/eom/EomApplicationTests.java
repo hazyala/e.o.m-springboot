@@ -95,7 +95,8 @@ class EomApplicationTests {
     void dashboardBoardTabsAndLinkedPagesRender() throws Exception {
         mockMvc.perform(get("/dashboard?board=CAST").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("홍대 쇼케이스 백업댄서 모집")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("data-board=\"CAST\" class=\" is-active\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("type-cast")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("SHOW에 새 글")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/dashboard?board=HYPE")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/boards/HYPE?officialEvents=true")));
@@ -454,6 +455,60 @@ class EomApplicationTests {
     }
 
     @Test
+    void myPageShowsOwnerTabsAndPostCardMeta() throws Exception {
+        Post post = saveTestPost("owner posts tab meta target", "mina.flow");
+        createComment(post, "dancer1", "메타 댓글입니다.");
+
+        mockMvc.perform(get("/my-page").with(user("mina.flow").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Portfolio")))
+                .andExpect(content().string(containsString("Posts")))
+                .andExpect(content().string(containsString("Events")))
+                .andExpect(content().string(containsString("Likes")))
+                .andExpect(content().string(containsString("Saves")))
+                .andExpect(content().string(containsString("Comments")))
+                .andExpect(content().string(containsString("owner posts tab meta target")))
+                .andExpect(content().string(containsString("SHOW")))
+                .andExpect(content().string(containsString("댓글 1")))
+                .andExpect(content().string(containsString("좋아요 0")))
+                .andExpect(content().string(containsString("/posts/" + post.getId())));
+    }
+
+    @Test
+    void otherUsersPublicProfileHidesPrivateTabsAndOwnerActions() throws Exception {
+        Post post = saveTestPost("public profile visible post target", "mina.flow");
+        Long minaId = userRepository.findByUsername("mina.flow").orElseThrow().getId();
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/" + post.getId()));
+
+        mockMvc.perform(get("/dancers/{id}", minaId).with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Portfolio")))
+                .andExpect(content().string(containsString("Posts")))
+                .andExpect(content().string(containsString("Events")))
+                .andExpect(content().string(containsString("Comments")))
+                .andExpect(content().string(containsString("public profile visible post target")))
+                .andExpect(content().string(containsString("/posts/" + post.getId())))
+                .andExpect(content().string(not(containsString(">Likes<"))))
+                .andExpect(content().string(not(containsString(">Saves<"))))
+                .andExpect(content().string(not(containsString("프로필 편집"))))
+                .andExpect(content().string(not(containsString("회원정보 수정"))))
+                .andExpect(content().string(not(containsString("포트폴리오에 추가"))))
+                .andExpect(content().string(not(containsString("대표 고정"))))
+                .andExpect(content().string(not(containsString("Add</button>"))));
+    }
+
+    @Test
     void myPageLikesReflectPostLikeRows() throws Exception {
         Post post = saveTestPost("reaction my likes target", "dancer1");
 
@@ -477,6 +532,74 @@ class EomApplicationTests {
         mockMvc.perform(get("/my-page").with(user("mina.flow").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(content().string(not(containsString("reaction my likes target"))));
+    }
+
+    @Test
+    void portfolioSelectionAndPinningOnlyAllowShowPosts() throws Exception {
+        Post showPost = saveTestPost("show portfolio candidate target", "mina.flow", BoardType.SHOW);
+        Post castPost = saveTestPost("cast portfolio blocked target", "mina.flow", BoardType.CAST);
+
+        mockMvc.perform(post("/my-page/portfolio/select")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("postId", castPost.getId().toString())
+                        .param("selected", "true")
+                        .param("returnTab", "posts"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-page#posts"));
+
+        mockMvc.perform(post("/my-page/portfolio/pin")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("postId", castPost.getId().toString())
+                        .param("pinned", "true")
+                        .param("returnTab", "posts"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-page#posts"));
+
+        Post unchangedCastPost = postRepository.findById(castPost.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(unchangedCastPost.isPortfolioSelected()).isFalse();
+        org.assertj.core.api.Assertions.assertThat(unchangedCastPost.isPortfolioPinned()).isFalse();
+
+        mockMvc.perform(post("/my-page/portfolio/pin")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("postId", showPost.getId().toString())
+                        .param("pinned", "true")
+                        .param("returnTab", "portfolio"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-page#portfolio"));
+
+        Post pinnedShowPost = postRepository.findById(showPost.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(pinnedShowPost.isPortfolioSelected()).isTrue();
+        org.assertj.core.api.Assertions.assertThat(pinnedShowPost.isPortfolioPinned()).isTrue();
+    }
+
+    @Test
+    void portfolioPinLimitStillAllowsOnlyThreePinnedShowPosts() throws Exception {
+        Post firstPost = saveTestPost("portfolio pin first target", "mina.flow", BoardType.SHOW);
+        Post secondPost = saveTestPost("portfolio pin second target", "mina.flow", BoardType.SHOW);
+        Post thirdPost = saveTestPost("portfolio pin third target", "mina.flow", BoardType.SHOW);
+        Post fourthPost = saveTestPost("portfolio pin fourth target", "mina.flow", BoardType.SHOW);
+
+        firstPost.setPortfolioPinned(true);
+        secondPost.setPortfolioPinned(true);
+        thirdPost.setPortfolioPinned(true);
+        postRepository.save(firstPost);
+        postRepository.save(secondPost);
+        postRepository.save(thirdPost);
+
+        mockMvc.perform(post("/my-page/portfolio/pin")
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .param("postId", fourthPost.getId().toString())
+                        .param("pinned", "true")
+                        .param("returnTab", "portfolio"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-page#portfolio"));
+
+        Post unpinnedFourthPost = postRepository.findById(fourthPost.getId()).orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(unpinnedFourthPost.isPortfolioPinned()).isFalse();
     }
 
     @Test
@@ -557,9 +680,13 @@ class EomApplicationTests {
     }
 
     private Post saveTestPost(String title, String authorUsername) {
+        return saveTestPost(title, authorUsername, BoardType.SHOW);
+    }
+
+    private Post saveTestPost(String title, String authorUsername, BoardType boardType) {
         AppUser author = userRepository.findByUsername(authorUsername).orElseThrow();
         Post post = new Post(
-                BoardType.SHOW,
+                boardType,
                 title,
                 "테스트 게시글 본문입니다.",
                 "",

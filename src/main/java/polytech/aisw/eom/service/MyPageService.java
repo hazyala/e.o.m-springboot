@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import polytech.aisw.eom.domain.AppUser;
+import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.domain.Comment;
 import polytech.aisw.eom.domain.JoinedEvent;
 import polytech.aisw.eom.domain.Post;
@@ -61,15 +62,20 @@ public class MyPageService {
         return buildMyPageView(user, user.getUsername().equals(viewerUsername));
     }
 
-    private MyPageView buildMyPageView(AppUser user, boolean includeSavedPosts) {
+    private MyPageView buildMyPageView(AppUser user, boolean includePrivateTabs) {
         String username = user.getUsername();
         List<Post> posts = postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
         List<Post> portfolioPosts = postRepository
-                .findByAuthorUsernameAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(username);
-        List<Post> likedPosts = postLikeRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
-                .map(like -> like.getPost())
-                .toList();
-        List<Post> savedPosts = includeSavedPosts
+                .findByAuthorUsernameAndBoardTypeAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(
+                        username,
+                        BoardType.SHOW
+                );
+        List<Post> likedPosts = includePrivateTabs
+                ? postLikeRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
+                        .map(like -> like.getPost())
+                        .toList()
+                : List.of();
+        List<Post> savedPosts = includePrivateTabs
                 ? postSaveRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
                         .map(save -> save.getPost())
                         .toList()
@@ -127,14 +133,23 @@ public class MyPageService {
     @Transactional
     public void updatePortfolioSelection(String username, Long postId, boolean selected) {
         Post post = findOwnedPost(username, postId);
+        if (!post.isPortfolioCandidate()) {
+            post.setPortfolioSelected(false);
+            return;
+        }
         post.setPortfolioSelected(selected);
     }
 
     @Transactional
     public void updatePortfolioPin(String username, Long postId, boolean pinned) {
         Post post = findOwnedPost(username, postId);
+        if (!post.isPortfolioCandidate()) {
+            post.setPortfolioPinned(false);
+            return;
+        }
         if (pinned && !post.isPortfolioPinned()
-                && postRepository.countByAuthorUsernameAndPortfolioPinnedTrue(username) >= MAX_PINNED_PORTFOLIO) {
+                && postRepository.countByAuthorUsernameAndBoardTypeAndPortfolioPinnedTrue(username, BoardType.SHOW)
+                        >= MAX_PINNED_PORTFOLIO) {
             throw new IllegalStateException("Pinned portfolio limit exceeded");
         }
         post.setPortfolioPinned(pinned);

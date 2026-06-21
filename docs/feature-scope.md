@@ -130,11 +130,13 @@
 - 공통 헤더는 index 제외 화면에서 대시보드 톤을 유지하고, 인증 사용자의 버튼은 일반 화면에서 외곽선 없는 `My Page`, 마이페이지에서 같은 크기의 붉은 `Logout`으로 전환합니다.
 - 로그인 상태 유지는 기본 체크 상태이며 remember-me 쿠키로 유지하고, 로그아웃 시 세션 쿠키와 remember-me 쿠키를 함께 삭제합니다.
 - 마이페이지는 displayName, crewName, bio, instagramUrl, profileImageUrl, headerImageUrl, 주 장르를 보여주고 admin도 본인 마이페이지에 접근할 수 있습니다.
-- 포트폴리오는 내가 쓴 게시글 중 선택된 항목으로 구성하며, 상단 고정은 최대 3개입니다.
+- 포트폴리오는 내가 쓴 SHOW 게시글 중 선택된 항목으로 구성하며, 새 SHOW 게시글은 기본 포트폴리오 후보입니다. CAST/HYPE/LINK는 포트폴리오 선택/고정 대상에서 제외합니다.
+- 포트폴리오 상단 고정은 SHOW 게시글 기준 최대 3개이며, 선택/고정 액션은 본인 마이페이지에서만 노출합니다.
 - 탭 순서는 Portfolio, Posts, Events, Likes, Saves, Comments입니다.
-- Posts 탭은 내가 쓴 전체 게시글을 카드형으로 보여주고 별 버튼으로 포트폴리오 포함 여부를 바꿉니다.
-- Events 탭은 Joined Events 전체 목록과 입력 폼을 카드형으로 제공하고, 사이드바 Joined Events는 최신 참여 행사 일부만 보여줍니다.
-- Likes, Saves, Comments 탭은 각각 좋아요한 게시글, 저장한 게시글, 내가 작성한 댓글을 목록형으로 제공합니다.
+- 본인 마이페이지는 Portfolio, Posts, Events, Likes, Saves, Comments를 모두 보여주며, 공개 작성자 프로필은 Portfolio, Posts, Events, Comments 중심으로 보여주고 개인 북마크성 Likes/Saves는 숨깁니다.
+- Posts 탭은 작성자가 쓴 전체 게시글을 최신순 카드형으로 보여주고 boardType, 작성일, 조회/좋아요/댓글 수를 함께 표시합니다. 포트폴리오 포함 여부 변경은 본인 SHOW 글에서만 가능합니다.
+- Events 탭은 Joined Events 전체 목록을 카드형으로 제공합니다. 참여 행사는 공개 프로필에서도 볼 수 있지만 추가/수정/삭제 폼은 본인에게만 노출합니다.
+- Likes, Saves, Comments 탭은 각각 좋아요한 게시글, 저장한 게시글, 내가 작성한 댓글을 목록형으로 제공합니다. Likes/Saves는 개인 데이터로 본인에게만 노출합니다.
 - Activity는 게시글/댓글 기반 최근 활동을 자동 표시합니다.
 - 마이페이지 편집은 URL 기반 프로필/헤더 이미지 갱신만 제공하며 새 이미지 원본 추가, 직접 이미지 업로드, 직접 영상 업로드는 제외합니다.
 - Instagram/외부 미디어 링크가 상세/프로필 영역에 노출될 경우 새 탭으로 열며, 파일 업로드나 직접 영상 저장 흐름은 제공하지 않습니다.
