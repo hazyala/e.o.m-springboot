@@ -75,6 +75,15 @@ public class Post {
     @Column(nullable = false)
     private boolean adminApprovedEvent;
 
+    @Column(nullable = false)
+    private boolean hiddenByAdmin;
+
+    @Column(nullable = false)
+    private int reportCount;
+
+    @Column(length = 300)
+    private String latestReportReason;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private AppUser author;
 
@@ -141,6 +150,9 @@ public class Post {
         this.portfolioSelected = boardType == BoardType.SHOW;
         this.portfolioPinned = false;
         this.adminApprovedEvent = false;
+        this.hiddenByAdmin = false;
+        this.reportCount = 0;
+        this.latestReportReason = "";
         this.author = author;
         this.createdAt = LocalDateTime.now();
     }
@@ -235,6 +247,22 @@ public class Post {
         return adminApprovedEvent;
     }
 
+    public boolean isHiddenByAdmin() {
+        return hiddenByAdmin;
+    }
+
+    public int getReportCount() {
+        return reportCount;
+    }
+
+    public String getLatestReportReason() {
+        return latestReportReason;
+    }
+
+    public boolean isVisibleInCommunity() {
+        return !hiddenByAdmin && !author.isBlocked();
+    }
+
     public void increaseCommentCount() {
         this.commentCount++;
     }
@@ -249,6 +277,19 @@ public class Post {
         if (boardType == BoardType.HYPE && eventDate != null) {
             this.adminApprovedEvent = true;
         }
+    }
+
+    public void setAdminApprovedEvent(boolean adminApprovedEvent) {
+        this.adminApprovedEvent = adminApprovedEvent && boardType == BoardType.HYPE && eventDate != null;
+    }
+
+    public void setHiddenByAdmin(boolean hiddenByAdmin) {
+        this.hiddenByAdmin = hiddenByAdmin;
+    }
+
+    public void report(String reason) {
+        this.reportCount++;
+        this.latestReportReason = reason;
     }
 
     public AppUser getAuthor() {

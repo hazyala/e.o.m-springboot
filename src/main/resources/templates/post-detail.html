@@ -60,6 +60,13 @@
                             <button type="button" data-copy-post-link>링크 복사</button>
                             <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">게시판으로 이동</a>
                             <a th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">미디어 열기</a>
+                            <form th:unless="${canDeletePost}"
+                                  th:action="@{/posts/{id}/report(id=${post.id})}"
+                                  method="post"
+                                  th:attr="data-confirm-message='이 게시글을 운영자에게 신고할까요?'">
+                                <input type="hidden" name="reason" value="부적절한 콘텐츠">
+                                <button type="submit">신고하기</button>
+                            </form>
                         </div>
                     </div>
                 </div>

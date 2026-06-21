@@ -4546,6 +4546,10 @@ html[data-theme="dark"] .community-event-meta span {
     white-space: nowrap;
 }
 
+.post-top-actions .post-more-menu form {
+    margin: 0;
+}
+
 .post-top-actions .post-more-menu a:hover,
 .post-top-actions .post-more-menu button:hover {
     background: rgba(211, 15, 70, 0.08);
@@ -5626,6 +5630,78 @@ html[data-theme="dark"] .dancer-profile a {
 .admin-grid article {
     overflow-x: auto;
     padding: 24px;
+}
+
+.admin-notice {
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid rgba(104, 160, 99, 0.35);
+    border-radius: 8px;
+    background: rgba(104, 160, 99, 0.12);
+    color: #315e2d;
+    font-weight: 800;
+}
+
+.admin-notice.is-error {
+    border-color: rgba(243, 58, 106, 0.35);
+    background: rgba(243, 58, 106, 0.12);
+    color: #ff8ba5;
+}
+
+.admin-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--sub-text-color);
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.admin-status.is-ok {
+    background: rgba(104, 160, 99, 0.14);
+    color: #68a063;
+}
+
+.admin-status.is-danger {
+    background: rgba(243, 58, 106, 0.14);
+    color: #ff4d6d;
+}
+
+.admin-status.is-pending {
+    background: rgba(255, 201, 87, 0.16);
+    color: #ffc957;
+}
+
+.admin-actions,
+.admin-grid td:last-child {
+    min-width: 150px;
+}
+
+.admin-grid form {
+    display: inline-flex;
+    margin: 0 6px 6px 0;
+}
+
+.admin-grid button {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.admin-grid a {
+    color: var(--text-color);
+    font-weight: 800;
 }
 
 table {

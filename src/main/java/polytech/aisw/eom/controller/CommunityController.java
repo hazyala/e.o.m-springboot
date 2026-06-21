@@ -208,6 +208,25 @@ public class CommunityController {
         return "redirect:/posts/" + id;
     }
 
+    @PostMapping("/posts/{id}/report")
+    public String reportPost(
+            @PathVariable Long id,
+            @RequestParam(required = false) String reason,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            communityService.reportPost(id, reason, principal.getName());
+            redirectAttributes.addFlashAttribute("postNotice", "신고가 접수되었습니다. 운영자가 확인합니다.");
+        } catch (AccessDeniedException exception) {
+            redirectAttributes.addFlashAttribute("postError", exception.getMessage());
+            return "redirect:/boards/all";
+        } catch (RuntimeException exception) {
+            redirectAttributes.addFlashAttribute("postError", "신고를 접수할 수 없습니다.");
+        }
+        return "redirect:/posts/" + id;
+    }
+
     @PostMapping("/posts/{postId}/comments/{commentId}/delete")
     public String deleteComment(
             @PathVariable Long postId,
@@ -235,8 +254,8 @@ public class CommunityController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            var post = communityService.findPost(id);
             String username = principal == null ? null : principal.getName();
+            var post = communityService.findPostForViewer(id, username);
             var comments = communityService.findComments(id);
             Set<Long> deletableCommentIds = comments.stream()
                     .filter(comment -> communityService.canDeleteComment(comment, username))
@@ -257,6 +276,9 @@ public class CommunityController {
             model.addAttribute("likedByCurrentUser", communityService.hasLikedPost(id, username));
             model.addAttribute("savedByCurrentUser", communityService.hasSavedPost(id, username));
             return "post-detail";
+        } catch (AccessDeniedException exception) {
+            redirectAttributes.addFlashAttribute("postError", exception.getMessage());
+            return "redirect:/boards/all";
         } catch (RuntimeException exception) {
             redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
             return "redirect:/boards/all";
@@ -436,12 +458,17 @@ public class CommunityController {
 
     @GetMapping("/dancers/{id}")
     public String dancerDetail(@PathVariable Long id, Principal principal, Model model) {
-        String viewerUsername = principal == null ? null : principal.getName();
-        var myPage = myPageService.findProfilePage(id, viewerUsername);
-        model.addAttribute("boards", BoardType.values());
-        model.addAttribute("myPage", myPage);
-        model.addAttribute("isOwner", myPage.user().getUsername().equals(viewerUsername));
-        return "my-page";
+        try {
+            communityService.findDancer(id);
+            String viewerUsername = principal == null ? null : principal.getName();
+            var myPage = myPageService.findProfilePage(id, viewerUsername);
+            model.addAttribute("boards", BoardType.values());
+            model.addAttribute("myPage", myPage);
+            model.addAttribute("isOwner", myPage.user().getUsername().equals(viewerUsername));
+            return "my-page";
+        } catch (AccessDeniedException exception) {
+            return "redirect:/dancers";
+        }
     }
 
     private String resolveBackUrl(HttpServletRequest request) {

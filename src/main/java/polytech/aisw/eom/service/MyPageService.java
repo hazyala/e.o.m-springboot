@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import polytech.aisw.eom.domain.AppUser;
@@ -59,25 +60,33 @@ public class MyPageService {
     @Transactional(readOnly = true)
     public MyPageView findProfilePage(Long userId, String viewerUsername) {
         AppUser user = userRepository.findById(userId).orElseThrow();
+        if (user.isBlocked() && !user.getUsername().equals(viewerUsername)) {
+            throw new AccessDeniedException("차단된 사용자입니다.");
+        }
         return buildMyPageView(user, user.getUsername().equals(viewerUsername));
     }
 
     private MyPageView buildMyPageView(AppUser user, boolean includePrivateTabs) {
         String username = user.getUsername();
-        List<Post> posts = postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
-        List<Post> portfolioPosts = postRepository
+        List<Post> posts = filterVisiblePosts(
+                postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username),
+                includePrivateTabs
+        );
+        List<Post> portfolioPosts = filterVisiblePosts(postRepository
                 .findByAuthorUsernameAndBoardTypeAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(
                         username,
                         BoardType.SHOW
-                );
+                ), includePrivateTabs);
         List<Post> likedPosts = includePrivateTabs
                 ? postLikeRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
                         .map(like -> like.getPost())
+                        .filter(Post::isVisibleInCommunity)
                         .toList()
                 : List.of();
         List<Post> savedPosts = includePrivateTabs
                 ? postSaveRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
                         .map(save -> save.getPost())
+                        .filter(Post::isVisibleInCommunity)
                         .toList()
                 : List.of();
         List<Comment> comments = commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username);
@@ -219,6 +228,15 @@ public class MyPageService {
                 )
                 .sorted(Comparator.comparing(ActivityItem::createdAt).reversed())
                 .limit(5)
+                .toList();
+    }
+
+    private List<Post> filterVisiblePosts(List<Post> posts, boolean includePrivateTabs) {
+        if (includePrivateTabs) {
+            return posts;
+        }
+        return posts.stream()
+                .filter(Post::isVisibleInCommunity)
                 .toList();
     }
 
