@@ -27,6 +27,7 @@ import polytech.aisw.eom.domain.UserRole;
 import polytech.aisw.eom.dto.CommentCreateRequest;
 import polytech.aisw.eom.dto.PostCreateRequest;
 import polytech.aisw.eom.service.CommunityService;
+import polytech.aisw.eom.service.MediaUploadException;
 import polytech.aisw.eom.service.MyPageService;
 import polytech.aisw.eom.service.PostSortOption;
 
@@ -68,8 +69,20 @@ public class CommunityController {
             return "post-create";
         }
 
-        var post = communityService.createPost(postCreateRequest, principal.getName());
-        return "redirect:/posts/" + post.getId();
+        try {
+            var post = communityService.createPost(postCreateRequest, principal.getName());
+            return "redirect:/posts/" + post.getId();
+        } catch (MediaUploadException exception) {
+            bindingResult.rejectValue("mediaFile", "mediaFile.upload", exception.getMessage());
+            populatePostCreateModel(model, principal);
+            return "post-create";
+        } catch (AccessDeniedException exception) {
+            throw exception;
+        } catch (RuntimeException exception) {
+            bindingResult.reject("post.create.failed", "게시글을 저장하는 중 오류가 발생했습니다. 입력값과 업로드 설정을 확인해 주세요.");
+            populatePostCreateModel(model, principal);
+            return "post-create";
+        }
     }
 
     @GetMapping("/posts/{id}/edit")
@@ -128,12 +141,25 @@ public class CommunityController {
             var post = communityService.updatePost(id, postCreateRequest, principal.getName());
             redirectAttributes.addFlashAttribute("postNotice", "게시글이 수정되었습니다.");
             return "redirect:/posts/" + post.getId();
+        } catch (MediaUploadException exception) {
+            var post = communityService.findEditablePost(id, principal.getName());
+            bindingResult.rejectValue("mediaFile", "mediaFile.upload", exception.getMessage());
+            populatePostCreateModel(model, principal);
+            model.addAttribute("post", post);
+            model.addAttribute("formMode", "edit");
+            model.addAttribute("formAction", "/posts/" + id + "/edit");
+            return "post-create";
         } catch (AccessDeniedException exception) {
             redirectAttributes.addFlashAttribute("postError", exception.getMessage());
             return "redirect:/posts/" + id;
         } catch (RuntimeException exception) {
-            redirectAttributes.addFlashAttribute("postError", "게시글을 찾을 수 없습니다.");
-            return "redirect:/boards/all";
+            var post = communityService.findEditablePost(id, principal.getName());
+            bindingResult.reject("post.update.failed", "게시글을 저장하는 중 오류가 발생했습니다. 입력값과 업로드 설정을 확인해 주세요.");
+            populatePostCreateModel(model, principal);
+            model.addAttribute("post", post);
+            model.addAttribute("formMode", "edit");
+            model.addAttribute("formAction", "/posts/" + id + "/edit");
+            return "post-create";
         }
     }
 

@@ -57,19 +57,22 @@ public class CommunityService {
     private final CommentRepository commentRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostSaveRepository postSaveRepository;
+    private final CloudinaryMediaStorageService mediaStorageService;
 
     public CommunityService(
             PostRepository postRepository,
             UserRepository userRepository,
             CommentRepository commentRepository,
             PostLikeRepository postLikeRepository,
-            PostSaveRepository postSaveRepository
+            PostSaveRepository postSaveRepository,
+            CloudinaryMediaStorageService mediaStorageService
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.postLikeRepository = postLikeRepository;
         this.postSaveRepository = postSaveRepository;
+        this.mediaStorageService = mediaStorageService;
     }
 
     public Post findPost(Long id) {
@@ -124,8 +127,9 @@ public class CommunityService {
     @Transactional
     public Post createPost(PostCreateRequest request, String username) {
         AppUser author = findActiveUser(username);
-        String mediaUrl = normalizeText(request.getMediaUrl());
-        String thumbnailUrl = normalizeText(request.getThumbnailUrl());
+        MediaUploadResult uploadedMedia = mediaStorageService.upload(request.getMediaFile());
+        String mediaUrl = resolveMediaUrl(request, uploadedMedia);
+        String thumbnailUrl = resolveThumbnailUrl(request, uploadedMedia);
         MediaType mediaType = resolveMediaType(mediaUrl);
         Post post = new Post(
                 request.getBoardType(),
@@ -357,8 +361,9 @@ public class CommunityService {
     }
 
     private void applyPostDetails(Post post, PostCreateRequest request, AppUser editor) {
-        String mediaUrl = normalizeText(request.getMediaUrl());
-        String thumbnailUrl = normalizeText(request.getThumbnailUrl());
+        MediaUploadResult uploadedMedia = mediaStorageService.upload(request.getMediaFile());
+        String mediaUrl = resolveMediaUrl(request, uploadedMedia);
+        String thumbnailUrl = resolveThumbnailUrl(request, uploadedMedia);
         MediaType mediaType = resolveMediaType(mediaUrl);
         boolean adminApprovedEvent = resolveAdminApprovedEvent(post, request, editor);
         post.updateDetails(
@@ -455,6 +460,40 @@ public class CommunityService {
             return "";
         }
         return text.trim();
+    }
+
+    private String resolveMediaUrl(PostCreateRequest request, MediaUploadResult uploadedMedia) {
+        if (uploadedMedia != null) {
+            return uploadedMedia.mediaUrl();
+        }
+        return normalizeMediaUrl(request.getMediaUrl());
+    }
+
+    private String resolveThumbnailUrl(PostCreateRequest request, MediaUploadResult uploadedMedia) {
+        if (uploadedMedia != null) {
+            return uploadedMedia.thumbnailUrl();
+        }
+        return normalizeText(request.getThumbnailUrl());
+    }
+
+    private String normalizeMediaUrl(String mediaUrl) {
+        String normalized = normalizeText(mediaUrl);
+        if (normalized.isBlank()) {
+            return "";
+        }
+
+        String lowerUrl = normalized.toLowerCase();
+        if (lowerUrl.startsWith("http://") || lowerUrl.startsWith("https://")) {
+            return normalized;
+        }
+        while (normalized.startsWith("/")) {
+            normalized = normalized.substring(1);
+        }
+        lowerUrl = normalized.toLowerCase();
+        if (lowerUrl.startsWith("www.instagram.com/") || lowerUrl.startsWith("instagram.com/")) {
+            return "https://" + normalized;
+        }
+        return normalized;
     }
 
     private List<String> normalizeDancerGenres(List<String> genres) {

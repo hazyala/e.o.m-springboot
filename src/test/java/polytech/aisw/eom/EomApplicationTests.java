@@ -210,6 +210,16 @@ class EomApplicationTests {
     }
 
     @Test
+    void instagramPostDetailShowsInstagramCardWithoutTemplateError() throws Exception {
+        Post post = saveInstagramPost("instagram detail target", "dancer1");
+
+        mockMvc.perform(get("/posts/{id}", post.getId()).with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Instagram Preview")))
+                .andExpect(content().string(not(containsString("INSTAGRAM MEDIA"))));
+    }
+
+    @Test
     void authorCanEditOwnPost() throws Exception {
         Post post = saveTestPost("owner edit target", "dancer1");
 
@@ -1039,6 +1049,29 @@ class EomApplicationTests {
                 MediaType.IMAGE,
                 "",
                 "",
+                author
+        );
+        return postRepository.save(post);
+    }
+
+    private Post saveInstagramPost(String title, String authorUsername) {
+        AppUser author = userRepository.findByUsername(authorUsername).orElseThrow();
+        Post post = new Post(
+                BoardType.SHOW,
+                title,
+                "instagram detail content",
+                "https://www.instagram.com/p/test/",
+                "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+                0,
+                0,
+                0,
+                "instagram",
+                "Seoul",
+                null,
+                null,
+                MediaType.INSTAGRAM,
+                "https://www.instagram.com/p/test/",
+                "https://res.cloudinary.com/demo/image/upload/sample.jpg",
                 author
         );
         return postRepository.save(post);

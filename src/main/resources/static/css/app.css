@@ -3323,13 +3323,18 @@ html[data-theme="dark"] .dashboard-nav a.is-current {
 
 .my-page-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 18px;
-    overflow-x: auto;
+    overflow: visible;
     padding: 30px 0 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     font-weight: 900;
     text-transform: uppercase;
-    scrollbar-width: thin;
+    scrollbar-width: none;
+}
+
+.my-page-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .my-page-tabs a {
@@ -4530,6 +4535,10 @@ html[data-theme="dark"] .community-event-meta span {
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
 }
 
+.post-more-menu[hidden] {
+    display: none;
+}
+
 .post-top-actions .post-more-menu a,
 .post-top-actions .post-more-menu button {
     justify-content: flex-start;
@@ -4575,12 +4584,18 @@ html[data-theme="dark"] .community-event-meta span {
     border-radius: 8px;
 }
 
-.post-media-frame img {
+.post-media-frame img,
+.post-media-frame video {
     width: 100%;
     height: 100%;
     min-height: 460px;
     object-fit: cover;
     filter: saturate(0.95) contrast(1.04);
+}
+
+.post-media-frame video {
+    display: block;
+    background: #111111;
 }
 
 .post-media-overlay {
@@ -4761,6 +4776,24 @@ html[data-theme="dark"] .community-event-meta span {
     min-height: 44px;
 }
 
+.post-create-fields input[type="file"] {
+    padding: 10px 0;
+    cursor: pointer;
+}
+
+.post-create-fields input[type="file"]::file-selector-button {
+    margin-right: 14px;
+    border: 0;
+    border-radius: 999px;
+    padding: 9px 14px;
+    background: #111111;
+    color: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+}
+
 .post-create-fields textarea {
     min-height: 190px;
     resize: vertical;
@@ -4927,22 +4960,25 @@ html[data-theme="dark"] .community-event-meta span {
 
 .post-preview-media {
     position: relative;
-    display: grid;
-    place-items: center;
+    display: block;
     overflow: hidden;
-    min-height: min(180px, 25vh);
     margin-bottom: 14px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 8px;
-    background: #d7d7df;
+    background: #f6f6f8;
 }
 
-.post-preview-media img {
-    position: absolute;
-    inset: 0;
+.post-preview-media img,
+.post-preview-media video {
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    max-height: 520px;
+    object-fit: contain;
+}
+
+.post-preview-media video {
+    background: #111111;
 }
 
 .post-preview-media::after {
