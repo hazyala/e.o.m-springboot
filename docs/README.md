@@ -15,6 +15,7 @@
 - `git-guide.md`: 브랜치, 커밋, PR 컨벤션
 - `feature-scope.md`: MVP, SHOULD, 제외 기능 범위
 - `render-deploy-guide.md`: Docker 없는 Render 배포 가이드
+- `neon-cloudinary-setup.md`: Neon PostgreSQL과 Cloudinary Free 환경변수 설정
 
 현재 문서 기준:
 - Spring Boot MVC + Thymeleaf 구조를 유지합니다.

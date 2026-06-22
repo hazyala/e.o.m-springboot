@@ -10,6 +10,8 @@
 - Spring Data JPA
 - H2 local
 - PostgreSQL prod
+- Neon PostgreSQL
+- Cloudinary media storage
 - Render Web Service
 
 ## 2. 핵심 구조
@@ -79,6 +81,7 @@ src/main/resources
 - 빈 검색어는 Service에서 빈 리스트로 처리해 `/posts`가 전체 게시글 목록으로 흐르지 않게 합니다.
 - `open-in-view=false`를 기준으로 지연 로딩 문제가 없도록 조회합니다.
 - Render 배포를 위해 `server.port=${PORT:8080}` 설정을 유지합니다.
+- 업로드 파일은 Service 계층에서 Cloudinary로 전송하고, Controller는 성공/실패 결과에 따른 화면 흐름만 처리합니다.
 
 ## 6. 도메인 초안
 
@@ -127,7 +130,7 @@ src/main/resources
 - VIDEO_LINK
 - EXTERNAL_LINK
 
-MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그램 릴스/게시물 URL, 유튜브 URL, 외부 영상 URL을 `mediaUrl`로 저장합니다. 목록 화면은 `thumbnailUrl`을 카드 이미지로 사용하고, 상세 화면은 `thumbnailUrl` 중심 프리뷰와 새 탭 외부 링크만 제공합니다. 인스타그램 URL은 `https://www.instagram.com/hazyala?igsh=ZW1maGFzNHQzdzEx&utm_source=qr` 계정과 해당 계정 내 확인 가능한 실제 릴스/게시물 URL을 기준으로 하며, 정확한 릴스/게시물 URL을 확인한 경우 해당 URL을 사용하고 확인 전에는 프로필 URL을 fallback으로 사용한 뒤 실제 URL로 교체 예정입니다.
+MVP에서는 Cloudinary를 외부 스토리지로 사용해 이미지/영상 파일 업로드를 지원합니다. 업로드 성공 시 Cloudinary `secure_url`을 `mediaUrl`로 저장하고, 이미지는 같은 URL을 `thumbnailUrl`로 사용하며 영상은 Cloudinary URL 기반 jpg 썸네일 URL을 `thumbnailUrl`로 저장합니다. 인스타그램 게시물 링크는 `MediaType.INSTAGRAM`으로 저장하고 상세 화면의 별도 링크 카드에서만 새 탭으로 엽니다.
 
 현재 `DataSeeder`는 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 게시글 `mediaUrl`에 반영합니다. Instagram 미디어 게시글은 `instagramUrl`도 해당 게시물 URL을 사용하고, 아직 개별 URL이 없는 항목만 프로필 URL을 fallback으로 둡니다.
 
@@ -193,7 +196,7 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다. 잘못된 보드 path는 `/boards/all`로 되돌립니다. HYPE는 `officialEvents=true` 쿼리로 관리자 승인 행사만 최신순 고정 필터링할 수 있습니다.
 - `/posts`: 헤더 검색과 대시보드 Tags `ALL` 목적지입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
 - `/posts` 검색어 정규화: `q`가 `#왁킹`처럼 들어오면 앞의 `#`를 제거합니다. 태그 클릭은 `/posts?tag={tag}`를 사용하고 `findByTagsContainingIgnoreCase`로 조회합니다.
-- `/posts/new`: 로그인 사용자 게시글 작성 폼입니다. `PostCreateRequest`를 받아 Service에서 작성자를 조회하고 `PostRepository.save`로 저장한 뒤 생성된 `/posts/{id}`로 이동합니다. `board=SHOW|CAST|HYPE|LINK` 쿼리를 받으면 작성 탭 기본값으로 사용합니다. 보드/제목/본문/태그/위치/Instagram 또는 외부 미디어 URL/`thumbnailUrl`/일정 필드를 받으며 파일 업로드와 embed는 제공하지 않습니다. HYPE 관리자 승인 행사는 ADMIN 작성자에게만 저장됩니다.
+- `/posts/new`: 로그인 사용자 게시글 작성 폼입니다. `PostCreateRequest`를 받아 Service에서 작성자를 조회하고 `PostRepository.save`로 저장한 뒤 생성된 `/posts/{id}`로 이동합니다. `board=SHOW|CAST|HYPE|LINK` 쿼리를 받으면 작성 탭 기본값으로 사용합니다. 보드/제목/본문/태그/위치/이미지 또는 영상 파일/Instagram 게시물 링크/일정 필드를 받습니다. 첨부 파일은 Cloudinary 업로드 후 URL을 저장하고, Instagram 링크는 별도 링크 카드로 표시합니다. HYPE 관리자 승인 행사는 ADMIN 작성자에게만 저장됩니다.
 - `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다. 작성자에게 Edit/Delete, ADMIN에게 Delete 액션을 노출합니다.
 - `/posts/{id}/like`, `/posts/{id}/save`, `/posts/{id}/comments`: 로그인 사용자의 좋아요, 저장, 댓글 POST 액션입니다. 숨김 게시글 또는 차단 작성자 게시글은 상세 조회와 같은 가시성 검사를 통과해야 하며, 일반 사용자는 직접 POST로 우회할 수 없습니다.
 - `/posts/{id}/report`: 로그인 사용자가 게시글을 신고하는 POST 경로입니다. 신고 수와 최신 사유는 관리자 화면에서 검토합니다.
@@ -214,10 +217,10 @@ MVP에서는 직접 영상 파일 업로드를 구현하지 않고, 인스타그
 - `/admin/users/{id}/block`: USER 계정 차단 상태를 바꾸는 POST 경로입니다. 차단 사용자는 로그인과 커뮤니티 쓰기 액션이 제한됩니다.
 - `/admin/posts/{id}/visibility`: 게시글 숨김 상태를 바꾸는 POST 경로입니다. 숨김 글은 일반 커뮤니티 목록과 상세에서 제외됩니다.
 - `/admin/posts/{id}/hype-approval`: 행사일이 있는 HYPE 게시글의 관리자 승인 행사 상태를 바꾸는 POST 경로입니다.
-- 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 `OPEN MEDIA`/`INSTAGRAM` 링크에서만 새 탭으로 열며, 대시보드와 목록 썸네일은 내부 게시글 미리보기로 취급합니다.
+- 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 `OPEN MEDIA`/`INSTAGRAM` 링크에서만 새 탭으로 열며, 대시보드와 목록 썸네일은 내부 게시글 미리보기로 취급합니다. 첨부 이미지/영상은 게시글 본문 미디어로 직접 표시하고, Instagram 배지는 첨부 파일에는 표시하지 않습니다.
 
 운영 가시성 정책은 `Post.isVisibleInCommunity()` 기준을 공유합니다. 숨김 게시글과 차단 작성자 게시글은 일반 목록, 대시보드, 검색, 태그 추천, 공개 프로필 댓글/활동에서 제외하고, 상세 조회와 좋아요/저장/댓글 POST 액션도 같은 검사를 통과해야 합니다.
-- 직접 영상 업로드와 실제 embed는 현재 MVC 범위에 포함하지 않습니다. 기존 `mediaType + mediaUrl + thumbnailUrl` 필드를 유지합니다.
+- 실제 Instagram embed는 현재 MVC 범위에 포함하지 않습니다. 기존 `mediaType + mediaUrl + thumbnailUrl` 필드를 유지하되, 파일 업로드 결과 URL도 같은 필드에 저장합니다.
 
 ## 9. 배포 구조
 
@@ -233,3 +236,7 @@ Start Command: java -jar build/libs/eom-springboot-0.0.1-SNAPSHOT.jar
 - `SPRING_DATASOURCE_URL`
 - `SPRING_DATASOURCE_USERNAME`
 - `SPRING_DATASOURCE_PASSWORD`
+- `CLOUDINARY_URL` 또는 `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+- `CLOUDINARY_FOLDER`
+- `MEDIA_MAX_FILE_SIZE_BYTES`
+- `MEDIA_MAX_PART_COUNT`
