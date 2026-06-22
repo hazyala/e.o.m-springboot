@@ -27,6 +27,7 @@ java -jar build/libs/eom-springboot-0.0.1-SNAPSHOT.jar
 ## 3. 환경변수
 
 ```text
+JAVA_VERSION=21
 SPRING_PROFILES_ACTIVE=prod
 SPRING_DATASOURCE_URL=jdbc:postgresql://HOST/DB_NAME?sslmode=require
 SPRING_DATASOURCE_USERNAME=...
@@ -73,6 +74,7 @@ Neon Connection string이 `postgresql://USER:PASSWORD@HOST/DB_NAME?sslmode=requi
 
 - [ ] `./gradlew clean test` 성공
 - [ ] `./gradlew clean build` 성공
+- [ ] `JAVA_VERSION=21` 설정
 - [ ] `SPRING_PROFILES_ACTIVE=prod` 설정
 - [ ] Neon PostgreSQL 환경변수 설정
 - [ ] Cloudinary 환경변수 설정

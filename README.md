@@ -93,6 +93,7 @@ Docker 없이 Render Web Service로 배포합니다.
 Build Command: ./gradlew clean build
 Start Command: java -jar build/libs/eom-springboot-0.0.1-SNAPSHOT.jar
 Environment:
+- JAVA_VERSION=21
 - SPRING_PROFILES_ACTIVE=prod
 - SPRING_DATASOURCE_URL
 - SPRING_DATASOURCE_USERNAME

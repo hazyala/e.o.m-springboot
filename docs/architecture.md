@@ -232,6 +232,7 @@ Start Command: java -jar build/libs/eom-springboot-0.0.1-SNAPSHOT.jar
 ```
 
 환경변수:
+- `JAVA_VERSION=21`
 - `SPRING_PROFILES_ACTIVE=prod`
 - `SPRING_DATASOURCE_URL`
 - `SPRING_DATASOURCE_USERNAME`

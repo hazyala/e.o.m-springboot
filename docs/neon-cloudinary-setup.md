@@ -37,6 +37,7 @@ MEDIA_MAX_PART_COUNT=50
 3. Render Web Service 환경변수에 아래 값을 추가합니다.
 
 ```text
+JAVA_VERSION=21
 SPRING_PROFILES_ACTIVE=prod
 SPRING_DATASOURCE_URL=jdbc:postgresql://HOST/DB_NAME?sslmode=require
 SPRING_DATASOURCE_USERNAME=...
