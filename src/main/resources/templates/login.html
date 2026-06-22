@@ -6,35 +6,79 @@
     <title>Login | E.O.M</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
 </head>
 <body>
-<main class="auth-page">
-    <section class="auth-brand">
-        <a class="brand" th:href="@{/}">Echo of Movement</a>
-        <h1>We don't just move, we echo.</h1>
-        <p>로그인하면 댄서들의 아지트가 열립니다.</p>
-    </section>
-    <section class="auth-panel">
-        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">Mode</button>
-        <h2>LOGIN</h2>
-        <p th:if="${param.error}" class="form-alert">아이디 또는 비밀번호를 확인해주세요.</p>
-        <p th:if="${param.logout}" class="form-alert">로그아웃되었습니다.</p>
-        <form th:action="@{/login}" method="post">
-            <label for="username">아이디</label>
-            <input id="username" name="username" type="text" autocomplete="username" required>
-            <label for="password">비밀번호</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" required>
-            <button class="primary-action full" type="submit">로그인</button>
+<div class="login-page" data-auth-page>
+    <div class="login-visual">
+        <h1><a th:href="@{/}" data-login-title>Echo of Movement</a></h1>
+        <p>We don't just move, we echo.</p>
+    </div>
+
+    <div class="container">
+        <button class="login-theme-toggle theme-toggle-button" type="button" data-theme-toggle aria-label="Toggle theme">☀</button>
+
+        <div class="form-title" data-auth-title>LOGIN</div>
+        <div class="subtitle" data-auth-subtitle>계정에 로그인하세요</div>
+
+        <p th:if="${param.error}" class="server-message">아이디 또는 비밀번호를 확인해주세요.</p>
+        <p th:if="${param.logout}" class="server-message">로그아웃되었습니다.</p>
+        <p th:if="${loginMessage}" class="server-message" th:text="${loginMessage}">회원가입이 완료되었습니다.</p>
+        <p th:if="${signupMessage}" class="server-message" th:text="${signupMessage}">회원가입 정보를 확인해주세요.</p>
+
+        <form class="login-form" th:action="@{/login}" method="post" data-login-form th:attr="data-login-action=@{/login}, data-signup-action=@{/signup}">
+            <div class="signup-only form-group">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <input type="text" id="name" name="displayName" placeholder="이름" autocomplete="name">
+                <div class="error" data-name-error></div>
+            </div>
+
+            <div class="form-group">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" fill="none"/><path d="M4 4l8 8 8-8"/></svg>
+                <input type="text" id="username" name="username" placeholder="이메일 주소" autocomplete="username" required>
+                <div class="error" data-email-error></div>
+            </div>
+
+            <div class="form-group">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm6-7V8a6 6 0 0 0-12 0v2H4v11h16V10h-2zm-8 0V8a4 4 0 0 1 8 0v2H10z"/></svg>
+                <input type="password" id="password" name="password" placeholder="비밀번호" autocomplete="current-password" required data-password-input>
+                <button type="button" class="toggle-password" data-password-toggle aria-label="Toggle password">◐</button>
+                <div class="error" data-password-error></div>
+            </div>
+
+            <div class="signup-only form-group">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm6-7V8a6 6 0 0 0-12 0v2H4v11h16V10h-2zm-8 0V8a4 4 0 0 1 8 0v2H10z"/></svg>
+                <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호 확인" autocomplete="new-password" data-password-confirm>
+                <button type="button" class="toggle-password" data-password-toggle aria-label="Toggle password">◐</button>
+                <div class="error" data-confirm-error></div>
+            </div>
+
+            <div class="form-options login-only">
+                <label>
+                    <input type="checkbox" id="rememberMe" name="remember-me" checked>
+                    로그인 상태 유지
+                </label>
+                <span>데모 계정은 아래를 참고하세요</span>
+            </div>
+
+            <button type="submit" class="submit-btn" data-submit-button>로그인</button>
+
+            <div class="signup-link">
+                <span data-auth-toggle-copy>계정이 없으신가요?</span>
+                <button type="button" class="signup-toggle" data-auth-toggle>회원가입</button>
+            </div>
+
+            <div class="demo-account login-only">
+                <span>admin / admin</span>
+                <span>dancer1 / 1234</span>
+            </div>
         </form>
-        <div class="demo-account">
-            <span>admin/admin</span>
-            <span>dancer1/1234</span>
-        </div>
-    </section>
-</main>
+    </div>
+</div>
+
 <script th:src="@{/js/theme.js}"></script>
+<script th:src="@{/js/auth.js}"></script>
 </body>
 </html>
-

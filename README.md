@@ -15,11 +15,24 @@ E.O.M은 인스타그램, DM, 오픈채팅, 지인 추천에 흩어진 댄서들
 ## 대표 기능
 
 - 사용자/관리자 로그인
-- 관리자 페이지
-- 보드별 게시글 목록, 상세, 작성
-- 인스타그램 프로필 링크와 게시물 URL 첨부
+- 회원가입과 사용자/관리자 로그인
+- 관리자 페이지 사용자 차단, 게시글 숨김/복구, 신고 검토, HYPE 행사 승인/취소
+- 숨김 게시글과 차단 사용자 게시글의 목록/상세/추천 태그/공개 프로필 노출 및 직접 POST 액션 차단
+- 대시보드 Today Pick, Popular, Recent, Tags, Events, Dancers 미리보기
+- 보드별 게시글 목록과 상세
+- 로그인 사용자 게시글 작성 폼 `/posts/new`
+- `/posts?q=` 통합 검색과 `/posts?tag=` 태그 검색
+- HYPE 관리자 승인 행사 탐색 `/boards/HYPE?officialEvents=true` (`/events`는 호환 리다이렉트)
+- 보드 목록 우측 `New Post`에서 현재 보드를 유지한 글쓰기 진입
+- 마이페이지 프로필/계정 수정, 포트폴리오 선택, 참여 행사 기록
+- 게시글 상세 더보기 메뉴의 링크 복사, 미디어 열기, 신고 접수
+- 인스타그램 프로필 링크와 게시물 링크 카드
+- 이미지/영상 파일 첨부와 Cloudinary 업로드 저장
+- 첨부 파일 원본 비율 Live Preview
 - 라이트/다크 모드
 - Render 무료 티어 배포 대응
+
+현재 MVP는 Cloudinary Free를 외부 스토리지로 사용해 이미지/영상 파일 첨부를 지원합니다. 게시글 작성 폼은 첨부 파일과 Instagram 게시물 링크를 분리해서 받으며, Instagram 실제 embed는 제외하고 새 탭 링크 카드로 처리합니다.
 
 ## 기술 스택
 
@@ -31,7 +44,8 @@ E.O.M은 인스타그램, DM, 오픈채팅, 지인 추천에 흩어진 댄서들
 | 인증 | Spring Security |
 | 데이터 | Spring Data JPA |
 | 로컬 DB | H2 |
-| 배포 DB | PostgreSQL |
+| 배포 DB | Neon PostgreSQL |
+| 미디어 저장소 | Cloudinary |
 | 배포 | Render Web Service |
 
 ## 프로젝트 구조
@@ -79,11 +93,15 @@ Docker 없이 Render Web Service로 배포합니다.
 Build Command: ./gradlew clean build
 Start Command: java -jar build/libs/eom-springboot-0.0.1-SNAPSHOT.jar
 Environment:
+- JAVA_VERSION=21
 - SPRING_PROFILES_ACTIVE=prod
 - SPRING_DATASOURCE_URL
 - SPRING_DATASOURCE_USERNAME
 - SPRING_DATASOURCE_PASSWORD
+- CLOUDINARY_URL
+- CLOUDINARY_FOLDER
+- MEDIA_MAX_FILE_SIZE_BYTES
+- MEDIA_MAX_PART_COUNT
 ```
 
 현재 `server.port=${PORT:8080}` 설정으로 Render의 `PORT` 환경변수를 받을 수 있습니다.
-

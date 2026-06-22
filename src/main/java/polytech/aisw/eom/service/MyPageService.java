@@ -1,0 +1,325 @@
+package polytech.aisw.eom.service;
+
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Stream;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import polytech.aisw.eom.domain.AppUser;
+import polytech.aisw.eom.domain.BoardType;
+import polytech.aisw.eom.domain.Comment;
+import polytech.aisw.eom.domain.JoinedEvent;
+import polytech.aisw.eom.domain.Post;
+import polytech.aisw.eom.repository.CommentRepository;
+import polytech.aisw.eom.repository.JoinedEventRepository;
+import polytech.aisw.eom.repository.PostLikeRepository;
+import polytech.aisw.eom.repository.PostRepository;
+import polytech.aisw.eom.repository.PostSaveRepository;
+import polytech.aisw.eom.repository.UserRepository;
+
+@Service
+public class MyPageService {
+
+    private static final int MAX_PINNED_PORTFOLIO = 3;
+
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final PostSaveRepository postSaveRepository;
+    private final CommentRepository commentRepository;
+    private final JoinedEventRepository joinedEventRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public MyPageService(
+            UserRepository userRepository,
+            PostRepository postRepository,
+            PostLikeRepository postLikeRepository,
+            PostSaveRepository postSaveRepository,
+            CommentRepository commentRepository,
+            JoinedEventRepository joinedEventRepository,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.postLikeRepository = postLikeRepository;
+        this.postSaveRepository = postSaveRepository;
+        this.commentRepository = commentRepository;
+        this.joinedEventRepository = joinedEventRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional(readOnly = true)
+    public MyPageView findMyPage(String username) {
+        AppUser user = findUser(username);
+        return buildMyPageView(user, true);
+    }
+
+    @Transactional(readOnly = true)
+    public MyPageView findProfilePage(Long userId, String viewerUsername) {
+        AppUser user = userRepository.findById(userId).orElseThrow();
+        if (user.isBlocked() && !user.getUsername().equals(viewerUsername)) {
+            throw new AccessDeniedException("차단된 사용자입니다.");
+        }
+        return buildMyPageView(user, user.getUsername().equals(viewerUsername));
+    }
+
+    private MyPageView buildMyPageView(AppUser user, boolean includePrivateTabs) {
+        String username = user.getUsername();
+        List<Post> posts = filterVisiblePosts(
+                postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username),
+                includePrivateTabs
+        );
+        List<Post> portfolioPosts = filterVisiblePosts(postRepository
+                .findByAuthorUsernameAndBoardTypeAndPortfolioSelectedTrueOrderByPortfolioPinnedDescCreatedAtDesc(
+                        username,
+                        BoardType.SHOW
+                ), includePrivateTabs);
+        List<Post> likedPosts = includePrivateTabs
+                ? postLikeRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
+                        .map(like -> like.getPost())
+                        .filter(Post::isVisibleInCommunity)
+                        .toList()
+                : List.of();
+        List<Post> savedPosts = includePrivateTabs
+                ? postSaveRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
+                        .map(save -> save.getPost())
+                        .filter(Post::isVisibleInCommunity)
+                        .toList()
+                : List.of();
+        List<Comment> comments = filterVisibleComments(
+                commentRepository.findByAuthorUsernameOrderByCreatedAtDesc(username),
+                includePrivateTabs
+        );
+        List<JoinedEvent> joinedEvents = joinedEventRepository.findByUserUsernameOrderByEventDateDescCreatedAtDesc(username);
+        List<ActivityItem> activityItems = buildActivity(posts, comments);
+
+        return new MyPageView(
+                user,
+                posts,
+                portfolioPosts,
+                likedPosts,
+                savedPosts,
+                comments,
+                joinedEvents,
+                activityItems
+        );
+    }
+
+    @Transactional
+    public AccountUpdateResult updateAccount(String username, AccountUpdateRequest request) {
+        AppUser user = findActiveUser(username);
+        String nextUsername = cleanRequired(request.username(), username);
+        if (!nextUsername.equals(username) && userRepository.findByUsername(nextUsername).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+        if (!passwordEncoder.matches(cleanRequired(request.currentPassword(), ""), user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
+        }
+
+        String nextPassword = user.getPassword();
+        String newPassword = clean(request.newPassword());
+        if (newPassword != null) {
+            nextPassword = passwordEncoder.encode(newPassword);
+        }
+        user.updateAccount(nextUsername, nextPassword);
+        return new AccountUpdateResult(!nextUsername.equals(username));
+    }
+
+    @Transactional
+    public void updateProfile(String username, ProfileUpdateRequest request) {
+        AppUser user = findActiveUser(username);
+        user.updateProfile(
+                cleanRequired(request.displayName(), user.getDisplayName()),
+                clean(request.crewName()),
+                clean(request.primaryGenre()),
+                clean(request.bio()),
+                clean(request.instagramUrl()),
+                clean(request.profileImageUrl()),
+                clean(request.headerImageUrl())
+        );
+    }
+
+    @Transactional
+    public void updatePortfolioSelection(String username, Long postId, boolean selected) {
+        assertUserActive(username);
+        Post post = findOwnedPost(username, postId);
+        if (!post.isPortfolioCandidate()) {
+            post.setPortfolioSelected(false);
+            return;
+        }
+        post.setPortfolioSelected(selected);
+    }
+
+    @Transactional
+    public void updatePortfolioPin(String username, Long postId, boolean pinned) {
+        assertUserActive(username);
+        Post post = findOwnedPost(username, postId);
+        if (!post.isPortfolioCandidate()) {
+            post.setPortfolioPinned(false);
+            return;
+        }
+        if (pinned && !post.isPortfolioPinned()
+                && postRepository.countByAuthorUsernameAndBoardTypeAndPortfolioPinnedTrue(username, BoardType.SHOW)
+                        >= MAX_PINNED_PORTFOLIO) {
+            throw new IllegalStateException("Pinned portfolio limit exceeded");
+        }
+        post.setPortfolioPinned(pinned);
+    }
+
+    @Transactional
+    public void addJoinedEvent(String username, LocalDate eventDate, String eventName, String result) {
+        AppUser user = findActiveUser(username);
+        joinedEventRepository.save(new JoinedEvent(
+                user,
+                eventDate,
+                cleanRequired(eventName, "Untitled event"),
+                cleanRequired(result, "참여")
+        ));
+    }
+
+    @Transactional
+    public void updateJoinedEvent(String username, Long eventId, LocalDate eventDate, String eventName, String result) {
+        assertUserActive(username);
+        JoinedEvent joinedEvent = findOwnedJoinedEvent(username, eventId);
+        joinedEvent.update(
+                eventDate,
+                cleanRequired(eventName, "Untitled event"),
+                cleanRequired(result, "참여")
+        );
+    }
+
+    @Transactional
+    public void deleteJoinedEvent(String username, Long eventId) {
+        assertUserActive(username);
+        JoinedEvent joinedEvent = findOwnedJoinedEvent(username, eventId);
+        joinedEventRepository.delete(joinedEvent);
+    }
+
+    private AppUser findUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow();
+    }
+
+    private void assertUserActive(String username) {
+        findActiveUser(username);
+    }
+
+    private AppUser findActiveUser(String username) {
+        AppUser user = findUser(username);
+        if (user.isBlocked()) {
+            throw new AccessDeniedException("차단된 사용자입니다.");
+        }
+        return user;
+    }
+
+    private Post findOwnedPost(String username, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        if (!post.isAuthoredBy(username)) {
+            throw new IllegalArgumentException("Cannot edit another user's portfolio");
+        }
+        return post;
+    }
+
+    private JoinedEvent findOwnedJoinedEvent(String username, Long eventId) {
+        JoinedEvent joinedEvent = joinedEventRepository.findById(eventId).orElseThrow();
+        if (!joinedEvent.isOwnedBy(username)) {
+            throw new IllegalArgumentException("Cannot edit another user's joined event");
+        }
+        return joinedEvent;
+    }
+
+    private List<ActivityItem> buildActivity(List<Post> posts, List<Comment> comments) {
+        return Stream.concat(
+                        posts.stream().map(post -> new ActivityItem(
+                                post.getCreatedAt(),
+                                post.getBoardType().getLabel() + " 게시글 작성",
+                                post.getTitle(),
+                                "/posts/" + post.getId()
+                        )),
+                        comments.stream().map(comment -> new ActivityItem(
+                                comment.getCreatedAt(),
+                                "댓글 작성",
+                                comment.getPost().getTitle(),
+                                "/posts/" + comment.getPost().getId()
+                        ))
+                )
+                .sorted(Comparator.comparing(ActivityItem::createdAt).reversed())
+                .limit(5)
+                .toList();
+    }
+
+    private List<Post> filterVisiblePosts(List<Post> posts, boolean includePrivateTabs) {
+        if (includePrivateTabs) {
+            return posts;
+        }
+        return posts.stream()
+                .filter(Post::isVisibleInCommunity)
+                .toList();
+    }
+
+    private List<Comment> filterVisibleComments(List<Comment> comments, boolean includePrivateTabs) {
+        if (includePrivateTabs) {
+            return comments;
+        }
+        return comments.stream()
+                .filter(comment -> comment.getPost().isVisibleInCommunity())
+                .toList();
+    }
+
+    private String clean(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
+    }
+
+    private String cleanRequired(String value, String fallback) {
+        String cleaned = clean(value);
+        return cleaned == null ? fallback : cleaned;
+    }
+
+    public record MyPageView(
+            AppUser user,
+            List<Post> posts,
+            List<Post> portfolioPosts,
+            List<Post> likedPosts,
+            List<Post> savedPosts,
+            List<Comment> comments,
+            List<JoinedEvent> joinedEvents,
+            List<ActivityItem> activityItems
+    ) {
+    }
+
+    public record ActivityItem(
+            java.time.LocalDateTime createdAt,
+            String action,
+            String title,
+            String href
+    ) {
+    }
+
+    public record ProfileUpdateRequest(
+            String displayName,
+            String crewName,
+            String primaryGenre,
+            String bio,
+            String instagramUrl,
+            String profileImageUrl,
+            String headerImageUrl
+    ) {
+    }
+
+    public record AccountUpdateRequest(
+            String username,
+            String currentPassword,
+            String newPassword
+    ) {
+    }
+
+    public record AccountUpdateResult(
+            boolean usernameChanged
+    ) {
+    }
+}

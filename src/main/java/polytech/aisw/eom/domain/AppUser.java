@@ -30,9 +30,27 @@ public class AppUser {
     @Column(length = 300)
     private String instagramUrl;
 
+    @Column(length = 300)
+    private String profileImageUrl;
+
+    @Column(length = 300)
+    private String headerImageUrl;
+
+    @Column(length = 500)
+    private String bio;
+
+    @Column(length = 80)
+    private String crewName;
+
+    @Column(length = 80)
+    private String primaryGenre;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private UserRole role;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean blocked;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -41,11 +59,45 @@ public class AppUser {
     }
 
     public AppUser(String username, String password, String displayName, String instagramUrl, UserRole role) {
+        this(username, password, displayName, instagramUrl, null, null, null, role);
+    }
+
+    public AppUser(
+            String username,
+            String password,
+            String displayName,
+            String instagramUrl,
+            String profileImageUrl,
+            String bio,
+            String crewName,
+            UserRole role
+    ) {
+        this(username, password, displayName, instagramUrl, profileImageUrl, null, bio, crewName, null, role);
+    }
+
+    public AppUser(
+            String username,
+            String password,
+            String displayName,
+            String instagramUrl,
+            String profileImageUrl,
+            String headerImageUrl,
+            String bio,
+            String crewName,
+            String primaryGenre,
+            UserRole role
+    ) {
         this.username = username;
         this.password = password;
         this.displayName = displayName;
         this.instagramUrl = instagramUrl;
+        this.profileImageUrl = profileImageUrl;
+        this.headerImageUrl = headerImageUrl;
+        this.bio = bio;
+        this.crewName = crewName;
+        this.primaryGenre = primaryGenre;
         this.role = role;
+        this.blocked = false;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -69,12 +121,62 @@ public class AppUser {
         return instagramUrl;
     }
 
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public String getHeaderImageUrl() {
+        return headerImageUrl;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public String getCrewName() {
+        return crewName;
+    }
+
+    public String getPrimaryGenre() {
+        return primaryGenre;
+    }
+
     public UserRole getRole() {
         return role;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-}
 
+    public void updateProfile(
+            String displayName,
+            String crewName,
+            String primaryGenre,
+            String bio,
+            String instagramUrl,
+            String profileImageUrl,
+            String headerImageUrl
+    ) {
+        this.displayName = displayName;
+        this.crewName = crewName;
+        this.primaryGenre = primaryGenre;
+        this.bio = bio;
+        this.instagramUrl = instagramUrl;
+        this.profileImageUrl = profileImageUrl;
+        this.headerImageUrl = headerImageUrl;
+    }
+
+    public void updateAccount(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+}
