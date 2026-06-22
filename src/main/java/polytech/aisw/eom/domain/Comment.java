@@ -32,5 +32,35 @@ public class Comment {
 
     protected Comment() {
     }
-}
 
+    public Comment(Post post, AppUser author, String content) {
+        this.post = post;
+        this.author = author;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public AppUser getAuthor() {
+        return author;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public boolean isAuthoredBy(String username) {
+        return author.getUsername().equals(username);
+    }
+}

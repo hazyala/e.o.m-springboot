@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ko" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${post.title + ' | E.O.M'}">Post | E.O.M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Irish+Grover&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="dashboard-page">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="post-page-shell">
+    <article class="post-article">
+        <a class="post-back-link" th:href="${backUrl}">← BACK</a>
+        <p class="post-alert is-success" th:if="${postNotice}" th:text="${postNotice}">게시글이 수정되었습니다.</p>
+        <p class="post-alert is-error" th:if="${postError}" th:text="${postError}">게시글을 처리할 수 없습니다.</p>
+
+        <header class="post-article-head">
+            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
+               class="post-board-pill"
+               th:classappend="| type-${post.boardType.name().toLowerCase()}|"
+               th:text="${post.boardType.label}">SHOW</a>
+            <h1 th:text="${post.title}">Post title</h1>
+            <div class="post-author-row">
+                <a class="post-author-avatar-link" th:href="@{/dancers/{id}(id=${post.author.id})}" aria-label="작성자 프로필 보기">
+                    <img th:if="${post.author.profileImageUrl}" th:src="${post.author.profileImageUrl}" th:alt="${post.author.displayName}">
+                    <span th:unless="${post.author.profileImageUrl}" aria-hidden="true"></span>
+                </a>
+                <div>
+                    <a class="post-author-name-link" th:href="@{/dancers/{id}(id=${post.author.id})}">
+                        <strong th:text="${post.author.displayName}">Author</strong>
+                    </a>
+                    <p>
+                        <span th:if="${post.author.crewName}" th:text="${post.author.crewName}">Crew</span>
+                        <span th:text="| · ${post.location}|"> · Location</span>
+                    </p>
+                </div>
+                <div class="post-top-actions">
+                    <a th:if="${canEditPost}" th:href="@{/posts/{id}/edit(id=${post.id})}" aria-label="Edit post">EDIT</a>
+                    <form th:if="${canDeletePost}"
+                          th:action="@{/posts/{id}/delete(id=${post.id})}"
+                          method="post"
+                          th:attr="data-confirm-message=|정말 '${post.title}' 게시글을 삭제할까요? 삭제 후에는 되돌릴 수 없습니다.|">
+                        <button type="submit" aria-label="Delete post">DELETE</button>
+                    </form>
+                    <form th:action="@{/posts/{id}/save(id=${post.id})}" method="post">
+                        <button class="post-icon-action"
+                                type="submit"
+                                th:classappend="${savedByCurrentUser} ? ' is-active' : ''"
+                                th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '게시글 저장'}"
+                                th:text="${savedByCurrentUser ? '▣' : '▢'}">▢</button>
+                    </form>
+                    <button type="button" aria-label="Share post" data-share-post>↗</button>
+                    <div class="post-more-actions" data-post-more-actions>
+                        <button type="button" aria-label="More actions" aria-expanded="false" data-more-actions-toggle>…</button>
+                        <div class="post-more-menu" data-more-actions-menu hidden>
+                            <button type="button" data-copy-post-link>링크 복사</button>
+                            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">게시판으로 이동</a>
+                            <a th:if="${post.mediaUrl != null and !post.mediaUrl.isBlank()}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">미디어 열기</a>
+                            <form th:unless="${canDeletePost}"
+                                  th:action="@{/posts/{id}/report(id=${post.id})}"
+                                  method="post"
+                                  th:attr="data-confirm-message='이 게시글을 운영자에게 신고할까요?'">
+                                <input type="hidden" name="reason" value="부적절한 콘텐츠">
+                                <button type="submit">신고하기</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="post-media-frame">
+            <video th:if="${post.mediaType.name() == 'VIDEO_LINK'}"
+                   th:src="${post.mediaUrl}"
+                   th:poster="${post.thumbnailUrl}"
+                   controls
+                   playsinline></video>
+            <img th:if="${post.mediaType.name() != 'VIDEO_LINK' and post.thumbnailUrl != null and !post.thumbnailUrl.isBlank()}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+        </section>
+
+        <section class="post-body-copy">
+            <p th:text="${post.content}">Post content</p>
+            <div class="post-info-strip">
+                <span th:text="|Board · ${post.boardType.label}|">Board</span>
+                <span th:if="${post.location}" th:text="|Location · ${post.location}|">Location</span>
+                <time th:if="${post.eventDate}" th:datetime="${post.eventDate}" th:text="|Event · ${#temporals.format(post.eventDate, 'yyyy.MM.dd')}|">Event</time>
+                <time th:if="${post.deadline}" th:datetime="${post.deadline}" th:text="|Deadline · ${#temporals.format(post.deadline, 'yyyy.MM.dd')}|">Deadline</time>
+            </div>
+        </section>
+
+        <a class="instagram-preview-card" th:if="${post.mediaType.name() == 'INSTAGRAM' and post.mediaUrl != null and !post.mediaUrl.isBlank()}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">
+            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
+            <div>
+                <span>Instagram Preview</span>
+                <strong th:text="${post.title}">Post title</strong>
+                <p th:text="${post.mediaUrl}">mediaUrl</p>
+            </div>
+            <em>OPEN</em>
+        </a>
+
+        <div class="post-tag-row" th:if="${!postTags.isEmpty()}">
+            <a th:each="tag : ${postTags}" th:href="@{/posts(tag=${tag})}" th:text="|# ${tag}|"># tag</a>
+        </div>
+
+        <div class="post-action-bar">
+            <form th:action="@{/posts/{id}/like(id=${post.id})}" method="post">
+                <button type="submit"
+                        th:classappend="${likedByCurrentUser} ? ' is-active' : ''"
+                        th:attr="aria-label=${likedByCurrentUser ? '좋아요 취소' : '좋아요'}">
+                    <b th:text="${likedByCurrentUser ? '♥' : '♡'}">♡</b>
+                    <strong th:text="${post.likeCount}">0</strong>
+                </button>
+            </form>
+            <form th:action="@{/posts/{id}/save(id=${post.id})}" method="post">
+                <button type="submit"
+                        th:classappend="${savedByCurrentUser} ? ' is-active' : ''"
+                        th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '저장'}">
+                    <b th:text="${savedByCurrentUser ? '▣' : '▢'}">▢</b>
+                    <strong th:text="${savedByCurrentUser ? '저장됨' : '저장'}">저장</strong>
+                </button>
+            </form>
+            <span><b>댓글</b><strong th:text="${commentCount}">0</strong></span>
+            <span><b>조회</b><strong th:text="${post.viewCount}">0</strong></span>
+            <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">☰ 목록으로</a>
+        </div>
+
+        <section class="post-comments">
+            <h2><span></span>COMMENTS <b th:text="${commentCount}">0</b></h2>
+            <p class="post-alert is-error" th:if="${commentError}" th:text="${commentError}">댓글을 처리할 수 없습니다.</p>
+            <form th:action="@{/posts/{id}/comments(id=${post.id})}" th:object="${commentCreateRequest}" method="post">
+                <span class="post-avatar-placeholder" aria-hidden="true"></span>
+                <input type="text" th:field="*{content}" maxlength="500" required placeholder="댓글을 남겨보세요" aria-label="댓글">
+                <button type="submit">등록</button>
+            </form>
+            <div class="post-comment-list" th:if="${!comments.isEmpty()}">
+                <article th:each="comment : ${comments}">
+                    <a class="post-author-avatar-link" th:href="@{/dancers/{id}(id=${comment.author.id})}" aria-label="댓글 작성자 프로필 보기">
+                        <img th:if="${comment.author.profileImageUrl}" th:src="${comment.author.profileImageUrl}" th:alt="${comment.author.displayName}">
+                        <span th:unless="${comment.author.profileImageUrl}" aria-hidden="true"></span>
+                    </a>
+                    <div>
+                        <header>
+                            <a th:href="@{/dancers/{id}(id=${comment.author.id})}" th:text="${comment.author.displayName}">Author</a>
+                            <time th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}">2026.06.21 10:00</time>
+                        </header>
+                        <p th:text="${comment.content}">댓글 내용</p>
+                    </div>
+                    <form th:if="${deletableCommentIds.contains(comment.id)}"
+                          th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}"
+                          method="post"
+                          th:attr="data-confirm-message='댓글을 삭제할까요?'">
+                        <button type="submit">삭제</button>
+                    </form>
+                </article>
+            </div>
+            <p class="post-comment-empty" th:if="${comments.isEmpty()}">첫 댓글을 남겨보세요.</p>
+        </section>
+    </article>
+
+    <aside class="post-side">
+        <section class="post-side-author">
+            <h2><span></span>WRITTEN BY</h2>
+            <div>
+                <a class="post-author-avatar-link" th:href="@{/dancers/{id}(id=${post.author.id})}" aria-label="작성자 프로필 보기">
+                    <img th:if="${post.author.profileImageUrl}" th:src="${post.author.profileImageUrl}" th:alt="${post.author.displayName}">
+                    <span th:unless="${post.author.profileImageUrl}" aria-hidden="true"></span>
+                </a>
+                <div>
+                    <a class="post-author-name-link" th:href="@{/dancers/{id}(id=${post.author.id})}">
+                        <strong th:text="${post.author.displayName}">Author</strong>
+                    </a>
+                    <p th:text="|${post.author.crewName ?: 'DANCER'} · ${post.boardType.label}|">DANCER · SHOW</p>
+                </div>
+            </div>
+            <p th:text="${post.author.bio}">Author bio</p>
+            <a th:href="@{/dancers/{id}(id=${post.author.id})}">프로필 보기</a>
+        </section>
+
+        <section class="post-side-list">
+            <h2><span></span>POPULAR</h2>
+            <a th:each="item, stat : ${popularPosts}" th:if="${stat.index < 4}" th:href="@{/posts/{id}(id=${item.id})}">
+                <div>
+                    <span th:classappend="| type-${item.boardType.name().toLowerCase()}|" th:text="${item.boardType.label}">SHOW</span>
+                    <strong th:text="${item.title}">Post title</strong>
+                    <small th:text="|조회 ${item.viewCount}|">조회 0</small>
+                </div>
+                <img th:if="${item.thumbnailUrl}" th:src="${item.thumbnailUrl}" th:alt="${item.title}">
+            </a>
+        </section>
+
+        <section class="post-side-tags" th:if="${!postTags.isEmpty()}">
+            <h2><span></span>TAGS</h2>
+            <div>
+                <a th:each="tag : ${postTags}" th:href="@{/posts(tag=${tag})}" th:text="|# ${tag}|"># tag</a>
+            </div>
+        </section>
+
+        <section class="post-side-list post-side-recent">
+            <div class="post-side-title-row">
+                <h2><span></span><b th:text="|MORE IN ${post.boardType.label}|">MORE IN SHOW</b></h2>
+                <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">ALL →</a>
+            </div>
+            <a th:each="item, stat : ${recentPosts}" th:if="${stat.index < 5}" th:href="@{/posts/{id}(id=${item.id})}">
+                <div>
+                    <strong th:text="${item.title}">Post title</strong>
+                    <small th:text="|${item.author.displayName} · 조회 ${item.viewCount}|">Author · 조회 0</small>
+                </div>
+                <img th:if="${item.thumbnailUrl}" th:src="${item.thumbnailUrl}" th:alt="${item.title}">
+            </a>
+        </section>
+
+        <section class="post-side-promo">
+            <img th:src="@{/assets/source/milad-fakurian-ZI1VF7thzys-unsplash.jpg}" alt="">
+            <div>
+                <strong>WE DON’T JUST<br>MOVE, WE ECHO.</strong>
+                <span>ECHO OF MOVEMENT</span>
+            </div>
+        </section>
+    </aside>
+</main>
+
+<footer class="dashboard-footer">
+    <div>
+        <strong>Echo of Movement</strong>
+        <span>WE DON’T JUST MOVE, WE ECHO.</span>
+    </div>
+    <p>© 2026 E.O.M</p>
+</footer>
+
+<script th:src="@{/js/theme.js}"></script>
+<script>
+    const copyPostLink = async () => {
+        await navigator.clipboard.writeText(window.location.href);
+    };
+
+    const showTemporaryLabel = (button, label, originalLabel) => {
+        button.textContent = label;
+        window.setTimeout(() => {
+            button.textContent = originalLabel;
+        }, 1600);
+    };
+
+    const shareButton = document.querySelector("[data-share-post]");
+    if (shareButton) {
+        shareButton.addEventListener("click", async () => {
+            const shareUrl = window.location.href;
+            if (navigator.share) {
+                await navigator.share({title: document.title, url: shareUrl});
+                return;
+            }
+            await copyPostLink();
+            showTemporaryLabel(shareButton, "COPIED", "↗");
+        });
+    }
+
+    const moreActions = document.querySelector("[data-post-more-actions]");
+    const moreToggle = document.querySelector("[data-more-actions-toggle]");
+    const moreMenu = document.querySelector("[data-more-actions-menu]");
+    const copyPostLinkButton = document.querySelector("[data-copy-post-link]");
+    if (moreActions && moreToggle && moreMenu) {
+        moreToggle.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const isOpen = moreToggle.getAttribute("aria-expanded") === "true";
+            moreToggle.setAttribute("aria-expanded", String(!isOpen));
+            moreMenu.hidden = isOpen;
+        });
+        moreMenu.addEventListener("click", (event) => {
+            event.stopPropagation();
+        });
+        document.addEventListener("click", (event) => {
+            if (!moreActions.contains(event.target)) {
+                moreToggle.setAttribute("aria-expanded", "false");
+                moreMenu.hidden = true;
+            }
+        });
+    }
+
+    if (copyPostLinkButton) {
+        copyPostLinkButton.addEventListener("click", async () => {
+            await copyPostLink();
+            showTemporaryLabel(copyPostLinkButton, "복사 완료", "링크 복사");
+            if (moreToggle && moreMenu) {
+                moreToggle.setAttribute("aria-expanded", "false");
+                moreMenu.hidden = true;
+            }
+        });
+    }
+
+    document.querySelectorAll("form[data-confirm-message]").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+            if (!window.confirm(form.dataset.confirmMessage)) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+</body>
+</html>

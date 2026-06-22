@@ -5,12 +5,20 @@
 
     root.setAttribute('data-theme', savedTheme);
 
+    function syncButtons() {
+        document.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
+            button.textContent = root.getAttribute('data-theme') === 'dark' ? '☀' : '☾';
+        });
+    }
+
     document.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
         button.addEventListener('click', function () {
             var nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             root.setAttribute('data-theme', nextTheme);
             localStorage.setItem(storageKey, nextTheme);
+            syncButtons();
         });
     });
-})();
 
+    syncButtons();
+})();

@@ -3,6 +3,7 @@ package polytech.aisw.eom.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.service.DashboardService;
 
@@ -16,10 +17,32 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(@RequestParam(defaultValue = "SHOW") String board, Model model) {
+        BoardType selectedBoard = resolveBoardType(board);
         model.addAttribute("boards", BoardType.values());
+        model.addAttribute("selectedBoard", selectedBoard);
+        model.addAttribute("todayPick", dashboardService.findTodayPick());
+        model.addAttribute("showRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.SHOW));
+        model.addAttribute("castRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.CAST));
+        model.addAttribute("hypeRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.HYPE));
+        model.addAttribute("linkRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.LINK));
         model.addAttribute("recentPosts", dashboardService.findRecentPosts());
+        model.addAttribute("popularPosts", dashboardService.findPopularPosts());
+        model.addAttribute("upcomingEvents", dashboardService.findUpcomingEvents());
+        model.addAttribute("recommendedDancers", dashboardService.findRecommendedDancers());
+        model.addAttribute("featuredMediaPosts", dashboardService.findFeaturedMediaPosts());
+        model.addAttribute("tags", dashboardService.findTags());
         return "dashboard";
     }
-}
 
+    private BoardType resolveBoardType(String board) {
+        if (board == null || board.isBlank()) {
+            return BoardType.SHOW;
+        }
+        try {
+            return BoardType.valueOf(board.trim().toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            return BoardType.SHOW;
+        }
+    }
+}

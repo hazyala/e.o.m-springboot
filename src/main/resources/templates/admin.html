@@ -18,7 +18,45 @@
             <h1>Moderation Room</h1>
         </div>
     </section>
+    <p class="admin-notice" th:if="${adminNotice}" th:text="${adminNotice}">처리되었습니다.</p>
+    <p class="admin-notice is-error" th:if="${adminError}" th:text="${adminError}">처리할 수 없습니다.</p>
     <section class="admin-grid">
+        <article>
+            <h2>Reports</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Post</th>
+                    <th>Reports</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="post : ${reportedPosts}">
+                    <td th:text="${post.id}">1</td>
+                    <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Title</a></td>
+                    <td th:text="${post.reportCount}">0</td>
+                    <td th:text="${post.latestReportReason}">Reason</td>
+                    <td>
+                        <span class="admin-status" th:classappend="${post.hiddenByAdmin} ? ' is-danger' : ' is-ok'"
+                              th:text="${post.hiddenByAdmin ? '숨김' : '공개'}">공개</span>
+                    </td>
+                    <td>
+                        <form th:action="@{/admin/posts/{id}/visibility(id=${post.id})}" method="post">
+                            <input type="hidden" name="hidden" th:value="${!post.hiddenByAdmin}">
+                            <button type="submit" th:text="${post.hiddenByAdmin ? '복구' : '숨김'}">숨김</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${reportedPosts.isEmpty()}">
+                    <td colspan="6">접수된 신고가 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </article>
         <article>
             <h2>Users</h2>
             <table>
@@ -28,6 +66,8 @@
                     <th>Username</th>
                     <th>Name</th>
                     <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -36,6 +76,16 @@
                     <td th:text="${user.username}">admin</td>
                     <td th:text="${user.displayName}">Admin</td>
                     <td th:text="${user.role}">ADMIN</td>
+                    <td>
+                        <span class="admin-status" th:classappend="${user.blocked} ? ' is-danger' : ' is-ok'"
+                              th:text="${user.blocked ? '차단' : '활성'}">활성</span>
+                    </td>
+                    <td>
+                        <form th:if="${user.role.name() != 'ADMIN'}" th:action="@{/admin/users/{id}/block(id=${user.id})}" method="post">
+                            <input type="hidden" name="blocked" th:value="${!user.blocked}">
+                            <button type="submit" th:text="${user.blocked ? '차단 해제' : '차단'}">차단</button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -49,14 +99,41 @@
                     <th>Board</th>
                     <th>Title</th>
                     <th>Author</th>
+                    <th>Moderation</th>
+                    <th>HYPE Event</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="post : ${posts}">
                     <td th:text="${post.id}">1</td>
                     <td th:text="${post.boardType.label}">SHOW</td>
-                    <td th:text="${post.title}">Title</td>
+                    <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Title</a></td>
                     <td th:text="${post.author.displayName}">Dancer</td>
+                    <td>
+                        <span class="admin-status" th:classappend="${post.hiddenByAdmin} ? ' is-danger' : ' is-ok'"
+                              th:text="${post.hiddenByAdmin ? '숨김' : '공개'}">공개</span>
+                        <small th:if="${post.reportCount > 0}" th:text="|신고 ${post.reportCount}|">신고 1</small>
+                    </td>
+                    <td>
+                        <span class="admin-status"
+                              th:if="${post.boardType.name() == 'HYPE' and post.eventDate != null}"
+                              th:classappend="${post.adminApprovedEvent} ? ' is-ok' : ' is-pending'"
+                              th:text="${post.adminApprovedEvent ? '승인' : '대기'}">대기</span>
+                        <span th:unless="${post.boardType.name() == 'HYPE' and post.eventDate != null}">-</span>
+                    </td>
+                    <td class="admin-actions">
+                        <form th:action="@{/admin/posts/{id}/visibility(id=${post.id})}" method="post">
+                            <input type="hidden" name="hidden" th:value="${!post.hiddenByAdmin}">
+                            <button type="submit" th:text="${post.hiddenByAdmin ? '복구' : '숨김'}">숨김</button>
+                        </form>
+                        <form th:if="${post.boardType.name() == 'HYPE' and post.eventDate != null}"
+                              th:action="@{/admin/posts/{id}/hype-approval(id=${post.id})}"
+                              method="post">
+                            <input type="hidden" name="approved" th:value="${!post.adminApprovedEvent}">
+                            <button type="submit" th:text="${post.adminApprovedEvent ? '승인 취소' : '행사 승인'}">행사 승인</button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -66,4 +143,3 @@
 <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>
-
