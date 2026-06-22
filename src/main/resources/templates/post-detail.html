@@ -59,7 +59,7 @@
                         <div class="post-more-menu" data-more-actions-menu hidden>
                             <button type="button" data-copy-post-link>링크 복사</button>
                             <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">게시판으로 이동</a>
-                            <a th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">미디어 열기</a>
+                            <a th:if="${post.mediaUrl != null and !post.mediaUrl.isBlank()}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">미디어 열기</a>
                             <form th:unless="${canDeletePost}"
                                   th:action="@{/posts/{id}/report(id=${post.id})}"
                                   method="post"
@@ -74,11 +74,12 @@
         </header>
 
         <section class="post-media-frame">
-            <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
-            <div class="post-media-overlay" th:if="${post.mediaType.name() != 'IMAGE'}">
-                <span aria-hidden="true">▶</span>
-                <strong th:text="${post.mediaType.name() == 'INSTAGRAM'} ? 'INSTAGRAM MEDIA' : 'EXTERNAL MEDIA'">EXTERNAL MEDIA</strong>
-            </div>
+            <video th:if="${post.mediaType.name() == 'VIDEO_LINK'}"
+                   th:src="${post.mediaUrl}"
+                   th:poster="${post.thumbnailUrl}"
+                   controls
+                   playsinline></video>
+            <img th:if="${post.mediaType.name() != 'VIDEO_LINK' and post.thumbnailUrl != null and !post.thumbnailUrl.isBlank()}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
         </section>
 
         <section class="post-body-copy">
@@ -91,10 +92,10 @@
             </div>
         </section>
 
-        <a class="instagram-preview-card" th:if="${post.mediaUrl}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">
+        <a class="instagram-preview-card" th:if="${post.mediaType.name() == 'INSTAGRAM' and post.mediaUrl != null and !post.mediaUrl.isBlank()}" th:href="${post.mediaUrl}" target="_blank" rel="noreferrer">
             <img th:if="${post.thumbnailUrl}" th:src="${post.thumbnailUrl}" th:alt="${post.title}">
             <div>
-                <span th:text="${post.mediaType.name() == 'INSTAGRAM'} ? 'Instagram Preview' : 'External Media Preview'">Instagram Preview</span>
+                <span>Instagram Preview</span>
                 <strong th:text="${post.title}">Post title</strong>
                 <p th:text="${post.mediaUrl}">mediaUrl</p>
             </div>
@@ -261,10 +262,14 @@
     const moreMenu = document.querySelector("[data-more-actions-menu]");
     const copyPostLinkButton = document.querySelector("[data-copy-post-link]");
     if (moreActions && moreToggle && moreMenu) {
-        moreToggle.addEventListener("click", () => {
+        moreToggle.addEventListener("click", (event) => {
+            event.stopPropagation();
             const isOpen = moreToggle.getAttribute("aria-expanded") === "true";
             moreToggle.setAttribute("aria-expanded", String(!isOpen));
             moreMenu.hidden = isOpen;
+        });
+        moreMenu.addEventListener("click", (event) => {
+            event.stopPropagation();
         });
         document.addEventListener("click", (event) => {
             if (!moreActions.contains(event.target)) {

@@ -18,10 +18,12 @@
         <h1 id="post-create-title" th:text="${formMode == 'edit'} ? 'REFINE WHAT MOVES YOU.' : 'TELL US WHAT MOVES YOU.'">TELL US WHAT MOVES YOU.</h1>
 
         <form class="post-create-form"
-              th:action="${formMode == 'edit'} ? @{/posts/{id}/edit(id=${post.id})} : @{/posts/new}"
+              th:action="${formMode == 'edit'} ? @{/posts/{id}/edit(id=${post.id}, _csrf=${_csrf.token})} : @{/posts/new(_csrf=${_csrf.token})}"
               th:object="${postCreateRequest}"
               method="post"
+              enctype="multipart/form-data"
               novalidate>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <section class="post-create-section">
                 <p class="post-create-label">CHOOSE BOARD</p>
                 <div class="post-board-tabs" role="radiogroup" aria-label="Choose board">
@@ -49,7 +51,7 @@
                 <div class="post-create-inline">
                     <label>
                         <span>TAGS</span>
-                        <input type="text" th:field="*{tags}" placeholder="# 스트릿잼, # 배틀, # 서울" data-preview-tags>
+                        <input type="text" th:field="*{tags}" placeholder="# 스트릿, # 배틀, # 서울" data-preview-tags>
                     </label>
                     <label>
                         <span>LOCATION</span>
@@ -58,16 +60,18 @@
                 </div>
 
                 <label>
-                    <span>ADD INSTAGRAM POST LINK OR EXTERNAL MEDIA URL</span>
+                    <span>ATTACH IMAGE OR VIDEO</span>
+                    <input type="file" name="mediaFile" accept="image/*,video/*" data-preview-file>
+                    <small th:if="${#fields.hasErrors('mediaFile')}" th:errors="*{mediaFile}">Upload error</small>
+                </label>
+
+                <label>
+                    <span>OR ADD INSTAGRAM POST LINK</span>
                     <input type="url" th:field="*{mediaUrl}" placeholder="https://www.instagram.com/p/..." data-preview-media>
                     <small th:if="${#fields.hasErrors('mediaUrl')}" th:errors="*{mediaUrl}">Media error</small>
                 </label>
 
-                <label>
-                    <span>THUMBNAIL URL</span>
-                    <input type="url" th:field="*{thumbnailUrl}" placeholder="https://... 또는 /assets/source/..." data-preview-thumbnail>
-                    <small th:if="${#fields.hasErrors('thumbnailUrl')}" th:errors="*{thumbnailUrl}">Thumbnail error</small>
-                </label>
+                <input type="hidden" th:field="*{thumbnailUrl}">
 
                 <div class="post-create-inline post-create-dates" data-date-fields>
                     <label>
@@ -86,18 +90,22 @@
                 </label>
             </section>
 
+            <div class="post-alert is-error" th:if="${#fields.hasGlobalErrors()}">
+                <p th:each="error : ${#fields.globalErrors()}" th:text="${error}">게시글을 저장할 수 없습니다.</p>
+            </div>
+
             <button class="post-create-publish" type="submit">
                 <span th:text="${formMode == 'edit'} ? 'UPDATE' : 'PUBLISH'">PUBLISH</span>
                 <span aria-hidden="true">→</span>
             </button>
-            <p class="post-create-footnote">WE DON’T JUST MOVE, WE ECHO.</p>
+            <p class="post-create-footnote">WE DON'T JUST MOVE, WE ECHO.</p>
         </form>
     </section>
 
     <aside class="post-create-preview" aria-label="Live preview">
         <div class="post-preview-sticky">
             <div class="post-create-kicker post-preview-kicker">LIVE PREVIEW <span></span></div>
-            <p>작성 중인 글이 게시판에 올라갔을 때 보이는 모습을 실시간으로 보여줍니다</p>
+            <p>작성 중인 글이 게시판에 올라갔을 때 보이는 모습을 실시간으로 보여줍니다.</p>
 
             <article class="post-live-preview">
                 <span class="post-board-pill type-show" data-preview-board>SHOW</span>
@@ -111,7 +119,8 @@
 
                 <div class="post-preview-media" data-preview-media-frame hidden>
                     <img alt="" data-preview-thumbnail-output hidden>
-                    <span class="post-preview-play" aria-hidden="true" hidden>▶</span>
+                    <video data-preview-video-output hidden muted playsinline controls></video>
+                    <span class="post-preview-play" aria-hidden="true" hidden></span>
                     <b data-preview-media-badge hidden></b>
                 </div>
 

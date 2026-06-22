@@ -11,8 +11,8 @@
     const contentInput = form.querySelector("[data-preview-content]");
     const tagsInput = form.querySelector("[data-preview-tags]");
     const locationInput = form.querySelector("[data-preview-location]");
+    const fileInput = form.querySelector("[data-preview-file]");
     const mediaInput = form.querySelector("[data-preview-media]");
-    const thumbnailInput = form.querySelector("[data-preview-thumbnail]");
     const eventDateInput = form.querySelector("[data-preview-event-date]");
     const deadlineInput = form.querySelector("[data-preview-deadline]");
     const dateFields = form.querySelector("[data-date-fields]");
@@ -28,6 +28,7 @@
     const deadlineOutput = root.querySelector("[data-preview-deadline-output]");
     const mediaFrame = root.querySelector("[data-preview-media-frame]");
     const thumbnailOutput = root.querySelector("[data-preview-thumbnail-output]");
+    const videoOutput = root.querySelector("[data-preview-video-output]");
     const mediaBadge = root.querySelector("[data-preview-media-badge]");
     const mediaPlay = root.querySelector(".post-preview-play");
     const linkCard = root.querySelector("[data-preview-link-card]");
@@ -35,6 +36,7 @@
     const linkLabel = root.querySelector("[data-preview-link-label]");
     const linkTitle = root.querySelector("[data-preview-link-title]");
     const linkUrl = root.querySelector("[data-preview-link-url]");
+    let filePreviewUrl = "";
 
     function selectedBoard() {
         return boardInputs.find((input) => input.checked)?.value || "SHOW";
@@ -71,24 +73,27 @@
             .slice(0, 6);
     }
 
-    function resolveMediaLabel(mediaUrl) {
-        const lowerUrl = mediaUrl.toLowerCase();
-        if (!lowerUrl) {
-            return "MEDIA PREVIEW";
-        }
-        if (lowerUrl.includes("instagram.com/")) {
-            return "INSTAGRAM PREVIEW";
-        }
-        if (lowerUrl.includes("youtube.com/") || lowerUrl.includes("youtu.be/")) {
-            return "YOUTUBE PREVIEW";
-        }
-        return "EXTERNAL MEDIA";
+    function selectedFile() {
+        return fileInput && fileInput.files && fileInput.files.length > 0 ? fileInput.files[0] : null;
     }
 
-    function resolveLinkLabel(mediaUrl) {
-        return mediaUrl.toLowerCase().includes("instagram.com/")
-            ? "Instagram Preview"
-            : "External Media Preview";
+    function isInstagramUrl(mediaUrl) {
+        return mediaUrl.toLowerCase().includes("instagram.com/");
+    }
+
+    function normalizeInstagramUrl(mediaUrl) {
+        let normalized = mediaUrl.trim();
+        if (!normalized) {
+            return "";
+        }
+        if (/^https?:\/\//i.test(normalized)) {
+            return normalized;
+        }
+        normalized = normalized.replace(/^\/+/, "");
+        if (/^(www\.)?instagram\.com\//i.test(normalized)) {
+            return `https://${normalized}`;
+        }
+        return normalized;
     }
 
     function syncOptionalFields(board) {
@@ -135,32 +140,63 @@
         deadlineOutput.hidden = !deadline;
         deadlineOutput.textContent = deadline;
 
-        const thumbnailUrl = thumbnailInput.value.trim();
+        const file = selectedFile();
+        if (filePreviewUrl) {
+            URL.revokeObjectURL(filePreviewUrl);
+            filePreviewUrl = "";
+        }
+        if (file) {
+            filePreviewUrl = URL.createObjectURL(file);
+        }
+
+        const thumbnailUrl = filePreviewUrl;
+        const isVideoFile = file && file.type.startsWith("video/");
         mediaFrame.hidden = !thumbnailUrl;
-        thumbnailOutput.hidden = !thumbnailUrl;
-        mediaFrame.classList.toggle("has-image", Boolean(thumbnailUrl));
+        thumbnailOutput.hidden = !thumbnailUrl || isVideoFile;
+        if (videoOutput) {
+            videoOutput.hidden = !thumbnailUrl || !isVideoFile;
+        }
+        mediaFrame.classList.remove("has-image");
         if (thumbnailUrl) {
-            thumbnailOutput.src = thumbnailUrl;
-            linkThumbnail.src = thumbnailUrl;
-            linkThumbnail.hidden = false;
-            linkCard.classList.remove("is-text-only");
+            if (isVideoFile && videoOutput) {
+                thumbnailOutput.removeAttribute("src");
+                videoOutput.src = thumbnailUrl;
+                linkThumbnail.removeAttribute("src");
+                linkThumbnail.hidden = true;
+                linkCard.classList.add("is-text-only");
+            } else {
+                thumbnailOutput.src = thumbnailUrl;
+                if (videoOutput) {
+                    videoOutput.removeAttribute("src");
+                }
+                linkThumbnail.src = thumbnailUrl;
+                linkThumbnail.hidden = false;
+                linkCard.classList.remove("is-text-only");
+            }
         } else {
             thumbnailOutput.removeAttribute("src");
+            if (videoOutput) {
+                videoOutput.removeAttribute("src");
+            }
             linkThumbnail.removeAttribute("src");
             linkThumbnail.hidden = true;
             linkCard.classList.add("is-text-only");
         }
 
-        const mediaUrl = mediaInput.value.trim();
-        mediaBadge.hidden = !mediaUrl || !thumbnailUrl;
-        mediaBadge.textContent = mediaUrl ? resolveMediaLabel(mediaUrl) : "";
-        mediaPlay.hidden = !mediaUrl || !thumbnailUrl;
+        const mediaUrl = normalizeInstagramUrl(mediaInput.value);
+        const hasInstagram = Boolean(mediaUrl && isInstagramUrl(mediaUrl));
+        mediaBadge.hidden = true;
+        mediaBadge.textContent = "";
+        mediaPlay.hidden = true;
 
-        linkCard.hidden = !mediaUrl;
-        if (mediaUrl) {
+        linkCard.hidden = !hasInstagram;
+        if (hasInstagram) {
             linkCard.href = mediaUrl;
-            linkLabel.textContent = resolveLinkLabel(mediaUrl);
-            linkTitle.textContent = titleInput.value.trim() || `${board} post media`;
+            linkThumbnail.removeAttribute("src");
+            linkThumbnail.hidden = true;
+            linkCard.classList.add("is-text-only");
+            linkLabel.textContent = "Instagram Preview";
+            linkTitle.textContent = titleInput.value.trim() || `${board} Instagram post`;
             linkUrl.textContent = mediaUrl;
         } else {
             linkCard.removeAttribute("href");
@@ -178,8 +214,8 @@
         contentInput,
         tagsInput,
         locationInput,
+        fileInput,
         mediaInput,
-        thumbnailInput,
         eventDateInput,
         deadlineInput,
         ...boardInputs

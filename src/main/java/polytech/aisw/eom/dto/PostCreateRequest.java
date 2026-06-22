@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import org.springframework.web.multipart.MultipartFile;
 import polytech.aisw.eom.domain.BoardType;
 import polytech.aisw.eom.domain.Post;
 
@@ -31,6 +32,8 @@ public class PostCreateRequest {
 
     @Size(max = 300)
     private String thumbnailUrl;
+
+    private MultipartFile mediaFile;
 
     private LocalDate eventDate;
 
@@ -107,6 +110,14 @@ public class PostCreateRequest {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public MultipartFile getMediaFile() {
+        return mediaFile;
+    }
+
+    public void setMediaFile(MultipartFile mediaFile) {
+        this.mediaFile = mediaFile;
     }
 
     public LocalDate getEventDate() {
