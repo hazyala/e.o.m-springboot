@@ -3,6 +3,7 @@
     var header = document.querySelector('[data-marketing-header]');
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var ticking = false;
+    var scrollStatusTimer = 0;
     var sceneCache = [];
 
     function clamp(value, min, max) {
@@ -24,6 +25,7 @@
                 element: element,
                 type: element.getAttribute('data-scene'),
                 lines: Array.prototype.slice.call(element.querySelectorAll('[data-hero-line]')),
+                heroCube: element.querySelector('[data-hero-cube]'),
                 cube: element.querySelector('[data-cube]'),
                 cards: Array.prototype.slice.call(element.querySelectorAll('.board-motion-card')),
                 rail: element.querySelector('[data-reel-rail]')
@@ -32,27 +34,76 @@
         update();
     }
 
+    function restartHeroTyping() {
+        document.querySelectorAll('.hero-type-line span:not(.hero-type-gap)').forEach(function (letter) {
+            var order = Number(letter.style.getPropertyValue('--n') || 0);
+            var delay = 0.28 + order * 0.085;
+            var rollDelay = 2.75 + order * 0.045;
+            letter.style.animation = 'none';
+            letter.style.opacity = '0';
+            letter.offsetHeight;
+            letter.style.animation = 'hero-type-in 0.24s steps(1, end) ' + delay + 's both, hero-letter-roll 3.6s ease-in-out ' + rollDelay + 's infinite';
+            window.setTimeout(function () {
+                letter.style.opacity = '1';
+            }, (delay + 0.28) * 1000);
+        });
+    }
+
     function updateHeader() {
         if (!header) {
             return;
         }
-        header.classList.toggle('is-solid', window.scrollY > window.innerHeight * 0.82);
+        header.classList.toggle('is-solid', window.scrollY > window.innerHeight * 0.16);
     }
 
     function updateHero(scene, progress) {
         var element = scene.element;
-        element.style.setProperty('--hero-scale', String(lerp(1.04, 1.18, progress)));
-        element.style.setProperty('--hero-y', lerp(0, 80, progress) + 'px');
-        element.style.setProperty('--ghost-opacity', String(lerp(0.14, 0.38, progress)));
-        element.style.setProperty('--ghost-x', lerp(0, -150, progress) + 'px');
-        element.style.setProperty('--ghost-y', lerp(0, 52, progress) + 'px');
+        var rect = element.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || 1;
+        var scrollable = Math.max(1, rect.height - viewportHeight);
+        progress = clamp(-rect.top / scrollable, 0, 1);
+        var navRise = clamp(progress / 0.26, 0, 1);
+        var heroLift = clamp((progress - 0.16) / 0.34, 0, 1);
+        var titleSettle = clamp((progress - 0.38) / 0.22, 0, 1);
+        var cubeEnter = clamp((progress - 0.18) / 0.5, 0, 1);
+        var finalSpin = clamp((progress - 0.68) / 0.32, 0, 1);
 
-        scene.lines.forEach(function (line, index) {
-            var direction = index % 2 === 0 ? -1 : 1;
-            line.style.setProperty('--line-x', (direction * lerp(0, 120, progress)) + 'px');
-            line.style.setProperty('--line-y', lerp(0, -38 * (index + 1), progress) + 'px');
-            line.style.opacity = String(lerp(1, 0.55, progress));
+        doc.style.setProperty('--hero-nav-x', 'calc(' + lerp(-35.6, 0, navRise) + 'vw - ' + lerp(10, 0, navRise) + 'px)');
+        doc.style.setProperty('--hero-nav-offset', 'calc(' + lerp(68, 0, navRise) + 'vh + ' + lerp(20, 0, navRise) + 'px)');
+        doc.style.setProperty('--hero-nav-font-size', lerp(28, 14, navRise) + 'px');
+
+        element.style.setProperty('--hero-ribbon-y', lerp(0, -viewportHeight * 0.92, heroLift) + 'px');
+        element.style.setProperty('--hero-ribbon-opacity', String(1 - clamp((heroLift - 0.12) / 0.64, 0, 1)));
+        element.style.setProperty('--line-dont-opacity', String(1 - titleSettle));
+        element.style.setProperty('--line-move-opacity', String(1 - titleSettle));
+        element.style.setProperty('--line-echo-opacity', '1');
+        element.style.setProperty('--echo-top', lerp(52, 13.2, titleSettle) + 'vh');
+        element.style.setProperty('--echo-left', lerp(10, 4.2, titleSettle) + 'vw');
+        element.style.setProperty('--echo-size', lerp(8, 6.4, titleSettle) + 'vw');
+        var echoIsAqua = cubeEnter > 0.58;
+        element.style.setProperty('--echo-color', echoIsAqua ? 'var(--brand-aqua)' : '#ffffff');
+        element.style.setProperty('--echo-glow-strong', echoIsAqua ? 'rgba(0, 180, 171, 0.72)' : 'rgba(255, 255, 255, 0.68)');
+        element.style.setProperty('--echo-glow-mid', echoIsAqua ? 'rgba(0, 180, 171, 0.44)' : 'rgba(255, 255, 255, 0.38)');
+        element.style.setProperty('--echo-glow-soft', echoIsAqua ? 'rgba(0, 180, 171, 0.26)' : 'rgba(255, 255, 255, 0.22)');
+
+        scene.lines.forEach(function (line) {
+            line.style.setProperty('--line-x', '0px');
+            line.style.setProperty('--line-y', lerp(0, -viewportHeight * 0.46, heroLift) + 'px');
         });
+
+        var echoLine = element.querySelector('.hero-type-line-echo');
+        if (echoLine) {
+            echoLine.style.setProperty('--line-y', lerp(0, 0, titleSettle) + 'px');
+        }
+
+        if (scene.heroCube) {
+            scene.heroCube.style.setProperty('--cube-x', lerp(31, 0, cubeEnter) + 'vw');
+            scene.heroCube.style.setProperty('--cube-y', lerp(25, 6, cubeEnter) + 'vh');
+            scene.heroCube.style.setProperty('--cube-rx', (lerp(-18, 12, cubeEnter) + finalSpin * 96) + 'deg');
+            scene.heroCube.style.setProperty('--cube-ry', (lerp(-38, 28, cubeEnter) + finalSpin * 300) + 'deg');
+            scene.heroCube.style.setProperty('--cube-rz', (lerp(2, -4, cubeEnter) + finalSpin * 36) + 'deg');
+            scene.heroCube.style.setProperty('--cube-scale', String(lerp(0.34, 0.88, cubeEnter)));
+        }
     }
 
     function updateCube(scene, progress) {
@@ -143,6 +194,16 @@
     }
 
     function requestUpdate() {
+        document.querySelectorAll('[data-scroll-status]').forEach(function (status) {
+            status.textContent = 'Keep Scroll';
+        });
+        window.clearTimeout(scrollStatusTimer);
+        scrollStatusTimer = window.setTimeout(function () {
+            document.querySelectorAll('[data-scroll-status]').forEach(function (status) {
+                status.textContent = 'Start Scroll';
+            });
+        }, 180);
+
         if (!ticking) {
             ticking = true;
             window.requestAnimationFrame(update);
@@ -172,6 +233,10 @@
 
     window.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', cacheScenes);
-    window.addEventListener('load', cacheScenes);
+    window.addEventListener('load', function () {
+        cacheScenes();
+        restartHeroTyping();
+    });
     cacheScenes();
+    restartHeroTyping();
 })();

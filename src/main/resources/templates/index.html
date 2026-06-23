@@ -14,34 +14,60 @@
 <header class="marketing-header" data-marketing-header>
     <a class="marketing-logo" href="/" data-scroll-top>Echo of Movement</a>
     <nav class="marketing-nav" aria-label="Main navigation">
-        <a href="#show" data-section-link="show">Show<span>Profile</span></a>
-        <a href="#cast" data-section-link="cast">Cast<span>Recruit</span></a>
-        <a href="#hype" data-section-link="hype">Hype<span>Events</span></a>
-        <a href="#link" data-section-link="link">Link<span>Practice</span></a>
-        <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login<span>Join</span></a>
-        <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Dash<span>Feed</span></a>
-        <button class="marketing-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">C</button>
+        <a th:href="@{/dashboard}">Dash</a>
+        <a href="#show" data-section-link="show">Show</a>
+        <a href="#cast" data-section-link="cast">Cast</a>
+        <a href="#hype" data-section-link="hype">Hype</a>
+        <a href="#link" data-section-link="link">Link</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
     </nav>
+    <button class="marketing-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">C</button>
 </header>
 
 <main class="dynamic-index">
     <section class="cinema-section hero-cinema" data-scene="hero">
-        <div class="hero-media-stack" aria-hidden="true">
-            <img class="hero-bg" th:src="@{/assets/source/hero.jpg}" alt="">
-            <img class="hero-ghost hero-ghost-a" th:src="@{/assets/source/hype.jpg}" alt="">
-            <img class="hero-ghost hero-ghost-b" th:src="@{/assets/source/background.jpg}" alt="">
-        </div>
-        <div class="hero-copy">
-            <p class="scene-kicker">E.O.M / Street dance community</p>
-            <h1>
-                <span data-hero-line>WE DON'T</span>
-                <span data-hero-line>JUST MOVE,</span>
-                <span data-hero-line>WE ECHO.</span>
-            </h1>
-        </div>
-        <div class="hero-side-note">
-            <span>Scroll</span>
-            <span>to enter the scene</span>
+        <div class="hero-sticky-stage">
+            <div class="hero-media-stack" aria-hidden="true">
+                <video class="hero-ribbon-video" th:src="@{/assets/source/mp4/herostart.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+            </div>
+
+            <div class="hero-reference-copy">
+                <h1 aria-label="Quote. We don't. Just move. We echo. Quote.">
+                    <span class="hero-type-line hero-type-line-dont" data-hero-line>
+                        <span style="--n:1">"</span><span class="hero-type-gap hero-type-gap-small" aria-hidden="true"></span><span style="--n:2">W</span><span style="--n:3">e</span><span class="hero-type-gap" aria-hidden="true"></span><span style="--n:4">D</span><span style="--n:5">o</span><span style="--n:6">n</span><span style="--n:7">'</span><span style="--n:8">t</span>
+                    </span>
+                    <span class="hero-type-line hero-type-line-move" data-hero-line>
+                        <span style="--n:9">J</span><span style="--n:10">u</span><span style="--n:11">s</span><span style="--n:12">t</span><span class="hero-type-gap" aria-hidden="true"></span><span style="--n:13">M</span><span style="--n:14">o</span><span style="--n:15">v</span><span style="--n:16">e</span>
+                    </span>
+                    <span class="hero-type-line hero-type-line-echo" data-hero-line>
+                        <span style="--n:17">W</span><span class="hero-letter-e" style="--n:18">e</span><span class="hero-type-gap" aria-hidden="true"></span><span style="--n:19">E</span><span style="--n:20">c</span><span style="--n:21">h</span><span style="--n:22">o</span><span class="hero-type-gap hero-type-gap-small" aria-hidden="true"></span><span style="--n:23">"</span>
+                    </span>
+                </h1>
+            </div>
+
+            <div class="hero-cube-stage" aria-label="E.O.M hero media cube">
+                <div class="media-cube hero-media-cube" data-hero-cube>
+                    <div class="cube-face cube-front">
+                        <video th:src="@{/assets/source/mp4/herostart.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                    </div>
+                    <div class="cube-face cube-back">
+                        <video th:src="@{/assets/source/mp4/cube1.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                    </div>
+                    <div class="cube-face cube-right">
+                        <img th:src="@{/assets/source/hype.jpg}" alt="Dance hype still">
+                    </div>
+                    <div class="cube-face cube-left">
+                        <video th:src="@{/assets/source/mp4/cube3.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                    </div>
+                    <div class="cube-face cube-top">
+                        <img th:src="@{/assets/source/hero.jpg}" alt="Dance hero still">
+                    </div>
+                    <div class="cube-face cube-bottom">
+                        <video th:src="@{/assets/source/mp4/cube2.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -193,6 +219,8 @@
         </div>
     </section>
 </main>
+
+<div class="scroll-status" data-scroll-status>Start Scroll</div>
 
 <footer class="marketing-footer">
     <div>
