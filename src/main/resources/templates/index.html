@@ -6,158 +6,206 @@
     <title>E.O.M | Echo of Movement</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Irish+Grover&family=Roboto:wght@700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Irish+Grover&family=Roboto:wght@700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="stylesheet" th:href="@{/css/marketing.css}">
 </head>
 <body class="marketing-page">
-<header class="header">
-    <a class="logo" href="/" data-scroll-top>Echo of Movement</a>
-    <nav class="navbar">
-        <ul>
-            <li>
-                <a href="#show" data-section-link="show">Show<span class="subtitle">당신을 보여주세요</span></a>
-            </li>
-            <li>
-                <a href="#cast" data-section-link="cast">Cast<span class="subtitle">공연 기회를 만나세요</span></a>
-            </li>
-            <li>
-                <a href="#hype" data-section-link="hype">Hype<span class="subtitle">움직임에 열광을 더하세요</span></a>
-            </li>
-            <li>
-                <a href="#link" data-section-link="link">Link<span class="subtitle">세상과 연결되세요</span></a>
-            </li>
-            <li>
-                <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login<span class="subtitle">가입해보세요</span></a>
-                <a sec:authorize="isAuthenticated()" th:href="@{/my-page}">My Page<span class="subtitle">프로필로 돌아가기</span></a>
-            </li>
-            <li>
-                <button class="theme-toggle-button" type="button" data-theme-toggle aria-label="Toggle theme">☀</button>
-            </li>
-        </ul>
+<header class="marketing-header" data-marketing-header>
+    <a class="marketing-logo" href="/" data-scroll-top>Echo of Movement</a>
+    <nav class="marketing-nav" aria-label="Main navigation">
+        <a href="#show" data-section-link="show">Show<span>Profile</span></a>
+        <a href="#cast" data-section-link="cast">Cast<span>Recruit</span></a>
+        <a href="#hype" data-section-link="hype">Hype<span>Events</span></a>
+        <a href="#link" data-section-link="link">Link<span>Practice</span></a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login<span>Join</span></a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Dash<span>Feed</span></a>
+        <button class="marketing-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">C</button>
     </nav>
 </header>
 
-<main>
-    <section class="hero-section">
-        <img class="hero-image" th:src="@{/assets/source/hero.jpg}" alt="Hero Background">
-        <div class="label">
-            <div class="typewriter-text" data-typewriter-text="&quot; WE&#10;DON'T&#10;JUST&#10;MOVE,&#10;WE ECHO &quot;"></div>
+<main class="dynamic-index">
+    <section class="cinema-section hero-cinema" data-scene="hero">
+        <div class="hero-media-stack" aria-hidden="true">
+            <img class="hero-bg" th:src="@{/assets/source/hero.jpg}" alt="">
+            <img class="hero-ghost hero-ghost-a" th:src="@{/assets/source/hype.jpg}" alt="">
+            <img class="hero-ghost hero-ghost-b" th:src="@{/assets/source/background.jpg}" alt="">
+        </div>
+        <div class="hero-copy">
+            <p class="scene-kicker">E.O.M / Street dance community</p>
+            <h1>
+                <span data-hero-line>WE DON'T</span>
+                <span data-hero-line>JUST MOVE,</span>
+                <span data-hero-line>WE ECHO.</span>
+            </h1>
+        </div>
+        <div class="hero-side-note">
+            <span>Scroll</span>
+            <span>to enter the scene</span>
         </div>
     </section>
 
-    <section id="show" class="show-section reveal-section">
-        <div class="show-container">
-            <div class="show-image-wrapper reveal-up">
-                <img th:src="@{/assets/source/show.png}" alt="Show Profile">
+    <section id="show" class="cinema-section cube-cinema" data-scene="cube">
+        <div class="scene-copy cube-copy">
+            <p class="scene-kicker">Show your movement</p>
+            <h2>Profiles become stage lights.</h2>
+            <p>
+                E.O.M turns dancer profiles, reels, crews, and moments into a living archive.
+                The index opens like a performance before the dashboard takes over.
+            </p>
+            <div class="scene-actions">
+                <a sec:authorize="!isAuthenticated()" class="pill-action" th:href="@{/login}">SHOW</a>
+                <a sec:authorize="isAuthenticated()" class="pill-action" th:href="@{/boards/SHOW}">SHOW</a>
+                <a class="ghost-action" th:href="@{/dashboard}">DASHBOARD</a>
             </div>
-            <div class="show-content reveal-right">
-                <h2 class="show-title">Show Your Profile</h2>
-                <p class="show-description">
-                    지금, 당신을 보여주세요.<br>
-                    누군가가 기다리고 있어요.
-                </p>
-                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">SHOW</a>
-                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/SHOW}">SHOW</a>
+        </div>
+
+        <div class="cube-stage" aria-label="E.O.M media cube">
+            <div class="media-cube" data-cube>
+                <div class="cube-face cube-front"><img th:src="@{/assets/source/show.png}" alt="Show profile"></div>
+                <div class="cube-face cube-back"><img th:src="@{/assets/source/hype.jpg}" alt="Dance battle"></div>
+                <div class="cube-face cube-right"><img th:src="@{/assets/source/cast1.jpg}" alt="Cast card"></div>
+                <div class="cube-face cube-left"><img th:src="@{/assets/source/cast3.jpg}" alt="Crew profile"></div>
+                <div class="cube-face cube-top"><img th:src="@{/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg}" alt="Performance archive"></div>
+                <div class="cube-face cube-bottom"><img th:src="@{/assets/source/dwayne-joe-_Haw_PsHa5E-unsplash.jpg}" alt="Street archive"></div>
+            </div>
+        </div>
+        <div class="massive-word" aria-hidden="true">ECHO</div>
+    </section>
+
+    <section id="cast" class="cinema-section card-cinema" data-scene="cards">
+        <div class="scene-copy cards-copy">
+            <p class="scene-kicker">From board to floor</p>
+            <h2>Posts fly in like casting calls.</h2>
+            <p>
+                Fresh posts from Show, Cast, Hype, and Link are staged as motion cards.
+                They can become reels later; today they use the assets already in the project.
+            </p>
+        </div>
+
+        <div class="board-card-field">
+            <a class="board-motion-card board-motion-card-data"
+               th:each="post, iter : ${indexPosts}"
+               th:if="${iter.index < 8}"
+               th:href="@{'/posts/' + ${post.id}}"
+               th:style="'--i:' + ${iter.index}">
+                <img th:src="${post.thumbnailUrl != null and !#strings.isEmpty(post.thumbnailUrl) ? post.thumbnailUrl : '/assets/source/background.jpg'}" th:alt="${post.title}">
+                <span th:text="${post.boardType}">SHOW</span>
+                <strong th:text="${post.title}">Board title</strong>
+                <small th:text="${post.author.displayName}">Dancer</small>
+            </a>
+
+            <th:block th:if="${#lists.isEmpty(indexPosts)}">
+                <a class="board-motion-card" th:href="@{/boards/SHOW}" style="--i:0">
+                    <img th:src="@{/assets/source/show.png}" alt="Show card">
+                    <span>SHOW</span>
+                    <strong>Build your profile</strong>
+                    <small>E.O.M Archive</small>
+                </a>
+                <a class="board-motion-card" th:href="@{/boards/CAST}" style="--i:1">
+                    <img th:src="@{/assets/source/cast1.jpg}" alt="Cast card">
+                    <span>CAST</span>
+                    <strong>Find the next stage</strong>
+                    <small>Open Floor</small>
+                </a>
+                <a class="board-motion-card" th:href="@{/boards/HYPE}" style="--i:2">
+                    <img th:src="@{/assets/source/hype.jpg}" alt="Hype card">
+                    <span>HYPE</span>
+                    <strong>Battle logs and events</strong>
+                    <small>Seoul Jam</small>
+                </a>
+                <a class="board-motion-card" th:href="@{/boards/LINK}" style="--i:3">
+                    <img th:src="@{/assets/source/link.png}" alt="Link card">
+                    <span>LINK</span>
+                    <strong>Practice together</strong>
+                    <small>Session Room</small>
+                </a>
+            </th:block>
+        </div>
+    </section>
+
+    <section class="typo-cinema" data-scene="typo" aria-label="E.O.M manifesto">
+        <div class="typo-track">
+            <span>SHOW THE MOVE</span>
+            <span>CAST THE CREW</span>
+            <span>DROP THE HYPE</span>
+            <span>LINK THE SCENE</span>
+        </div>
+        <p>
+            Instagram made the scene visible. E.O.M brings the scene home:
+            profiles, castings, battles, practice links, and records in one place.
+        </p>
+    </section>
+
+    <section id="hype" class="reels-cinema" data-scene="reels">
+        <div class="reels-head">
+            <p class="scene-kicker">Reels, photos, activity records</p>
+            <h2>Scroll sideways through the community.</h2>
+            <a sec:authorize="!isAuthenticated()" class="pill-action" th:href="@{/login}">HYPE</a>
+            <a sec:authorize="isAuthenticated()" class="pill-action" th:href="@{/boards/HYPE}">HYPE</a>
+        </div>
+
+        <div class="reel-rail-viewport">
+            <div class="reel-rail" data-reel-rail>
+                <a class="reel-card"
+                   th:each="post : ${indexPosts}"
+                   th:href="@{'/posts/' + ${post.id}}">
+                    <img th:src="${post.thumbnailUrl != null and !#strings.isEmpty(post.thumbnailUrl) ? post.thumbnailUrl : '/assets/source/hero.jpg'}" th:alt="${post.title}">
+                    <div>
+                        <span th:text="${post.boardType}">SHOW</span>
+                        <strong th:text="${post.title}">Movement log</strong>
+                        <small th:text="${post.likeCount + ' likes / ' + post.viewCount + ' views'}">0 likes</small>
+                    </div>
+                </a>
+
+                <th:block th:if="${#lists.isEmpty(indexPosts)}">
+                    <a class="reel-card" th:href="@{/boards/SHOW}">
+                        <img th:src="@{/assets/source/maick-maciel-anpdtW_Xg5c-unsplash.jpg}" alt="Dance reel">
+                        <div><span>SHOW</span><strong>Fisheye profile cut</strong><small>Demo reel</small></div>
+                    </a>
+                    <a class="reel-card" th:href="@{/boards/CAST}">
+                        <img th:src="@{/assets/source/cast2.jpg}" alt="Cast reel">
+                        <div><span>CAST</span><strong>Open crew casting</strong><small>Demo reel</small></div>
+                    </a>
+                    <a class="reel-card" th:href="@{/boards/HYPE}">
+                        <img th:src="@{/assets/source/sergio-kian-BB48dwtKHBk-unsplash.jpg}" alt="Hype reel">
+                        <div><span>HYPE</span><strong>Battle night recap</strong><small>Demo reel</small></div>
+                    </a>
+                    <a class="reel-card" th:href="@{/boards/LINK}">
+                        <img th:src="@{/assets/source/samuel-regan-asante-jRM3E-MG9sg-unsplash.jpg}" alt="Link reel">
+                        <div><span>LINK</span><strong>Practice session link</strong><small>Demo reel</small></div>
+                    </a>
+                </th:block>
             </div>
         </div>
     </section>
 
-    <section id="cast" class="cast-section reveal-section">
-        <div class="cast-carousel-wrapper">
-            <div class="cast-track">
-                <div class="cast-card"><img th:src="@{/assets/source/cast1.jpg}" alt="Cast 1"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast2.jpg}" alt="Cast 2"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast3.jpg}" alt="Cast 3"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast4.jpg}" alt="Cast 4"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast1.jpg}" alt="Cast 1"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast2.jpg}" alt="Cast 2"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast3.jpg}" alt="Cast 3"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast4.jpg}" alt="Cast 4"></div>
-            </div>
-        </div>
-        <div class="cast-content-wrapper reveal-up">
-            <h2 class="cast-title">Post it. Fill the Stage.</h2>
-            <p class="cast-desc">댄서를 찾고 계신가요?&nbsp;&nbsp;공고를 등록해 연결을 시작하세요.</p>
-            <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">CAST</a>
-            <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/CAST}">CAST</a>
-        </div>
-    </section>
-
-    <section id="hype" class="hype-section reveal-section">
-        <div class="hype-container">
-            <div class="hype-text reveal-left">
-                <h2 class="headline">
-                    Events. <br>
-                    Battles. <br>
-                    Everything <br>
-                    Hype.
-                </h2>
-                <p class="desc">
-                    배틀, 행사, 이벤트.<br>
-                    이 씬의 모든 하입은 여기에.
-                </p>
-                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">HYPE</a>
-                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/HYPE}">HYPE</a>
-            </div>
-            <div class="hype-image-wrapper reveal-right">
-                <img th:src="@{/assets/source/hype.jpg}" alt="Hype Image">
-            </div>
-        </div>
-    </section>
-
-    <section id="link" class="link-section reveal-section">
-        <div class="link-background">
-            <img th:src="@{/assets/source/link.png}" alt="Link Background Image">
-        </div>
-        <div class="link-content">
-            <div class="link-left reveal-left">
-                <div class="title">Practice,<br>Together</div>
-                <div class="desc">함께 연습할 사람, 지금 찾기.</div>
-            </div>
-            <div class="button-wrapper reveal-up">
-                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">LINK</a>
-                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/LINK}">LINK</a>
-            </div>
-            <div class="link-right reveal-right">
-                <div class="title">Drop It</div>
-                <div class="desc">당신의 말이 씬을 만듭니다.</div>
+    <section id="link" class="final-cinema" data-scene="final">
+        <img class="final-bg" th:src="@{/assets/source/background.jpg}" alt="">
+        <div class="final-panel">
+            <p class="scene-kicker">Echo of Movement</p>
+            <h2>Bring the dance community from scattered feeds into one stage.</h2>
+            <div class="final-actions">
+                <a sec:authorize="!isAuthenticated()" class="pill-action" th:href="@{/login}">START</a>
+                <a sec:authorize="isAuthenticated()" class="pill-action" th:href="@{/posts/new}">POST</a>
+                <a class="ghost-action" th:href="@{/dashboard}">EXPLORE</a>
             </div>
         </div>
     </section>
 </main>
 
-<footer class="footer reveal-section">
-    <div class="footer-left">
-        <div class="footer-logo">Echo of Movement</div>
-        <div class="footer-slogan">We don't just move we echo</div>
-        <div class="footer-icons" aria-hidden="true">
-            <span>◎</span>
-            <span>◇</span>
-            <span>✦</span>
-        </div>
+<footer class="marketing-footer">
+    <div>
+        <strong>Echo of Movement</strong>
+        <span>We don't just move. We echo.</span>
     </div>
-    <div class="footer-columns">
-        <div class="footer-column">
-            <div class="footer-column-title">MOVE</div>
-            <a href="#show" data-section-link="show">Show</a>
-            <a href="#cast" data-section-link="cast">Cast</a>
-            <a href="#hype" data-section-link="hype">Hype</a>
-        </div>
-        <div class="footer-column">
-            <div class="footer-column-title">CONNECT</div>
-            <a href="#link" data-section-link="link">Link</a>
-            <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/my-page}">My Page</a>
-            <a th:href="@{/dashboard}">Dashboard</a>
-        </div>
-        <div class="footer-column">
-            <div class="footer-column-title">E.O.M</div>
-            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram</a>
-            <a href="https://github.com/hazyala/e.o.m-springboot" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="/" data-scroll-top>Back to top</a>
-        </div>
-    </div>
+    <nav aria-label="Footer navigation">
+        <a th:href="@{/boards/SHOW}">Show</a>
+        <a th:href="@{/boards/CAST}">Cast</a>
+        <a th:href="@{/boards/HYPE}">Hype</a>
+        <a th:href="@{/boards/LINK}">Link</a>
+        <a th:href="@{/dashboard}">Dashboard</a>
+    </nav>
 </footer>
 
 <script th:src="@{/js/theme.js}"></script>
