@@ -71,32 +71,87 @@
         </div>
     </section>
 
-    <section id="show" class="cinema-section cube-cinema" data-scene="cube">
-        <div class="scene-copy cube-copy">
-            <p class="scene-kicker">Show your movement</p>
-            <h2>Profiles become stage lights.</h2>
-            <p>
-                E.O.M turns dancer profiles, reels, crews, and moments into a living archive.
-                The index opens like a performance before the dashboard takes over.
-            </p>
-            <div class="scene-actions">
-                <a sec:authorize="!isAuthenticated()" class="pill-action" th:href="@{/login}">SHOW</a>
-                <a sec:authorize="isAuthenticated()" class="pill-action" th:href="@{/boards/SHOW}">SHOW</a>
-                <a class="ghost-action" th:href="@{/dashboard}">DASHBOARD</a>
+    <section id="show" class="cinema-section show-cinema" data-scene="show">
+        <div class="show-sticky-stage">
+            <div class="show-title-stack" data-show-title aria-hidden="true">
+                <span><strong>SHOW</strong> <em class="show-title-fade">YOUR</em></span>
+                <span><em class="show-title-fade">MOVE</em><b class="show-title-fade">MENT</b></span>
             </div>
-        </div>
 
-        <div class="cube-stage" aria-label="E.O.M media cube">
-            <div class="media-cube" data-cube>
-                <div class="cube-face cube-front"><img th:src="@{/assets/source/show.png}" alt="Show profile"></div>
-                <div class="cube-face cube-back"><img th:src="@{/assets/source/hype.jpg}" alt="Dance battle"></div>
-                <div class="cube-face cube-right"><img th:src="@{/assets/source/cast1.jpg}" alt="Cast card"></div>
-                <div class="cube-face cube-left"><img th:src="@{/assets/source/cast3.jpg}" alt="Crew profile"></div>
-                <div class="cube-face cube-top"><img th:src="@{/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg}" alt="Performance archive"></div>
-                <div class="cube-face cube-bottom"><img th:src="@{/assets/source/dwayne-joe-_Haw_PsHa5E-unsplash.jpg}" alt="Street archive"></div>
+            <div class="show-message">
+                <p class="scene-kicker">Show your movement</p>
+                <h2>무대 밖의 춤까지, 나를 보여주는 기록.</h2>
+                <p>
+                    포트폴리오, 공연 기록, 수업 영상, 연습 영상 등을 남기고 내 움직임의 흐름을
+                    하나의 피드로 펼쳐보세요.
+                </p>
+            </div>
+
+            <div class="show-rail-viewport">
+                <div class="show-reel-rail" data-show-rail>
+                    <article class="show-reel-card show-reel-card-video" style="--i:0">
+                        <video th:src="@{/assets/source/mp4/show1.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                        <div class="show-caption">오늘 연습실 원테이크. 마지막 팔 라인까지 꼭 봐주세요.</div>
+                        <div class="show-meta"><span>Daily Practice</span><strong>@mina.flow</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:1">
+                        <img th:src="@{/assets/source/dwayne-joe-_Haw_PsHa5E-unsplash.jpg}" alt="Breakdance performance record">
+                        <div class="show-caption">배틀 예선 컷. 프리즈 타이밍 저장해둡니다.</div>
+                        <div class="show-meta"><span>Battle Log</span><strong>@zero.spin</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:2">
+                        <video th:src="@{/assets/source/mp4/show2.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                        <div class="show-caption">새 안무 공유. 카운트는 5-6-7-8부터 들어가요.</div>
+                        <div class="show-meta"><span>Choreo Share</span><strong>@yeon.archive</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:3">
+                        <img th:src="@{/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg}" alt="Crew stage portfolio">
+                        <div class="show-caption">팀 쇼케이스 포트폴리오용 베스트 컷.</div>
+                        <div class="show-meta"><span>Portfolio</span><strong>@crew.noise</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:4">
+                        <video th:src="@{/assets/source/mp4/show3.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                        <div class="show-caption">하우스 루틴 수정본. 발 리듬만 따로 체크.</div>
+                        <div class="show-meta"><span>Routine Check</span><strong>@rio.step</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:5">
+                        <img th:src="@{/assets/source/samuel-regan-asante-jRM3E-MG9sg-unsplash.jpg}" alt="Freestyle floor record">
+                        <div class="show-caption">즉흥으로 나온 플로어 연결, 다음 공연에 넣을 예정.</div>
+                        <div class="show-meta"><span>Freestyle</span><strong>@kai.room</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:6">
+                        <video th:src="@{/assets/source/mp4/show4.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                        <div class="show-caption">월말 평가 영상. 표정과 시선 처리 피드백 환영.</div>
+                        <div class="show-meta"><span>Review Clip</span><strong>@nari.motion</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:7">
+                        <img th:src="@{/assets/source/fethi-benattallah-Pf7DdhpYk88-unsplash.jpg}" alt="Street dancer vertical portfolio">
+                        <div class="show-caption">길 위에서 찍은 컨셉 컷. 무드가 좋아서 업로드.</div>
+                        <div class="show-meta"><span>Street Cut</span><strong>@jay.wave</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:8">
+                        <video th:src="@{/assets/source/mp4/show5.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                        <div class="show-caption">공연 리허설 기록. 동선 바뀐 부분 표시해두기.</div>
+                        <div class="show-meta"><span>Rehearsal</span><strong>@seoul.stage</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:9">
+                        <img th:src="@{/assets/source/daniel-oKJ2n8HiDr0-unsplash.jpg}" alt="Solo dancer under spotlight">
+                        <div class="show-caption">솔로 파트 조명 테스트. 실루엣이 마음에 들어요.</div>
+                        <div class="show-meta"><span>Solo Part</span><strong>@lumi.kr</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:10">
+                        <video th:src="@{/assets/source/mp4/show6.mp4}" autoplay muted loop playsinline preload="metadata"></video>
+                        <div class="show-caption">오늘의 락킹 콤보. 손끝 디테일 다시 연습.</div>
+                        <div class="show-meta"><span>Combo Note</span><strong>@doha.lock</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:11">
+                        <img th:src="@{/assets/source/shimo-yann-4vaZN5xBMEo-unsplash.jpg}" alt="Vertical dance motion portrait">
+                        <div class="show-caption">새 프로필에 넣을 모션 포트레이트 후보.</div>
+                        <div class="show-meta"><span>Profile Pick</span><strong>@haneul.pop</strong></div>
+                    </article>
+                </div>
             </div>
         </div>
-        <div class="massive-word" aria-hidden="true">ECHO</div>
     </section>
 
     <section id="cast" class="cinema-section card-cinema" data-scene="cards">

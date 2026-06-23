@@ -28,6 +28,10 @@
                 heroCube: element.querySelector('[data-hero-cube]'),
                 cube: element.querySelector('[data-cube]'),
                 cards: Array.prototype.slice.call(element.querySelectorAll('.board-motion-card')),
+                showTitle: element.querySelector('[data-show-title]'),
+                showMessage: element.querySelector('.show-message'),
+                showRail: element.querySelector('[data-show-rail]'),
+                showCards: Array.prototype.slice.call(element.querySelectorAll('.show-reel-card')),
                 rail: element.querySelector('[data-reel-rail]')
             };
         });
@@ -117,6 +121,68 @@
         scene.cube.style.setProperty('--cube-y', lerp(80, -34, progress) + 'px');
     }
 
+    function updateShow(scene, progress) {
+        var rect = scene.element.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || 1;
+        var scrollable = Math.max(1, rect.height - viewportHeight);
+        progress = clamp(-rect.top / scrollable, 0, 1);
+        var titleHoldEnd = 0.32;
+        var returnProgress = clamp((progress - 0.84) / 0.1, 0, 1);
+        var titleLeave = lerp(clamp((progress - titleHoldEnd) / 0.2, 0, 1), 0, returnProgress);
+        var cardsEnter = lerp(clamp((progress - titleHoldEnd) / 0.21, 0, 1), 0, returnProgress);
+        var horizontal = clamp((progress - 0.56) / 0.22, 0, 1);
+        var settle = lerp(clamp((progress - 0.7) / 0.1, 0, 1), 0, returnProgress);
+        var isActiveLight = progress > 0.04 && progress < 1;
+
+        doc.style.setProperty('--scroll-status-color', isActiveLight ? '#ffffff' : '#ffffff');
+        doc.style.setProperty('--scroll-status-border', isActiveLight ? 'rgba(211, 15, 66, 0.94)' : 'rgba(255, 255, 255, 0.42)');
+        doc.style.setProperty('--scroll-status-bg', isActiveLight ? 'rgba(211, 15, 66, 0.9)' : 'transparent');
+
+        if (header) {
+            header.classList.toggle('is-light-section', isActiveLight);
+        }
+
+        if (scene.showTitle) {
+            scene.showTitle.style.setProperty('--show-title-y', 'calc(' + lerp(0, 46, titleLeave) + 'vh - ' + lerp(0, 30, titleLeave) + 'px)');
+            scene.showTitle.style.setProperty('--show-title-scale', String(lerp(1, 0.84, titleLeave)));
+            scene.showTitle.style.setProperty('--show-title-opacity', String(lerp(1, 0.18, cardsEnter)));
+            scene.showTitle.style.setProperty('--show-title-detail-opacity', String(1 - clamp((titleLeave - 0.52) / 0.36, 0, 1)));
+        }
+
+        if (scene.showMessage) {
+            scene.showMessage.style.setProperty('--show-message-opacity', String(lerp(1, 0, cardsEnter)));
+            scene.showMessage.style.setProperty('--show-message-y', lerp(0, -28, cardsEnter) + 'px');
+        }
+
+        if (scene.showRail) {
+            var overflow = Math.max(0, scene.showRail.scrollWidth - window.innerWidth + Math.min(window.innerWidth * 0.34, 420));
+            var railEndInset = Math.min(window.innerWidth * 0.3, 420);
+            var railDistance = Math.max(0, overflow - railEndInset);
+            scene.showRail.style.setProperty('--show-rail-x', (-railDistance * horizontal) + 'px');
+            scene.showRail.style.setProperty('--show-rail-y', lerp(96, -27, cardsEnter) + 'px');
+        }
+
+        scene.showCards.forEach(function (card, index) {
+            var delay = index * 0.018;
+            var cardEnter = clamp((cardsEnter - delay) / 0.42, 0, 1);
+            var lane = index - (scene.showCards.length - 1) / 2;
+            var cross = index % 2 === 0 ? 1 : -1;
+            var lift = lerp(250 + (index % 3) * 58, (index % 2 === 0 ? 0 : 34), cardEnter);
+            var drift = lerp(cross * (80 + index * 6), 0, cardEnter);
+            var rotate = lerp(cross * (5 + index * 0.55), 0, cardEnter);
+
+            if (settle > 0) {
+                lift = lerp(lift, (index % 2 === 0 ? -8 : 26), settle);
+                rotate = lerp(rotate, lane * -0.35, settle);
+            }
+
+            card.style.setProperty('--show-card-y', lift + 'px');
+            card.style.setProperty('--show-card-x', drift + 'px');
+            card.style.setProperty('--show-card-r', rotate + 'deg');
+            card.style.setProperty('--show-card-opacity', String(cardEnter));
+        });
+    }
+
     function updateCards(scene, progress) {
         var spreadX = Math.min(window.innerWidth * 0.4, 520);
         var spreadY = Math.min(window.innerHeight * 0.24, 190);
@@ -164,12 +230,19 @@
     function update() {
         ticking = false;
         updateHeader();
+        var viewportHeight = window.innerHeight || 1;
 
         if (reducedMotion) {
             return;
         }
 
-        var viewportHeight = window.innerHeight || 1;
+        doc.style.setProperty('--scroll-status-color', '#ffffff');
+        doc.style.setProperty('--scroll-status-border', 'rgba(255, 255, 255, 0.42)');
+        doc.style.setProperty('--scroll-status-bg', 'transparent');
+        if (header) {
+            header.classList.remove('is-light-section');
+        }
+
         sceneCache.forEach(function (scene) {
             var rect = scene.element.getBoundingClientRect();
             var progress = progressFor(rect, viewportHeight);
@@ -179,6 +252,8 @@
 
             if (scene.type === 'hero') {
                 updateHero(scene, progress);
+            } else if (scene.type === 'show') {
+                updateShow(scene, progress);
             } else if (scene.type === 'cube') {
                 updateCube(scene, progress);
             } else if (scene.type === 'cards') {
