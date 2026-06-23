@@ -60,6 +60,21 @@
         header.classList.toggle('is-solid', window.scrollY > window.innerHeight * 0.16);
     }
 
+    function primeHeaderNavigation(viewportHeight) {
+        var heroScene = sceneCache.find(function (scene) {
+            return scene.type === 'hero';
+        });
+        if (!heroScene) {
+            return;
+        }
+        var heroRect = heroScene.element.getBoundingClientRect();
+        if (heroRect.bottom <= viewportHeight * 0.98) {
+            doc.style.setProperty('--hero-nav-x', 'calc(0vw - 0px)');
+            doc.style.setProperty('--hero-nav-offset', 'calc(0vh + 0px)');
+            doc.style.setProperty('--hero-nav-font-size', '14px');
+        }
+    }
+
     function updateHero(scene, progress) {
         var element = scene.element;
         var rect = element.getBoundingClientRect();
@@ -71,6 +86,7 @@
         var titleSettle = clamp((progress - 0.38) / 0.22, 0, 1);
         var cubeEnter = clamp((progress - 0.18) / 0.5, 0, 1);
         var finalSpin = clamp((progress - 0.68) / 0.32, 0, 1);
+        var echoFade = clamp(finalSpin / 0.18, 0, 1);
 
         doc.style.setProperty('--hero-nav-x', 'calc(' + lerp(-35.6, 0, navRise) + 'vw - ' + lerp(10, 0, navRise) + 'px)');
         doc.style.setProperty('--hero-nav-offset', 'calc(' + lerp(68, 0, navRise) + 'vh + ' + lerp(20, 0, navRise) + 'px)');
@@ -80,7 +96,7 @@
         element.style.setProperty('--hero-ribbon-opacity', String(1 - clamp((heroLift - 0.12) / 0.64, 0, 1)));
         element.style.setProperty('--line-dont-opacity', String(1 - titleSettle));
         element.style.setProperty('--line-move-opacity', String(1 - titleSettle));
-        element.style.setProperty('--line-echo-opacity', '1');
+        element.style.setProperty('--line-echo-opacity', String(1 - echoFade));
         element.style.setProperty('--echo-top', lerp(52, 13.2, titleSettle) + 'vh');
         element.style.setProperty('--echo-left', lerp(10, 4.2, titleSettle) + 'vw');
         element.style.setProperty('--echo-size', lerp(8, 6.4, titleSettle) + 'vw');
@@ -231,6 +247,7 @@
         ticking = false;
         updateHeader();
         var viewportHeight = window.innerHeight || 1;
+        primeHeaderNavigation(viewportHeight);
 
         if (reducedMotion) {
             return;
@@ -311,6 +328,13 @@
     window.addEventListener('load', function () {
         cacheScenes();
         restartHeroTyping();
+        window.requestAnimationFrame(update);
+        window.setTimeout(update, 120);
+    });
+    window.addEventListener('pageshow', function () {
+        cacheScenes();
+        window.requestAnimationFrame(update);
+        window.setTimeout(update, 120);
     });
     cacheScenes();
     restartHeroTyping();
