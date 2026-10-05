@@ -30,7 +30,7 @@ bash gradlew bootJar
 java -jar build/libs/eom-springboot-0.0.1-SNAPSHOT.jar
 ```
 
-JDK 21과 의존성 다운로드가 필요하다. 현재 `build.gradle`의 repository 누락으로 깨끗한 환경에서 resolve 실패가 발생할 수 있다. 소스를 변경하지 않는 범위에서 이 조건을 문서에 남긴다.
+JDK 21과 의존성 다운로드가 필요하다. 현재 `build.gradle`의 repository 누락으로 깨끗한 환경에서 resolve 실패가 발생할 수 있다.
 
 `main`에는 Java 21 multi-stage [Dockerfile](../Dockerfile)이 있다. 기존 README의 “Docker 없이 배포”는 배포 선택지였으며 저장소 구성과 구분한다.
 
