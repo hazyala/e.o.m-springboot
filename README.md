@@ -67,7 +67,7 @@ bash gradlew bootRun
 
 기본 local profile은 `http://localhost:8080`에서 메모리 H2를 사용한다. H2 console은 `/h2-console`이며 DB URL은 `application.yml`의 local 값을 사용한다. `DataSeeder`의 샘플 계정은 `admin / admin`, `dancer1 / 1234`다. local `create-drop` 설정이므로 종료 후 데이터가 유지되는 환경이 아니다.
 
-현재 `build.gradle`에 dependency repository 선언이 없다. 전역 Gradle 설정이 없는 깨끗한 환경에서는 의존성 해석에 실패할 수 있다. 이 문서 작업에서는 빌드 설정을 바꾸지 않았다. 실행 명령의 존재와 실제 clone의 재현 조건을 구분한다.
+현재 `build.gradle`에 dependency repository 선언이 없다. 전역 Gradle 설정이 없는 깨끗한 환경에서는 의존성 해석에 실패할 수 있다.
 
 ```bash
 bash gradlew test
