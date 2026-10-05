@@ -1,243 +1,48 @@
-# E.O.M Architecture
+# E.O.M 요청과 저장 구조
 
-## 1. 기술 스택
+## 서버 렌더링
 
-- Java 21
-- Spring Boot 3.x
-- Spring MVC
-- Thymeleaf
-- Spring Security
-- Spring Data JPA
-- H2 local
-- PostgreSQL prod
-- Neon PostgreSQL
-- Cloudinary media storage
-- Render Web Service
+Spring Security가 인증을 처리하고 MVC Controller가 Service 결과를 Model에 넣어 Thymeleaf view를 반환한다. `CommunityController`는 보드·검색·상세·작성·반응, `MyPageController`는 프로필·계정·포트폴리오·참여 행사, `AdminController`는 운영 액션을 맡는다.
 
-## 2. 핵심 구조
-
-반드시 다음 흐름을 지킵니다.
-
-```text
-Controller -> Service -> Repository -> Domain
+```mermaid
+sequenceDiagram
+    participant B as 브라우저
+    participant C as CommunityController
+    participant S as CommunityService
+    participant M as CloudinaryMediaStorageService
+    participant D as JPA Repository
+    B->>C: POST /posts/new / multipart form + CSRF
+    C->>C: Bean Validation
+    C->>S: 로그인 사용자 / PostCreateRequest
+    S->>S: 보드·사용자·미디어 규칙 검사
+    opt 파일 첨부
+        S->>M: mediaFile
+        M-->>S: secure URL / thumbnail URL
+    end
+    S->>D: Post 저장
+    D-->>S: 저장된 Post
+    S-->>C: Post
+    C-->>B: 상세 페이지 redirect
 ```
 
-역할:
-- Controller: 요청 파라미터 수집, 인증 정보 확인, Service 호출, 뷰 반환
-- Service: 비즈니스 로직, 검증, 트랜잭션 처리
-- Repository: JPA 데이터 접근
-- Domain: 엔티티와 핵심 모델
-- DTO: 폼 요청과 화면 전달 데이터
-- Templates: Thymeleaf 화면
-- Static: CSS, JS, 이미지 에셋
+폼 오류와 업로드 실패는 작성 화면에 되돌려 표시한다. DB row와 외부 파일 업로드는 서로 다른 시스템의 작업이며 단일 원자적 트랜잭션이라고 설명하지 않는다.
 
-## 3. 패키지 구조
+## 도메인 관계
 
-```text
-src/main/java/polytech/aisw/eom
-├─ config
-├─ controller
-├─ service
-├─ repository
-├─ domain
-├─ dto
-├─ security
-└─ init
-```
+`AppUser`는 게시글 작성자, 댓글 작성자, 좋아요·저장 주체와 연결된다. `Post`에는 boardType, 본문·태그·위치·미디어·행사 일자, 숨김/신고/승인/포트폴리오 관련 상태가 있다. `Comment`, `PostLike`, `PostSave`가 사용자와 게시글을 잇는다. `JoinedEvent`는 사용자가 입력한 행사 참여 기록이다.
 
-## 4. 리소스 구조
+- `CommunityService`와 Repository는 숨김 게시글·차단 작성자 노출을 걸러낸다.
+- 수정/삭제는 로그인만으로 허용하지 않고 작성자·관리자 조건을 검사한다.
+- 관리자 승인 행사 필터는 HYPE의 `adminApprovedEvent` 상태를 사용한다.
+- `DashboardService`는 여러 조회 결과를 대시보드 섹션으로 묶는다.
+- `CloudinaryMediaStorageService`는 RestClient multipart 요청과 서명 생성으로 업로드한다. 전용 Cloudinary SDK 의존성은 없다.
 
-```text
-src/main/resources
-├─ application.yml
-├─ templates
-│  ├─ fragments
-│  ├─ index.html
-│  ├─ login.html
-│  ├─ dashboard.html
-│  ├─ post-list.html
-│  ├─ post-create.html
-│  ├─ post-detail.html
-│  ├─ my-page.html
-│  ├─ dancers.html
-│  ├─ dancer-detail.html
-│  └─ admin.html
-└─ static
-   ├─ css
-   ├─ js
-   └─ assets
-      └─ source
-```
+## 인증과 profile
 
-## 5. 설계 원칙
+`SecurityConfig`는 홈·로그인·회원가입·정적 리소스·H2 console을 허용하고 `/admin/**`를 ADMIN으로 제한한다. 나머지 페이지에는 로그인이 필요하다. BCrypt로 비밀번호를 저장하고 form login, 세션, remember-me cookie를 사용한다. CSRF 예외는 H2 console이며 일반 POST 폼은 token이 필요하다.
 
-- Controller에 비즈니스 로직을 두지 않습니다.
-- Repository를 Controller에서 직접 호출하지 않습니다.
-- Thymeleaf 템플릿은 화면 표현에 집중합니다.
-- 공통 헤더, 푸터, 네비게이션은 fragments로 분리합니다.
-- 인증/권한은 Spring Security 설정과 security 패키지에서 관리합니다.
-- 게시글 조회와 후속 작성/삭제 같은 기능은 Service를 통해 처리합니다.
-- 검색, 보드 탐색, Events, 마이페이지 데이터 조립은 Controller -> Service -> Repository 순서를 지킵니다.
-- 빈 검색어는 Service에서 빈 리스트로 처리해 `/posts`가 전체 게시글 목록으로 흐르지 않게 합니다.
-- `open-in-view=false`를 기준으로 지연 로딩 문제가 없도록 조회합니다.
-- Render 배포를 위해 `server.port=${PORT:8080}` 설정을 유지합니다.
-- 업로드 파일은 Service 계층에서 Cloudinary로 전송하고, Controller는 성공/실패 결과에 따른 화면 흐름만 처리합니다.
+local profile은 H2 `create-drop`, prod는 PostgreSQL `update`다. 스키마 migration 도구가 선언된 프로젝트는 아니다. 실행 환경은 [RUNNING](RUNNING.md), 요청 계약은 [API](API.md)에서 확인한다.
 
-## 6. 도메인 초안
+## 코드 근거
 
-### AppUser
-
-- username
-- password
-- displayName
-- instagramUrl
-- profileImageUrl
-- headerImageUrl
-- bio
-- crewName
-- primaryGenre
-- role
-- createdAt
-
-### Post
-
-- boardType
-- title
-- content
-- instagramUrl
-- imageUrl
-- viewCount
-- likeCount
-- commentCount
-- tags
-- location
-- eventDate
-- deadline
-- mediaType
-- mediaUrl
-- thumbnailUrl
-- portfolioSelected
-- portfolioPinned
-- adminApprovedEvent
-- author
-- createdAt
-
-### MediaType
-
-- IMAGE
-- INSTAGRAM
-- YOUTUBE
-- VIDEO_LINK
-- EXTERNAL_LINK
-
-MVP에서는 Cloudinary를 외부 스토리지로 사용해 이미지/영상 파일 업로드를 지원합니다. 업로드 성공 시 Cloudinary `secure_url`을 `mediaUrl`로 저장하고, 이미지는 같은 URL을 `thumbnailUrl`로 사용하며 영상은 Cloudinary URL 기반 jpg 썸네일 URL을 `thumbnailUrl`로 저장합니다. 인스타그램 게시물 링크는 `MediaType.INSTAGRAM`으로 저장하고 상세 화면의 별도 링크 카드에서만 새 탭으로 엽니다.
-
-현재 `DataSeeder`는 제공받은 실제 인스타그램 릴스/게시물 URL 16개를 게시글 `mediaUrl`에 반영합니다. Instagram 미디어 게시글은 `instagramUrl`도 해당 게시물 URL을 사용하고, 아직 개별 URL이 없는 항목만 프로필 URL을 fallback으로 둡니다.
-
-### PostSortOption
-
-- LATEST: `createdAt desc`
-- VIEWS: `viewCount desc, createdAt desc`
-- COMMENTS: `commentCount desc, createdAt desc`
-- LIKES: `likeCount desc, createdAt desc`
-
-보드 목록, 검색 결과, 태그 검색은 같은 정렬 키 `sort=latest|views|comments|likes`를 공유합니다. HYPE 관리자 승인 행사 필터는 최신순 고정이며, 정렬 탭을 누르면 관리자 승인 여부와 무관한 HYPE 전체 목록으로 이동합니다.
-
-### Comment
-
-- post
-- author
-- content
-- createdAt
-
-### JoinedEvent
-
-- user
-- eventDate
-- eventName
-- result
-- createdAt
-
-### PostLike
-
-- post
-- user
-- createdAt
-
-### Dancer Genre Filter
-
-- 장르 목록은 Service 계층의 고정 정책으로 관리합니다.
-- 현재 버튼은 `Hip-hop`, `House`, `Krump`, `Popping`, `Locking`, `Breaking`, `Waacking`, `Voguing`, `Dancehall`입니다.
-- `/dancers` Controller는 `genres` 다중 쿼리 파라미터를 수집하고, Service는 `AppUser.primaryGenre`를 기준으로 USER 역할 댄서를 필터링합니다.
-- `primaryGenre`가 기존 시드처럼 영문으로 저장되거나 한국어 장르 텍스트를 포함하는 경우도 매칭되도록 장르별 키워드 호환을 Service에서 처리합니다.
-- `All`은 쿼리 파라미터 없는 `/dancers`로 이동해 필터를 초기화합니다.
-
-## 7. 인증/권한
-
-권한:
-- USER
-- ADMIN
-
-접근:
-- `/`, `/login`, `/css/**`, `/js/**`, `/assets/**`: 공개
-- `/dashboard`, `/posts`, `/posts/{id}`, `/posts?q={query}`, `/posts?tag={tag}`, `/boards/all`, `/boards/{board}`, `/events`, `/dancers`, `/my-page`, `/me`: 로그인 필요
-- `/admin/**`: ADMIN 필요
-
-로그인 폼의 `remember-me` 체크박스는 기본 선택 상태이며, Spring Security remember-me 쿠키 유효기간은 14일입니다. 로그아웃 시 `JSESSIONID`와 `remember-me` 쿠키를 함께 삭제합니다.
-
-## 8. 화면 라우트
-
-대시보드와 커뮤니티 탐색 화면은 Spring MVC Controller -> Service -> Repository 흐름을 유지합니다.
-
-- `/dashboard`: 로그인 후 첫 화면. Today Pick, Popular, Recent, Tags, Activity, Events, Dancers 미리보기를 렌더링합니다.
-- `/`: 공개 index입니다. 인증 상태에 따라 Login/My Page 링크를 전환하고, SHOW/CAST/HYPE/LINK CTA는 비로그인 상태에서 `/login`, 로그인 상태에서 `/boards/{board}`로 이동합니다.
-- `/dashboard?board=SHOW|CAST|HYPE|LINK`: Recent 기본 보드 선택값을 지정합니다. 잘못된 `board` 값은 SHOW로 보정합니다. 화면에서는 네 보드 데이터를 모두 렌더링한 뒤 클라이언트 탭 전환으로 Recent 목록만 바꿉니다.
-- `/boards/all`: SHOW, CAST, HYPE, LINK 전체 목록입니다. 대시보드 Activity `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다.
-- `/boards/SHOW|CAST|HYPE|LINK`: 보드별 전체 탐색 목록입니다. 대시보드 헤더 보드 링크와 Recent의 `ALL` 목적지이며 `sort=latest|views|comments|likes` 정렬 쿼리를 지원합니다. 잘못된 보드 path는 `/boards/all`로 되돌립니다. HYPE는 `officialEvents=true` 쿼리로 관리자 승인 행사만 최신순 고정 필터링할 수 있습니다.
-- `/posts`: 헤더 검색과 대시보드 Tags `ALL` 목적지입니다. `q` 쿼리는 `tags`, `title`, `content`, `author.displayName`, `author.crewName` 통합 검색으로 처리하고, 빈 검색어는 전체 목록으로 redirect하지 않고 검색 안내/추천 태그 상태를 렌더링합니다.
-- `/posts` 검색어 정규화: `q`가 `#왁킹`처럼 들어오면 앞의 `#`를 제거합니다. 태그 클릭은 `/posts?tag={tag}`를 사용하고 `findByTagsContainingIgnoreCase`로 조회합니다.
-- `/posts/new`: 로그인 사용자 게시글 작성 폼입니다. `PostCreateRequest`를 받아 Service에서 작성자를 조회하고 `PostRepository.save`로 저장한 뒤 생성된 `/posts/{id}`로 이동합니다. `board=SHOW|CAST|HYPE|LINK` 쿼리를 받으면 작성 탭 기본값으로 사용합니다. 보드/제목/본문/태그/위치/이미지 또는 영상 파일/Instagram 게시물 링크/일정 필드를 받습니다. 첨부 파일은 Cloudinary 업로드 후 URL을 저장하고, Instagram 링크는 별도 링크 카드로 표시합니다. HYPE 관리자 승인 행사는 ADMIN 작성자에게만 저장됩니다.
-- `/posts/{id}`: 대시보드 Today Pick, Popular, Recent 및 목록 카드의 내부 게시글 상세 목적지입니다. 작성자에게 Edit/Delete, ADMIN에게 Delete 액션을 노출합니다.
-- `/posts/{id}/like`, `/posts/{id}/save`, `/posts/{id}/comments`: 로그인 사용자의 좋아요, 저장, 댓글 POST 액션입니다. 숨김 게시글 또는 차단 작성자 게시글은 상세 조회와 같은 가시성 검사를 통과해야 하며, 일반 사용자는 직접 POST로 우회할 수 없습니다.
-- `/posts/{id}/report`: 로그인 사용자가 게시글을 신고하는 POST 경로입니다. 신고 수와 최신 사유는 관리자 화면에서 검토합니다.
-- `/posts/{id}/edit`: 작성자 본인만 접근할 수 있는 게시글 수정 폼입니다. ADMIN도 작성자가 아니면 수정할 수 없습니다.
-- `/posts/{id}/delete`: 작성자 본인 또는 ADMIN만 실행할 수 있는 삭제 POST 경로입니다. 권한 정책은 `CommunityService`에서 판단합니다.
-- `/posts?tag={tag}`: Tags 클릭 시 이동하는 태그 검색 목록이며, 검색 결과 화면의 목록형 UI를 공유합니다.
-- `/events`: 기존 링크 호환 경로이며 `/boards/HYPE?officialEvents=true`로 리다이렉트합니다.
-- `/dancers`: 장르별 댄서 탐색 목록입니다. `genres` 다중 쿼리 파라미터를 지원하며, 선택된 장르 중 하나라도 `primaryGenre`에 매칭되는 USER 역할 댄서를 카드형 목록으로 보여줍니다.
-- `/dancers/{id}`: 기존 작성자/댄서 프로필 이동 흐름을 유지하며 `my-page.html` 프로필 화면을 렌더링합니다.
-- `/my-page`, `/me`: 로그인한 사용자의 프로필, 포트폴리오, 작성 게시글, 참여 이벤트, 좋아요한 게시글, 작성 댓글, 자동 활동 이력을 렌더링합니다. admin도 본인 마이페이지에 접근할 수 있습니다.
-- `/my-page/profile`: 프로필 히어로에 쓰는 이름, 크루, 주 장르, 소개, 인스타그램 URL, 프로필 이미지 URL, 헤더 이미지 URL을 저장합니다. 차단된 기존 세션은 저장할 수 없습니다.
-- `/my-page/account`: 아이디와 비밀번호를 변경합니다. 현재 비밀번호 검증을 통과해야 하며, 저장 후 로그아웃되어 `/login`으로 이동합니다.
-- `/my-page/portfolio/select`: 내가 쓴 게시글을 포트폴리오 탭에 포함하거나 제외합니다. 차단된 기존 세션은 변경할 수 없습니다.
-- `/my-page/portfolio/pin`: 선택된 포트폴리오 중 상단 고정 상태를 저장하며 최대 3개로 제한합니다. 차단된 기존 세션은 변경할 수 없습니다.
-- `/my-page/joined-events`: 날짜, 행사명, 결과로 구성된 참여 이벤트 이력을 사용자가 직접 추가합니다. 차단된 기존 세션은 추가할 수 없습니다.
-- `/my-page/joined-events/update`, `/my-page/joined-events/delete`: 본인 참여 이벤트 이력만 수정/삭제합니다. 차단된 기존 세션은 수정/삭제할 수 없습니다.
-- `/admin`: ADMIN 전용 운영 화면입니다. 사용자 차단/해제, 게시글 숨김/복구, 신고 검토, HYPE 행사 승인/취소를 수행합니다.
-- `/admin/users/{id}/block`: USER 계정 차단 상태를 바꾸는 POST 경로입니다. 차단 사용자는 로그인과 커뮤니티 쓰기 액션이 제한됩니다.
-- `/admin/posts/{id}/visibility`: 게시글 숨김 상태를 바꾸는 POST 경로입니다. 숨김 글은 일반 커뮤니티 목록과 상세에서 제외됩니다.
-- `/admin/posts/{id}/hype-approval`: 행사일이 있는 HYPE 게시글의 관리자 승인 행사 상태를 바꾸는 POST 경로입니다.
-- 외부 인스타그램/미디어 URL: Follow, 프로필 보기, 게시글 상세의 `OPEN MEDIA`/`INSTAGRAM` 링크에서만 새 탭으로 열며, 대시보드와 목록 썸네일은 내부 게시글 미리보기로 취급합니다. 첨부 이미지/영상은 게시글 본문 미디어로 직접 표시하고, Instagram 배지는 첨부 파일에는 표시하지 않습니다.
-
-운영 가시성 정책은 `Post.isVisibleInCommunity()` 기준을 공유합니다. 숨김 게시글과 차단 작성자 게시글은 일반 목록, 대시보드, 검색, 태그 추천, 공개 프로필 댓글/활동에서 제외하고, 상세 조회와 좋아요/저장/댓글 POST 액션도 같은 검사를 통과해야 합니다.
-- 실제 Instagram embed는 현재 MVC 범위에 포함하지 않습니다. 기존 `mediaType + mediaUrl + thumbnailUrl` 필드를 유지하되, 파일 업로드 결과 URL도 같은 필드에 저장합니다.
-
-## 9. 배포 구조
-
-Docker 없이 Render Web Service로 배포합니다.
-
-```text
-Build Command: ./gradlew clean build
-Start Command: java -jar build/libs/eom-springboot-0.0.1-SNAPSHOT.jar
-```
-
-환경변수:
-- `JAVA_VERSION=21`
-- `SPRING_PROFILES_ACTIVE=prod`
-- `SPRING_DATASOURCE_URL`
-- `SPRING_DATASOURCE_USERNAME`
-- `SPRING_DATASOURCE_PASSWORD`
-- `CLOUDINARY_URL` 또는 `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
-- `CLOUDINARY_FOLDER`
-- `MEDIA_MAX_FILE_SIZE_BYTES`
-- `MEDIA_MAX_PART_COUNT`
+[Controller](../src/main/java/polytech/aisw/eom/controller/) · [Service](../src/main/java/polytech/aisw/eom/service/) · [Domain](../src/main/java/polytech/aisw/eom/domain/) · [Repository](../src/main/java/polytech/aisw/eom/repository/) · [SecurityConfig](../src/main/java/polytech/aisw/eom/config/SecurityConfig.java)
