@@ -6,7 +6,7 @@
 
 홈·로그인·회원가입·정적 파일·H2 console을 제외한 화면에는 인증이 필요하다. `/admin/**`는 ADMIN이다. 일반 POST에는 CSRF token을 포함한다. Spring Security가 `POST /login`의 username/password/remember-me와 logout을 처리한다.
 
-GET은 HTML 또는 redirect, POST는 대개 redirect다. 작성/수정의 binding·검증·미디어 오류는 폼 HTML로 되돌아올 수 있으므로 JSON 성공·오류 응답을 가정하지 않는다. 작성자/관리자 검사는 Service에서도 수행한다.
+GET은 HTML 또는 redirect, POST는 대개 redirect다. 작성/수정의 binding·검증·미디어 오류는 폼 HTML로 반환한다. 작성자/관리자 검사는 Service에서도 수행한다.
 
 ## 페이지·검색
 

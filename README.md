@@ -74,7 +74,7 @@ bash gradlew test
 bash gradlew bootJar
 ```
 
-기존 테스트는 `src/test/`에서 확인한다. 환경변수, Cloudinary 파일 제한, prod DB, JAR·Docker 실행은 [운영 안내](docs/RUNNING.md)에 분리했다. `main`에는 Java 21 multi-stage [Dockerfile](Dockerfile)이 있다. 기존 README의 “Docker 없이 배포”는 배포 선택지였으며 저장소 구성과 구분한다.
+기존 테스트는 `src/test/`에서 확인한다. 환경변수, Cloudinary 파일 제한, prod DB, JAR·Docker 실행은 [운영 안내](docs/RUNNING.md)에 분리했다. `main`에는 Java 21 multi-stage [Dockerfile](Dockerfile)이 있다.
 
 ## 요청 인터페이스
 
