@@ -2,6 +2,10 @@
 
 스트릿 댄서의 공연 기록, 모집, 행사, 연습 파트너 게시글을 모으는 Spring Boot 커뮤니티.
 
+[웹사이트](https://e-o-m-springboot-hazyala.onrender.com/) · [Figma 목업](https://www.figma.com/design/pT04v0r3cxUHGXasokgMQW/E.O.M?node-id=0-1&t=yp0hg0gAGQNN4oUJ-1)
+
+![E.O.M 대시보드 — Today’s Pick과 커뮤니티 탐색](docs/images/dashboard.jpg)
+
 ## 댄서들의 활동을 한곳에
 
 인스타그램, DM, 오픈채팅, 지인 추천에 흩어진 활동과 기회를 한곳에서 찾기 위해 만든 프로젝트다. SHOW·CAST·HYPE·LINK 보드로 게시글을 나누고, 로그인 후 대시보드와 개인 활동 기록을 연다. React API 서버가 아니라 Spring MVC와 Thymeleaf로 화면을 렌더링하는 웹 애플리케이션이다.
@@ -14,6 +18,37 @@
 회원가입·로그인, 게시글 작성/수정/삭제, 댓글·좋아요·저장·신고, 검색·태그·정렬, 프로필과 포트폴리오 선택을 구현했다. 관리자는 사용자 차단, 게시글 숨김/복구, 행사 승인을 처리한다. 게시글 노출과 POST 액션에서도 숨김·차단 상태를 검사한다.
 
 이미지·영상은 서버가 Cloudinary에 업로드하고 URL을 DB에 저장한다. Instagram은 링크 카드로 열며 실제 embed는 구현하지 않았다.
+
+## 주요 화면
+
+대시보드에서 추천 게시글과 보드별 활동을 살펴보고, 게시판에서 정렬·탐색한 뒤 상세 화면으로 이동한다. 작성 화면은 입력한 제목·본문·태그를 오른쪽 Live Preview에 반영한다.
+
+| SHOW 게시판 | 게시글 작성 · Live Preview |
+|---|---|
+| ![SHOW 게시판의 보드 필터와 정렬](docs/images/show-board.jpg) | ![게시글 입력 폼과 실시간 미리보기](docs/images/post-create.jpg) |
+
+<details>
+<summary>게시글 상세 · 랜딩 · 로그인 화면</summary>
+
+### 게시글 상세
+
+본문과 미디어, 작성자 프로필, 태그, 댓글·좋아요·저장 동작을 한 화면에 배치했다.
+
+![게시글 본문·미디어·댓글·작성자 정보](docs/images/post-detail.jpg)
+
+### 랜딩
+
+SHOW·CAST·HYPE·LINK의 주제를 소개하고 로그인으로 연결한다.
+
+![E.O.M 랜딩 페이지](docs/images/landing.jpg)
+
+### 로그인
+
+로그인·회원가입 화면과 데모 계정 안내.
+
+![E.O.M 로그인 화면](docs/images/login.jpg)
+
+</details>
 
 ## 화면과 데이터의 연결
 
@@ -87,4 +122,4 @@ bash gradlew bootJar
 | POST | `/posts/{id}/like`, `/posts/{id}/save` | 좋아요·저장 토글 |
 | GET | `/my-page`, `/admin` | 내 정보 / 관리자 화면 |
 
-이 경로들은 JSON REST 계약이 아니라 HTML·폼 중심이다. 인증·CSRF·필드·전체 endpoint는 [API / HTTP 문서](docs/API.md)를 본다. Render·Neon은 기존 배포 문서의 대상 서비스이며 저장소만으로 현재 배포 상태를 확정하지 않는다.
+이 경로들은 JSON REST 계약이 아니라 HTML·폼 중심이다. 인증·CSRF·필드·전체 endpoint는 [API / HTTP 문서](docs/API.md)를 본다.
