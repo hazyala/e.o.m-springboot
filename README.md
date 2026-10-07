@@ -23,18 +23,28 @@
 
 대시보드에서 추천 게시글과 보드별 활동을 살펴보고, 게시판에서 정렬·탐색한 뒤 상세 화면으로 이동한다. 작성 화면은 입력한 제목·본문·태그를 오른쪽 Live Preview에 반영한다.
 
-| SHOW 게시판 | 게시글 작성 · Live Preview |
+| SHOW 게시판 | 게시글 작성 · 화이트 테마 · Live Preview |
 |---|---|
-| ![SHOW 게시판의 보드 필터와 정렬](docs/images/show-board.jpg) | ![게시글 입력 폼과 실시간 미리보기](docs/images/post-create.jpg) |
+| ![SHOW 게시판의 보드 필터와 정렬](docs/images/show-board.jpg) | ![화이트 테마의 게시글 입력 폼과 실시간 미리보기](docs/images/post-create.jpg) |
+
+### 관리자 대시보드
+
+Moderation Room에서 신고 게시글, 사용자 역할·차단 상태, 게시글 공개 상태와 HYPE 행사 승인 여부를 확인한다. 사용자 차단·해제, 게시글 숨김·복구, 행사 승인·취소 액션을 각 목록에 배치했다.
+
+| 사용자 관리 · 화이트 테마 | 게시글 관리 · HYPE 행사 승인 |
+|---|---|
+| ![사용자 역할과 활성 상태, 차단 액션](docs/images/admin-users.jpg) | ![HYPE 게시글 공개·승인 상태와 운영 액션](docs/images/admin-posts.jpg) |
+
+[관리자 대시보드 전체 화면](docs/images/admin-dashboard.jpg)
 
 <details>
 <summary>게시글 상세 · 랜딩 · 로그인 화면</summary>
 
-### 게시글 상세
+### 게시글 상세 · 화이트 테마
 
 본문과 미디어, 작성자 프로필, 태그, 댓글·좋아요·저장 동작을 한 화면에 배치했다.
 
-![게시글 본문·미디어·댓글·작성자 정보](docs/images/post-detail.jpg)
+![화이트 테마의 게시글 본문·미디어·댓글·작성자 정보](docs/images/post-detail.jpg)
 
 ### 랜딩
 
