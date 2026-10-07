@@ -2,9 +2,17 @@
 
 스트릿 댄서의 공연 기록, 모집, 행사, 연습 파트너 게시글을 모으는 Spring Boot 커뮤니티.
 
-[웹사이트](https://e-o-m-springboot-hazyala.onrender.com/) · [Figma 목업](https://www.figma.com/design/pT04v0r3cxUHGXasokgMQW/E.O.M?node-id=0-1&t=yp0hg0gAGQNN4oUJ-1)
+### 웹사이트 — 실제 서비스
 
-![E.O.M 대시보드 — Today’s Pick과 커뮤니티 탐색](docs/images/dashboard.jpg)
+**[E.O.M 웹사이트 열기 →](https://e-o-m-springboot-hazyala.onrender.com/)**
+
+### Figma — 화면 디자인 목업
+
+**[E.O.M Figma 목업 보기 →](https://www.figma.com/design/pT04v0r3cxUHGXasokgMQW/E.O.M?node-id=0-1&t=yp0hg0gAGQNN4oUJ-1)**
+
+### 대시보드 · 다크 테마
+
+![다크 테마의 E.O.M 대시보드 — Today’s Pick과 커뮤니티 탐색](docs/images/dashboard.jpg)
 
 ## 댄서들의 활동을 한곳에
 
@@ -23,19 +31,19 @@
 
 대시보드에서 추천 게시글과 보드별 활동을 살펴보고, 게시판에서 정렬·탐색한 뒤 상세 화면으로 이동한다. 작성 화면은 입력한 제목·본문·태그를 오른쪽 Live Preview에 반영한다.
 
-| SHOW 게시판 | 게시글 작성 · 화이트 테마 · Live Preview |
+| SHOW 게시판 · 다크 테마 | 게시글 작성 · 화이트 테마 · Live Preview |
 |---|---|
-| ![SHOW 게시판의 보드 필터와 정렬](docs/images/show-board.jpg) | ![화이트 테마의 게시글 입력 폼과 실시간 미리보기](docs/images/post-create.jpg) |
+| ![다크 테마의 SHOW 게시판과 보드 필터·정렬](docs/images/show-board.jpg) | ![화이트 테마의 게시글 입력 폼과 실시간 미리보기](docs/images/post-create.jpg) |
 
-### 관리자 대시보드
+### 관리자 대시보드 · 화이트 테마
 
 Moderation Room에서 신고 게시글, 사용자 역할·차단 상태, 게시글 공개 상태와 HYPE 행사 승인 여부를 확인한다. 사용자 차단·해제, 게시글 숨김·복구, 행사 승인·취소 액션을 각 목록에 배치했다.
 
-| 사용자 관리 · 화이트 테마 | 게시글 관리 · HYPE 행사 승인 |
+| 사용자 관리 · 화이트 테마 | 게시글 관리 · 화이트 테마 · HYPE 행사 승인 |
 |---|---|
 | ![사용자 역할과 활성 상태, 차단 액션](docs/images/admin-users.jpg) | ![HYPE 게시글 공개·승인 상태와 운영 액션](docs/images/admin-posts.jpg) |
 
-[관리자 대시보드 전체 화면](docs/images/admin-dashboard.jpg)
+[관리자 대시보드 전체 화면 · 화이트 테마](docs/images/admin-dashboard.jpg)
 
 <details>
 <summary>게시글 상세 · 랜딩 · 로그인 화면</summary>
@@ -46,17 +54,17 @@ Moderation Room에서 신고 게시글, 사용자 역할·차단 상태, 게시�
 
 ![화이트 테마의 게시글 본문·미디어·댓글·작성자 정보](docs/images/post-detail.jpg)
 
-### 랜딩
+### 랜딩 · 다크 테마
 
 SHOW·CAST·HYPE·LINK의 주제를 소개하고 로그인으로 연결한다.
 
-![E.O.M 랜딩 페이지](docs/images/landing.jpg)
+![다크 테마의 E.O.M 랜딩 페이지](docs/images/landing.jpg)
 
-### 로그인
+### 로그인 · 다크 테마
 
 로그인·회원가입 화면과 데모 계정 안내.
 
-![E.O.M 로그인 화면](docs/images/login.jpg)
+![다크 테마의 E.O.M 로그인 화면](docs/images/login.jpg)
 
 </details>
 
