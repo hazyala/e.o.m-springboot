@@ -39,6 +39,7 @@
     }
 
     function restartHeroTyping() {
+        if (reducedMotion) return;
         document.querySelectorAll('.hero-type-line span:not(.hero-type-gap)').forEach(function (letter) {
             var order = Number(letter.style.getPropertyValue('--n') || 0);
             var delay = 0.28 + order * 0.085;
@@ -61,6 +62,7 @@
     }
 
     function primeHeaderNavigation(viewportHeight) {
+        if (document.querySelector('[data-opening]')) return;
         var heroScene = sceneCache.find(function (scene) {
             return scene.type === 'hero';
         });
@@ -88,9 +90,12 @@
         var finalSpin = clamp((progress - 0.68) / 0.32, 0, 1);
         var echoFade = clamp(finalSpin / 0.18, 0, 1);
 
+        if (!document.querySelector('[data-opening]')) {
         doc.style.setProperty('--hero-nav-x', 'calc(' + lerp(-35.6, 0, navRise) + 'vw - ' + lerp(10, 0, navRise) + 'px)');
         doc.style.setProperty('--hero-nav-offset', 'calc(' + lerp(68, 0, navRise) + 'vh + ' + lerp(20, 0, navRise) + 'px)');
         doc.style.setProperty('--hero-nav-font-size', lerp(28, 14, navRise) + 'px');
+
+        }
 
         element.style.setProperty('--hero-ribbon-y', lerp(0, -viewportHeight * 0.92, heroLift) + 'px');
         element.style.setProperty('--hero-ribbon-opacity', String(1 - clamp((heroLift - 0.12) / 0.64, 0, 1)));
@@ -142,12 +147,12 @@
         var viewportHeight = window.innerHeight || 1;
         var scrollable = Math.max(1, rect.height - viewportHeight);
         progress = clamp(-rect.top / scrollable, 0, 1);
-        var titleHoldEnd = 0.32;
-        var returnProgress = clamp((progress - 0.84) / 0.1, 0, 1);
-        var titleLeave = lerp(clamp((progress - titleHoldEnd) / 0.2, 0, 1), 0, returnProgress);
-        var cardsEnter = lerp(clamp((progress - titleHoldEnd) / 0.21, 0, 1), 0, returnProgress);
-        var horizontal = clamp((progress - 0.56) / 0.22, 0, 1);
-        var settle = lerp(clamp((progress - 0.7) / 0.1, 0, 1), 0, returnProgress);
+        var titleHoldEnd = 0.14;
+        var returnProgress = clamp((progress - 0.89) / 0.09, 0, 1);
+        var titleLeave = lerp(clamp((progress - titleHoldEnd) / 0.14, 0, 1), 0, returnProgress);
+        var cardsEnter = lerp(clamp((progress - titleHoldEnd) / 0.141, 0, 1), 0, returnProgress);
+        var horizontal = clamp((progress - 0.34) / 0.5, 0, 1);
+        var settle = lerp(clamp((progress - 0.72) / 0.1, 0, 1), 0, returnProgress);
         var isActiveLight = progress > 0.04 && progress < 1;
 
         doc.style.setProperty('--scroll-status-color', isActiveLight ? '#ffffff' : '#ffffff');
@@ -285,14 +290,27 @@
         });
     }
 
+    function updateScrollStatus(status, moving) {
+        var atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+        status.textContent = atEnd ? 'TOP ↑' : moving ? 'Keep Scroll' : 'Start Scroll';
+        status.setAttribute('aria-label', atEnd ? '페이지 맨 위로 이동' : '다음 화면으로 스크롤');
+    }
+    document.querySelectorAll('[data-scroll-status]').forEach(function (status) {
+        status.addEventListener('click', function () {
+            var atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+            window.scrollTo({ top: atEnd ? 0 : window.scrollY + window.innerHeight * .8, behavior: reducedMotion ? 'instant' : 'smooth' });
+        });
+        updateScrollStatus(status, false);
+    });
+
     function requestUpdate() {
         document.querySelectorAll('[data-scroll-status]').forEach(function (status) {
-            status.textContent = 'Keep Scroll';
+            updateScrollStatus(status, true);
         });
         window.clearTimeout(scrollStatusTimer);
         scrollStatusTimer = window.setTimeout(function () {
             document.querySelectorAll('[data-scroll-status]').forEach(function (status) {
-                status.textContent = 'Start Scroll';
+                updateScrollStatus(status, false);
             });
         }, 180);
 
@@ -310,7 +328,14 @@
                 return;
             }
             event.preventDefault();
-            window.scrollTo({ top: section.offsetTop, behavior: reducedMotion ? 'auto' : 'smooth' });
+            if (section.hasAttribute('data-orbit-card')) {
+                window.dispatchEvent(new CustomEvent('eom:orbit-navigate', { detail: { target: section } }));
+                return;
+            }
+            var inset = parseFloat(window.getComputedStyle(section).scrollMarginTop) || 0;
+            var targetTop = 0;
+            for (var node = section; node; node = node.offsetParent) targetTop += node.offsetTop;
+            window.scrollTo({ top: Math.max(0, targetTop - inset), behavior: reducedMotion ? 'auto' : 'smooth' });
         });
     });
 
@@ -323,6 +348,24 @@
         });
     });
 
+    window.addEventListener('eom:motion', function (event) {
+        reducedMotion = event.detail.paused;
+        if (reducedMotion) {
+            sceneCache.forEach(function (scene) {
+                if (scene.type === 'hero') {
+                    scene.element.removeAttribute('style');
+                    scene.lines.forEach(function (line) { line.removeAttribute('style'); });
+                }
+            });
+        }
+        cacheScenes();
+    });
+    var heroElement = document.querySelector('[data-scene="hero"]');
+    if (heroElement && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) { if (entry.isIntersecting) restartHeroTyping(); });
+        }, { threshold: 0 }).observe(heroElement);
+    }
     window.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', cacheScenes);
     window.addEventListener('load', function () {
