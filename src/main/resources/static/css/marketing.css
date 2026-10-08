@@ -249,7 +249,7 @@ body.marketing-page::selection {
     text-transform: uppercase;
 }
 
-.hero-reference-copy h1,
+.hero-reference-copy h2,
 .scene-copy h2,
 .reels-head h2,
 .final-panel h2 {
@@ -266,14 +266,14 @@ body.marketing-page::selection {
     pointer-events: none;
 }
 
-.hero-reference-copy h1 {
+.hero-reference-copy h2 {
     color: #ffffff;
     font-family: "Irish Grover", cursive;
     font-weight: 400;
     line-height: 0.88;
 }
 
-.hero-reference-copy h1 .hero-type-line {
+.hero-reference-copy h2 .hero-type-line {
     position: absolute;
     display: block;
     width: max-content;
