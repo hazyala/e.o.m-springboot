@@ -13,28 +13,35 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main>
-    <span class="dashboard-sr-only">Featured Media</span>
-    <span class="dashboard-sr-only" th:if="${todayPick != null and todayPick.mediaUrl != null}" th:text="${todayPick.mediaUrl}">media url</span>
-    <section class="dashboard-pick" th:if="${todayPick}">
-        <div class="dashboard-hero-shuffle" aria-hidden="true">
-            <img th:src="@{/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg}" alt="">
-            <img th:src="@{/assets/source/dan-duffey-7NaBBaRzfZ4-unsplash.jpg}" alt="">
-            <img th:src="@{/assets/source/someofakind-WaTX4_2fD9k-unsplash.jpg}" alt="">
-        </div>
-        <div class="dashboard-pick-inner">
-            <div class="dashboard-pick-copy">
-                <p class="dashboard-script">TODAY'S PICK</p>
-                <span class="dashboard-board-badge" th:text="${todayPick.boardType.label}">SHOW</span>
-                <h1 th:text="${todayPick.title}">서울 스트릿잼 후기</h1>
-                <p class="dashboard-author-line" th:text="|${todayPick.author.displayName} · ${todayPick.location}|">SHADOW_98 · 성수</p>
-                <div class="dashboard-quick-stats">
-                    <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${todayPick.likeCount}">284</b></span>
-                    <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${todayPick.commentCount}">32</b></span>
-                    <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${todayPick.viewCount}">1480</b></span>
+    <section class="dashboard-pick" th:if="${!#lists.isEmpty(popularPosts)}" data-dashboard-pick aria-label="인기 게시글">
+        <div class="dashboard-pick-slides">
+            <article class="dashboard-pick-slide" data-dashboard-slide
+                     th:each="post, stat : ${popularPosts}"
+                     th:classappend="${stat.first} ? ' is-active'"
+                     th:attr="aria-hidden=${!stat.first}">
+                <img class="dashboard-pick-image" th:if="${post.thumbnailUrl != null and !post.thumbnailUrl.isBlank()}"
+                     th:src="${post.thumbnailUrl}" alt="">
+                <div class="dashboard-pick-inner">
+                    <div class="dashboard-pick-copy">
+                        <p class="dashboard-script">POPULAR PICKS</p>
+                        <span class="dashboard-board-badge" th:text="${post.boardType.label}">SHOW</span>
+                        <h1 th:text="${post.title}">릴스 기반 코레오 쇼케이스</h1>
+                        <p class="dashboard-author-line" th:text="|${post.author.displayName} · ${post.location}|">SHADOW_98 · 성수</p>
+                        <div class="dashboard-quick-stats">
+                            <span class="dashboard-stat-like"><i aria-hidden="true"></i><b th:text="${post.likeCount}">284</b></span>
+                            <span class="dashboard-stat-comment"><i aria-hidden="true"></i><b th:text="${post.commentCount}">32</b></span>
+                            <span class="dashboard-stat-view"><i aria-hidden="true"></i><b th:text="${post.viewCount}">1480</b></span>
+                        </div>
+                        <a class="dashboard-view-post" th:href="@{/posts/{id}(id=${post.id})}">VIEW POST →</a>
+                    </div>
+                    <div class="dashboard-pick-mark" aria-hidden="true">E.O.M</div>
                 </div>
-                <a class="dashboard-view-post" th:href="@{/posts/{id}(id=${todayPick.id})}">VIEW POST →</a>
-            </div>
-            <div class="dashboard-pick-mark" aria-hidden="true">E.O.M</div>
+            </article>
+        </div>
+        <div class="dashboard-pick-controls" th:if="${#lists.size(popularPosts) > 1}" aria-label="인기 게시글 전환">
+            <button type="button" data-dashboard-prev aria-label="이전 인기 게시글">←</button>
+            <span class="dashboard-pick-count"><span data-dashboard-current>01</span> / <span th:text="${#numbers.formatInteger(#lists.size(popularPosts), 2)}">05</span></span>
+            <button type="button" data-dashboard-next aria-label="다음 인기 게시글">→</button>
         </div>
     </section>
 
@@ -46,7 +53,7 @@
                     <h2>POPULAR</h2>
                 </div>
                 <ol class="dashboard-popular-list">
-                    <li class="dashboard-popular-item" th:each="post, stat : ${popularPosts}" th:if="${stat.index < 5}">
+                    <li class="dashboard-popular-item" th:each="post, stat : ${popularPosts}">
                         <strong class="dashboard-rank" th:text="${#numbers.formatInteger(stat.count, 2)}">01</strong>
                         <div class="dashboard-row-copy">
                             <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">홍대 공연 백업댄서 모집</a></h3>
@@ -246,6 +253,7 @@
 </footer>
 
 <script th:src="@{/js/theme.js}"></script>
+<script th:src="@{/js/dashboard-carousel.js}" defer></script>
 <script>
     (() => {
         const tabs = document.querySelectorAll("[data-dashboard-board-tabs] a[data-board]");

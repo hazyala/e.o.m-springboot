@@ -19,6 +19,7 @@ import polytech.aisw.eom.repository.UserRepository;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -109,12 +110,28 @@ class EomApplicationTests {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/dashboard"));
 
-        mockMvc.perform(get("/dashboard").with(user("dancer1").roles("USER")))
+        String dashboardHtml = mockMvc.perform(get("/dashboard").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Featured Media")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("릴스 기반 코레오 쇼케이스")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("https://www.instagram.com/reel/C5frLClST0B/")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")))
+                .andReturn().getResponse().getContentAsString();
+
+        assertEquals(5, dashboardHtml.split("data-dashboard-slide", -1).length - 1);
+        assertEquals(5, dashboardHtml.split("class=\"dashboard-popular-item\"", -1).length - 1);
+    }
+
+    @Test
+    void dashboardKeepsFivePopularPostsWhenTopPostIsHidden() throws Exception {
+        jdbcTemplate.update("update posts set hidden_by_admin = true where title = ?", "릴스 기반 코레오 쇼케이스");
+
+        String dashboardHtml = mockMvc.perform(get("/dashboard").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("<h1>릴스 기반 코레오 쇼케이스</h1>"))))
+                .andReturn().getResponse().getContentAsString();
+
+        assertEquals(5, dashboardHtml.split("data-dashboard-slide", -1).length - 1);
+        assertEquals(5, dashboardHtml.split("class=\"dashboard-popular-item\"", -1).length - 1);
     }
 
     @Test

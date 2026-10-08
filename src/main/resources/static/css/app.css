@@ -1029,7 +1029,23 @@ body.dashboard-page::before {
     color: #ffffff;
 }
 
-.dashboard-pick::after {
+.dashboard-pick-slides {
+    display: block;
+}
+
+.dashboard-pick-slide {
+    position: relative;
+    display: none;
+    min-height: 520px;
+    overflow: hidden;
+    background: #111111;
+}
+
+.dashboard-pick-slide.is-active {
+    display: block;
+}
+
+.dashboard-pick-slide::after {
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -1039,30 +1055,61 @@ body.dashboard-page::before {
     content: "";
 }
 
-.dashboard-hero-shuffle {
+.dashboard-pick-image {
     position: absolute;
     inset: 0;
     z-index: 0;
-    display: flex;
-    width: 300%;
-    opacity: 1;
-    animation: dashboardHeroSlide 18s infinite cubic-bezier(0.76, 0, 0.24, 1);
-}
-
-.dashboard-hero-shuffle img {
-    flex: 0 0 33.3333%;
-    width: 33.3333%;
+    width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 1;
     filter: contrast(1.05) saturate(1.08);
 }
 
-@keyframes dashboardHeroSlide {
-    0%, 25% { transform: translateX(0); }
-    33%, 58% { transform: translateX(-33.3333%); }
-    66%, 91% { transform: translateX(-66.6666%); }
-    100% { transform: translateX(0); }
+.dashboard-pick-controls {
+    position: absolute;
+    right: max(40px, calc((100vw - 1280px) / 2));
+    bottom: 28px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #ffffff;
+    font: 700 12px "Roboto Mono", monospace;
+}
+
+.dashboard-pick-controls button {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.22);
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.dashboard-pick-controls button:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-2px);
+}
+
+.dashboard-pick-controls button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+
+.dashboard-pick-count {
+    min-width: 48px;
+    text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-pick-controls button {
+        transition: none;
+    }
 }
 
 .dashboard-pick-inner {
@@ -1108,6 +1155,7 @@ body.dashboard-page::before {
     font-size: clamp(44px, 4.55vw, 70px);
     line-height: 1.08;
     letter-spacing: 0;
+    word-break: keep-all;
 }
 
 .dashboard-author-line {
@@ -1216,8 +1264,8 @@ body.dashboard-page::before {
     display: grid;
     align-items: stretch;
     grid-template-columns: minmax(0, 2fr) minmax(320px, 0.95fr);
-    gap: 60px;
-    width: min(1280px, calc(100% - 80px));
+    gap: 60px clamp(48px, calc(50vw - 600px), 120px);
+    width: min(1200px, calc(100% - clamp(80px, 9vw, 160px)));
     margin: 58px auto 0;
 }
 
@@ -1270,9 +1318,9 @@ body.dashboard-page::before {
     font-size: 44px;
     line-height: 1;
     text-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.9),
-        0 8px 18px rgba(211, 15, 70, 0.24),
-        2px 2px 0 rgba(211, 15, 70, 0.08);
+        0 1px 0 rgba(255, 255, 255, 0.72),
+        0 5px 12px rgba(211, 15, 70, 0.12),
+        1px 1px 0 rgba(211, 15, 70, 0.04);
 }
 
 .dashboard-title-with-link > a,
@@ -1508,9 +1556,15 @@ body.dashboard-page::before {
     align-self: stretch;
     flex-direction: column;
     justify-content: space-between;
-    gap: 42px;
+    gap: clamp(55px, 5vw, 72px);
     height: 100%;
     min-height: 100%;
+}
+
+@media (min-width: 1101px) {
+    .dashboard-popular-list li {
+        min-height: 98px;
+    }
 }
 
 .dashboard-activity-block {
@@ -5968,6 +6022,12 @@ th {
 }
 
 @media (max-width: 720px) {
+    .dashboard-pick-controls {
+        top: 74px;
+        right: 22px;
+        bottom: auto;
+    }
+
     .dashboard-header {
         display: grid;
         grid-template-columns: 1fr auto auto;
