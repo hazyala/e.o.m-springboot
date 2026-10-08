@@ -1,13 +1,16 @@
-# templates
+# E.O.M의 Thymeleaf 화면
 
-Thymeleaf 화면 파일을 둡니다. 공통 헤더와 푸터는 `fragments/`로 분리합니다.
+Controller의 Model을 HTML로 렌더링한다. `fragments/`의 헤더·푸터를 화면들이 공유한다.
 
-현재 화면:
-- `index.html`, `login.html`: 공개 랜딩/로그인 화면. 전용 디자인 톤을 유지합니다.
-- `dashboard.html`: 로그인 후 첫 화면.
-- `post-list.html`: `/boards/*`, `/posts` 공용 탐색 화면. `/events`는 HYPE 관리자 승인 행사 필터로 리다이렉트합니다.
-- `post-create.html`: `/posts/new` 작성 폼. 좌측 입력, 우측 Live Preview 2컬럼이며 이미지/영상 파일 첨부와 Instagram 게시물 링크를 받습니다. 첨부 파일은 원본 비율로 미리보고, Instagram 링크는 별도 카드로 표시합니다.
-- `post-detail.html`: 게시글 상세, 첨부 이미지/영상 표시, Instagram 링크 카드, 외부 미디어 새 탭 링크.
-- `my-page.html`: 본인 마이페이지와 공개 작성자 프로필 화면.
-- `dancers.html`, `dancer-detail.html`: 댄서 탐색/프로필 진입.
-- `admin.html`: 관리자 조회 화면.
+| 파일 | 사용자가 하는 일 |
+|---|---|
+| `index.html`, `login.html` | 커뮤니티 소개, 로그인·가입 진입 |
+| `dashboard.html` | Today Pick·인기·최근 게시글과 행사·댄서 탐색 |
+| `post-list.html` | SHOW·CAST·HYPE·LINK 목록, 정렬·태그·검색 |
+| `post-create.html` | 게시글 작성·수정. 이미지/영상 파일과 Instagram 링크를 입력하고 Live Preview 확인 |
+| `post-detail.html` | 본문·미디어 확인, 댓글·좋아요·저장·신고 |
+| `my-page.html` | 본인 또는 작성자 프로필, 포트폴리오·참여 행사 |
+| `dancers.html`, `dancer-detail.html` | 댄서 목록과 프로필 진입 |
+| `admin.html` | 사용자·게시글·행사 관리 |
+
+폼은 Spring MVC endpoint로 제출한다. Live Preview와 테마 같은 브라우저 동작은 [static](../static/README.md)에 있다. 화면의 저장·권한 검사는 [Controller](../../java/polytech/aisw/eom/controller/README.md)와 Service가 처리한다.

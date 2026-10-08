@@ -25,3 +25,8 @@
 - 검색은 `/posts?q=` 통합 검색과 `/posts?tag=` 태그 검색을 지원하고, 빈 검색어는 전체 목록으로 흐르지 않습니다.
 - `/events`는 기존 호환 경로이며 HYPE 관리자 승인 행사 필터(`/boards/HYPE?officialEvents=true`)로 이동합니다.
 - 직접 영상 업로드, 직접 이미지 업로드, 외부 미디어 직접 embed는 제외합니다.
+
+## 현재 코드 기준 문서
+
+- [HTTP 요청과 인증](API.md)
+- [실행과 환경변수](RUNNING.md)
