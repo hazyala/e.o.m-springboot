@@ -4545,6 +4545,125 @@ html[data-theme="dark"] .community-event-meta span {
     color: #9b1638;
 }
 
+.site-toast {
+    position: fixed;
+    top: max(20px, env(safe-area-inset-top));
+    left: 50%;
+    z-index: 1000;
+    width: max-content;
+    max-width: min(440px, calc(100vw - 32px));
+    padding: 13px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    background: #19241d;
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.24);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.45;
+    text-align: center;
+    transform: translateX(-50%);
+}
+
+.site-toast.is-error {
+    background: #8c1837;
+}
+
+.post-confirm-dialog {
+    width: min(420px, calc(100vw - 32px));
+    padding: 28px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+    color: #151515;
+}
+
+.post-confirm-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.56);
+    backdrop-filter: blur(3px);
+}
+
+.post-confirm-dialog h2 {
+    margin: 0 0 12px;
+    font-size: 20px;
+}
+
+.post-confirm-dialog p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.post-confirm-dialog form > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+.post-confirm-dialog button {
+    min-height: 40px;
+    padding: 0 18px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    border-radius: 9px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.post-confirm-dialog button[value="confirm"] {
+    border-color: #d30f46;
+    background: #d30f46;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .post-confirm-dialog {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: #202020;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .post-confirm-dialog button[value="cancel"] {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.site-toast[hidden],
+.post-comment-error[hidden],
+.post-comment-empty[hidden] {
+    display: none;
+}
+
+.post-comment-error {
+    margin: 0 0 12px 56px;
+    color: #aa1741;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+html[data-theme="dark"] .post-comment-error {
+    color: #ff8eab;
+}
+
+form.is-pending button,
+.post-top-actions button:disabled,
+.post-action-bar button:disabled,
+.post-comments button:disabled {
+    cursor: wait;
+    opacity: 0.55;
+}
+
+.post-action-bar button:focus-visible,
+.post-top-actions button:focus-visible,
+.post-comments button:focus-visible,
+.post-comments input:focus-visible {
+    outline: 2px solid #d30f46;
+    outline-offset: 4px;
+}
+
 .post-top-actions form,
 .post-action-bar form {
     margin: 0;

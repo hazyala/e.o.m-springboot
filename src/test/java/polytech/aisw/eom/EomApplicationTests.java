@@ -20,12 +20,14 @@ import polytech.aisw.eom.repository.UserRepository;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -303,7 +305,7 @@ class EomApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("첫 댓글입니다.")))
                 .andExpect(content().string(containsString("href=\"/dancers/")))
-                .andExpect(content().string(containsString("COMMENTS <b>1</b>")));
+                .andExpect(content().string(containsString("COMMENTS <b data-comment-count>1</b>")));
     }
 
     @Test
@@ -461,6 +463,101 @@ class EomApplicationTests {
         Post unlikedPost = postRepository.findById(post.getId()).orElseThrow();
         org.assertj.core.api.Assertions.assertThat(unlikedPost.getLikeCount()).isZero();
         assertTableCount("post_likes", post.getId(), 0);
+    }
+
+    @Test
+    void ajaxLikeAndSaveReturnCurrentStateWithoutRedirecting() throws Exception {
+        Post post = saveTestPost("ajax reactions target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(true))
+                .andExpect(jsonPath("$.count").value(1));
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(true));
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(false))
+                .andExpect(jsonPath("$.count").value(0));
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(false));
+    }
+
+    @Test
+    void ajaxCommentCanBeCreatedValidatedAndDeletedInPlace() throws Exception {
+        Post post = saveTestPost("ajax comment target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON)
+                        .param("content", "   "))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message").exists());
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON)
+                        .param("content", "  새 댓글  "))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").value("새 댓글"))
+                .andExpect(jsonPath("$.authorName").exists())
+                .andExpect(jsonPath("$.count").value(1));
+
+        Long commentId = commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId()).get(0).getId();
+        mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId)
+                        .with(user("dancer1").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").exists());
+
+        mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId)
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.count").value(0));
+    }
+
+    @Test
+    void ajaxReportReturnsFeedbackWithoutRedirecting() throws Exception {
+        Post post = saveTestPost("ajax report target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/report", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON)
+                        .param("reason", "부적절한 콘텐츠"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("신고가 접수되었습니다. 운영자가 확인합니다."));
     }
 
     @Test

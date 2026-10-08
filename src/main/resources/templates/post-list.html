@@ -11,6 +11,10 @@
 </head>
 <body class="dashboard-page">
 <div th:replace="~{fragments/header :: header}"></div>
+<div class="site-toast" data-site-toast role="status" aria-live="polite"
+     th:classappend="${postError} ? ' is-error' : ''"
+     th:text="${postError ?: postNotice}"
+     th:hidden="${postError == null and postNotice == null}"></div>
 
 <main class="community-shell community-board-shell">
     <section class="community-hero community-board-hero"
@@ -170,5 +174,6 @@
 </footer>
 
 <script th:src="@{/js/theme.js}"></script>
+<script th:src="@{/js/post-interactions.js}" defer></script>
 </body>
 </html>
