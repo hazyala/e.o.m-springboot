@@ -5383,6 +5383,10 @@ form.is-pending button,
     font-family: "Irish Grover", cursive;
     font-size: 30px;
     line-height: 1;
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.72),
+        0 5px 12px rgba(211, 15, 70, 0.12),
+        1px 1px 0 rgba(211, 15, 70, 0.04);
 }
 
 .post-comments h2 span,
@@ -5747,6 +5751,13 @@ html[data-theme="dark"] .post-side-author strong,
 html[data-theme="dark"] .post-side-list strong,
 html[data-theme="dark"] .post-comment-list header a {
     color: #ffffff;
+}
+
+html[data-theme="dark"] .post-comments h2,
+html[data-theme="dark"] .post-side h2 {
+    text-shadow:
+        0 8px 20px rgba(255, 77, 109, 0.28),
+        2px 2px 0 rgba(255, 77, 109, 0.12);
 }
 
 html[data-theme="dark"] .post-back-link,
