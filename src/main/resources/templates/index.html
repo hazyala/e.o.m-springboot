@@ -44,7 +44,7 @@
                     <div class="monitor-face monitor-front">
                         <div class="monitor-brand">E.O.M <span>FIELD MONITOR / 01</span></div>
                         <div class="monitor-screen">
-                            <video th:src="@{/assets/source/mp4/show4.mp4}" muted autoplay loop playsinline preload="metadata" th:poster="@{/assets/source/hype.jpg}"></video>
+                            <video th:src="@{/assets/source/mp4/show4.mp4}" muted autoplay loop playsinline preload="metadata" th:poster="@{/assets/source/mp4/show4-poster.jpg}"></video>
                             <div class="monitor-frame"></div><span class="monitor-timecode">00:24:08:16</span><span class="monitor-spec">4K · 60 FPS · ISO 800</span><span class="monitor-rec">● REC</span><span class="monitor-live">LIVE / THE SCENE</span>
                             <div class="monitor-meters"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
                         </div>
@@ -71,7 +71,7 @@
         <div class="chapter-marker">01 / FEEL THE MOVEMENT</div>
         <div class="hero-sticky-stage">
             <div class="hero-media-stack" aria-hidden="true">
-                <video class="hero-ribbon-video" th:src="@{/assets/source/mp4/herostart.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                <video class="hero-ribbon-video" th:src="@{/assets/source/mp4/herostart.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/herostart-poster.jpg}"></video>
             </div>
 
             <div class="hero-reference-copy">
@@ -91,22 +91,22 @@
             <div class="hero-cube-stage" aria-label="E.O.M hero media cube">
                 <div class="media-cube hero-media-cube" data-hero-cube>
                     <div class="cube-face cube-front">
-                        <video th:src="@{/assets/source/mp4/herostart.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/herostart.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/herostart-poster.jpg}"></video>
                     </div>
                     <div class="cube-face cube-back">
-                        <video th:src="@{/assets/source/mp4/cube1.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/cube1.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/cube1-poster.jpg}"></video>
                     </div>
                     <div class="cube-face cube-right">
                         <img th:src="@{/assets/source/hype.jpg}" alt="Dance hype still">
                     </div>
                     <div class="cube-face cube-left">
-                        <video th:src="@{/assets/source/mp4/cube3.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/cube3.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/cube3-poster.jpg}"></video>
                     </div>
                     <div class="cube-face cube-top">
                         <img th:src="@{/assets/source/hero.jpg}" alt="Dance hero still">
                     </div>
                     <div class="cube-face cube-bottom">
-                        <video th:src="@{/assets/source/mp4/cube2.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/cube2.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/cube2-poster.jpg}"></video>
                     </div>
                 </div>
             </div>
@@ -130,7 +130,7 @@
                 <article id="show" class="orbit-card" data-orbit-card>
                     <div class="orbit-card-top"><span>E.O.M / WHY SHOW</span><span>01 — 04</span></div>
                     <h3>SHOW<span>YOUR MOVEMENT</span></h3>
-                    <img th:src="@{/assets/source/show.png}" alt="나만의 움직임을 보여주는 댄서" loading="lazy">
+                    <img th:src="@{/assets/source/show.png}" alt="나만의 움직임을 보여주는 댄서" loading="eager">
                     <h4>당신의 춤이,<br>한 번의 피드로 끝나지 않도록</h4>
                     <p><span class="copy-phrase">흩어진 움직임을 나만의 기록으로.</span> <span class="copy-phrase">프로필과 작품을 발견하고,</span> <span class="copy-phrase">좋아요와 댓글로 보내는</span> <span class="copy-phrase">응원까지 이어져요.</span></p>
                     <p class="orbit-uses">포트폴리오 · 공연 기록 · 연습 영상 · 안무 쉐어</p>
@@ -139,7 +139,7 @@
                 <article id="cast" class="orbit-card" data-orbit-card>
                     <div class="orbit-card-top"><span>E.O.M / WHY CAST</span><span>02 — 04</span></div>
                     <h3>CAST<span>YOUR NEXT STAGE</span></h3>
-                    <img th:src="@{/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg}" alt="함께 무대에 오른 댄서들" loading="lazy">
+                    <img th:src="@{/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg}" alt="함께 무대에 오른 댄서들" loading="eager">
                     <h4>인맥의 바깥에도,<br>무대는 있어야 하니까</h4>
                     <p><span class="copy-phrase">아는 사람의 연락을 기다리던 기회.</span> <span class="copy-phrase">나를 필요로 하는 무대를 직접 찾고,</span> <span class="copy-phrase">함께할 사람에게</span> <span class="copy-phrase">모집 소식을 열어요.</span></p>
                     <p class="orbit-uses">강사 · 백업댄서 · 크루 · 팀원 · 오디션 모집</p>
@@ -148,7 +148,7 @@
                 <article id="hype" class="orbit-card" data-orbit-card>
                     <div class="orbit-card-top"><span>E.O.M / WHY HYPE</span><span>03 — 04</span></div>
                     <h3>HYPE<span>THE NEXT SCENE</span></h3>
-                    <img th:src="@{/assets/source/hype.jpg}" alt="함께 즐기는 댄스 행사" loading="lazy">
+                    <img th:src="@{/assets/source/hype.jpg}" alt="함께 즐기는 댄스 행사" loading="eager">
                     <h4>흩어진 소식은 한곳에<br>현장의 열기는 더 가까이</h4>
                     <p><span class="copy-phrase">보고 싶던 무대,</span> <span class="copy-phrase">배우고 싶던 움직임.</span> <span class="copy-phrase">행사와 일정을 알리고 발견하며,</span> <span class="copy-phrase">댄서와 관객이</span> <span class="copy-phrase">같은 현장에서 만나요.</span></p>
                     <p class="orbit-uses">배틀 · 워크숍 · 공연 · 쇼케이스 · 파티 · 스트릿 행사</p>
@@ -157,7 +157,7 @@
                 <article id="link" class="orbit-card" data-orbit-card>
                     <div class="orbit-card-top"><span>E.O.M / WHY LINK</span><span>04 — 04</span></div>
                     <h3>LINK<span>OUR NEXT MOVE</span></h3>
-                    <img th:src="@{/assets/source/samuel-regan-asante-jRM3E-MG9sg-unsplash.jpg}" alt="함께 움직이는 댄서" loading="lazy">
+                    <img th:src="@{/assets/source/samuel-regan-asante-jRM3E-MG9sg-unsplash.jpg}" alt="함께 움직이는 댄서" loading="eager">
                     <h4>혼자 하던 춤을,<br>함께하는 문화로</h4>
                     <p><span class="copy-phrase">연습실 대여 부담은 나누고,</span> <span class="copy-phrase">서로의 춤에서 배워요.</span> <span class="copy-phrase">같이 연습하고, 찍어주고,</span> <span class="copy-phrase">피드백하며 춤으로</span> <span class="copy-phrase">인사하는 사이가 돼요.</span></p>
                     <p class="orbit-uses">연습 파트너 · 연습실 공유 · 촬영 메이트<br>피드백 모임 · 네트워킹 · 정보 공유</p>
@@ -196,7 +196,7 @@
             <div class="show-rail-viewport" tabindex="0" role="region" aria-label="댄서 콘텐츠 예시">
                 <div class="show-reel-rail" data-show-rail>
                     <article class="show-reel-card show-reel-card-video" style="--i:0">
-                        <video th:src="@{/assets/source/mp4/show1.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/show1.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/show1-poster.jpg}"></video>
                         <div class="show-caption">오늘 연습실 원테이크. 마지막 팔 라인까지 꼭 봐주세요.</div>
                         <div class="show-meta"><span>Daily Practice</span><strong>@mina.flow</strong></div>
                     </article>
@@ -206,7 +206,7 @@
                         <div class="show-meta"><span>Battle Log</span><strong>@zero.spin</strong></div>
                     </article>
                     <article class="show-reel-card show-reel-card-video" style="--i:2">
-                        <video th:src="@{/assets/source/mp4/show2.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/show2.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/show2-poster.jpg}"></video>
                         <div class="show-caption">새 안무 공유. 카운트는 5-6-7-8부터 들어가요.</div>
                         <div class="show-meta"><span>Choreo Share</span><strong>@yeon.archive</strong></div>
                     </article>
@@ -216,7 +216,7 @@
                         <div class="show-meta"><span>Portfolio</span><strong>@crew.noise</strong></div>
                     </article>
                     <article class="show-reel-card show-reel-card-video" style="--i:4">
-                        <video th:src="@{/assets/source/mp4/show3.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/show3.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/show3-poster.jpg}"></video>
                         <div class="show-caption">하우스 루틴 수정본. 발 리듬만 따로 체크.</div>
                         <div class="show-meta"><span>Routine Check</span><strong>@rio.step</strong></div>
                     </article>
@@ -226,7 +226,7 @@
                         <div class="show-meta"><span>Freestyle</span><strong>@kai.room</strong></div>
                     </article>
                     <article class="show-reel-card show-reel-card-video" style="--i:6">
-                        <video th:src="@{/assets/source/mp4/show4.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/show4.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/show4-poster.jpg}"></video>
                         <div class="show-caption">월말 평가 영상. 표정과 시선 처리 피드백 환영.</div>
                         <div class="show-meta"><span>Review Clip</span><strong>@nari.motion</strong></div>
                     </article>
@@ -236,7 +236,7 @@
                         <div class="show-meta"><span>Street Cut</span><strong>@jay.wave</strong></div>
                     </article>
                     <article class="show-reel-card show-reel-card-video" style="--i:8">
-                        <video th:src="@{/assets/source/mp4/show5.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/show5.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/show5-poster.jpg}"></video>
                         <div class="show-caption">공연 리허설 기록. 동선 바뀐 부분 표시해두기.</div>
                         <div class="show-meta"><span>Rehearsal</span><strong>@seoul.stage</strong></div>
                     </article>
@@ -246,7 +246,7 @@
                         <div class="show-meta"><span>Solo Part</span><strong>@lumi.kr</strong></div>
                     </article>
                     <article class="show-reel-card show-reel-card-video" style="--i:10">
-                        <video th:src="@{/assets/source/mp4/show6.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <video th:src="@{/assets/source/mp4/show6.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/mp4/show6-poster.jpg}"></video>
                         <div class="show-caption">오늘의 락킹 콤보. 손끝 디테일 다시 연습.</div>
                         <div class="show-meta"><span>Combo Note</span><strong>@doha.lock</strong></div>
                     </article>
