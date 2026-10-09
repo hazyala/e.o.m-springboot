@@ -45,6 +45,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBoardTypeAndAdminApprovedEventTrue(BoardType boardType, Sort sort);
 
     @EntityGraph(attributePaths = "author")
+    List<Post> findTop5ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc();
+
+    @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc();
 
     @EntityGraph(attributePaths = "author")

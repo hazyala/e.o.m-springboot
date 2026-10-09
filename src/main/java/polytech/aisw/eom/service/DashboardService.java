@@ -25,27 +25,12 @@ public class DashboardService {
         this.userRepository = userRepository;
     }
 
-    public Post findTodayPick() {
-        return postRepository.findTop6ByBoardTypeAndMediaTypeInOrderByLikeCountDescCreatedAtDesc(
-                        BoardType.SHOW,
-                        List.of(MediaType.INSTAGRAM, MediaType.YOUTUBE, MediaType.VIDEO_LINK)
-                )
-                .stream()
-                .filter(Post::isVisibleInCommunity)
-                .findFirst()
-                .orElseGet(() -> postRepository.findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc()
-                        .stream()
-                        .filter(Post::isVisibleInCommunity)
-                        .findFirst()
-                        .orElse(null));
-    }
-
     public List<Post> findRecentPosts() {
         return visiblePosts(postRepository.findTop6ByOrderByCreatedAtDesc());
     }
 
     public List<Post> findPopularPosts() {
-        return visiblePosts(postRepository.findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc());
+        return postRepository.findTop5ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc();
     }
 
     public List<Post> findUpcomingEvents() {

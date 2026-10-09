@@ -107,7 +107,8 @@ public class DataSeeder implements CommandLineRunner {
 
         savePost(BoardType.SHOW, "릴스 기반 코레오 쇼케이스", "짧은 릴스로 무드와 동선을 먼저 보여주는 SHOW 포스트입니다.",
                 1480, 284, 32, "코레오,릴스,쇼케이스", "성수", null, null,
-                MediaType.INSTAGRAM, REEL_CHOREO_SHOWCASE, "/assets/source/show.png", dancer);
+                MediaType.INSTAGRAM, REEL_CHOREO_SHOWCASE,
+                "/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg", dancer);
         savePost(BoardType.SHOW, "오픈 클래스 하이라이트", "클래스 마지막 런스루를 영상 URL로 연결해 포트폴리오처럼 보여줍니다.",
                 1210, 233, 21, "오픈클래스,힙합,영상", "홍대", null, null,
                 MediaType.INSTAGRAM, REEL_OPEN_CLASS, "/assets/source/hero.jpg", mina);

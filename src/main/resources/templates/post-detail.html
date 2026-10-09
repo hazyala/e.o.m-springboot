@@ -11,12 +11,24 @@
 </head>
 <body class="dashboard-page">
 <div th:replace="~{fragments/header :: header}"></div>
+<div class="site-toast" data-site-toast role="status" aria-live="polite"
+     th:classappend="${postError} ? ' is-error' : ''"
+     th:text="${postError ?: postNotice}"
+     th:hidden="${postError == null and postNotice == null}"></div>
+<dialog class="post-confirm-dialog" data-post-confirm aria-labelledby="post-confirm-title">
+    <form method="dialog">
+        <h2 id="post-confirm-title">확인해주세요</h2>
+        <p data-post-confirm-message></p>
+        <div>
+            <button type="submit" value="cancel">취소</button>
+            <button type="submit" value="confirm">확인</button>
+        </div>
+    </form>
+</dialog>
 
 <main class="post-page-shell">
     <article class="post-article">
         <a class="post-back-link" th:href="${backUrl}">← BACK</a>
-        <p class="post-alert is-success" th:if="${postNotice}" th:text="${postNotice}">게시글이 수정되었습니다.</p>
-        <p class="post-alert is-error" th:if="${postError}" th:text="${postError}">게시글을 처리할 수 없습니다.</p>
 
         <header class="post-article-head">
             <a th:href="@{/boards/{board}(board=${post.boardType.name()})}"
@@ -46,11 +58,11 @@
                           th:attr="data-confirm-message=|정말 '${post.title}' 게시글을 삭제할까요? 삭제 후에는 되돌릴 수 없습니다.|">
                         <button type="submit" aria-label="Delete post">DELETE</button>
                     </form>
-                    <form th:action="@{/posts/{id}/save(id=${post.id})}" method="post">
+                    <form th:action="@{/posts/{id}/save(id=${post.id})}" method="post" data-post-interaction="save">
                         <button class="post-icon-action"
                                 type="submit"
                                 th:classappend="${savedByCurrentUser} ? ' is-active' : ''"
-                                th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '게시글 저장'}"
+                                th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '게시글 저장'},aria-pressed=${savedByCurrentUser}"
                                 th:text="${savedByCurrentUser ? '▣' : '▢'}">▢</button>
                     </form>
                     <button type="button" aria-label="Share post" data-share-post>↗</button>
@@ -63,6 +75,7 @@
                             <form th:unless="${canDeletePost}"
                                   th:action="@{/posts/{id}/report(id=${post.id})}"
                                   method="post"
+                                  data-post-interaction="report"
                                   th:attr="data-confirm-message='이 게시글을 운영자에게 신고할까요?'">
                                 <input type="hidden" name="reason" value="부적절한 콘텐츠">
                                 <button type="submit">신고하기</button>
@@ -107,37 +120,38 @@
         </div>
 
         <div class="post-action-bar">
-            <form th:action="@{/posts/{id}/like(id=${post.id})}" method="post">
+            <form th:action="@{/posts/{id}/like(id=${post.id})}" method="post" data-post-interaction="like">
                 <button type="submit"
                         th:classappend="${likedByCurrentUser} ? ' is-active' : ''"
-                        th:attr="aria-label=${likedByCurrentUser ? '좋아요 취소' : '좋아요'}">
+                        th:attr="aria-label=${likedByCurrentUser ? '좋아요 취소' : '좋아요'},aria-pressed=${likedByCurrentUser}">
                     <b th:text="${likedByCurrentUser ? '♥' : '♡'}">♡</b>
-                    <strong th:text="${post.likeCount}">0</strong>
+                    <strong data-like-count th:text="${post.likeCount}">0</strong>
                 </button>
             </form>
-            <form th:action="@{/posts/{id}/save(id=${post.id})}" method="post">
+            <form th:action="@{/posts/{id}/save(id=${post.id})}" method="post" data-post-interaction="save">
                 <button type="submit"
                         th:classappend="${savedByCurrentUser} ? ' is-active' : ''"
-                        th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '저장'}">
+                        th:attr="aria-label=${savedByCurrentUser ? '저장 취소' : '저장'},aria-pressed=${savedByCurrentUser}">
                     <b th:text="${savedByCurrentUser ? '▣' : '▢'}">▢</b>
                     <strong th:text="${savedByCurrentUser ? '저장됨' : '저장'}">저장</strong>
                 </button>
             </form>
-            <span><b>댓글</b><strong th:text="${commentCount}">0</strong></span>
+            <span><b>댓글</b><strong data-comment-count th:text="${commentCount}">0</strong></span>
             <span><b>조회</b><strong th:text="${post.viewCount}">0</strong></span>
             <a th:href="@{/boards/{board}(board=${post.boardType.name()})}">☰ 목록으로</a>
         </div>
 
         <section class="post-comments">
-            <h2><span></span>COMMENTS <b th:text="${commentCount}">0</b></h2>
-            <p class="post-alert is-error" th:if="${commentError}" th:text="${commentError}">댓글을 처리할 수 없습니다.</p>
-            <form th:action="@{/posts/{id}/comments(id=${post.id})}" th:object="${commentCreateRequest}" method="post">
+            <h2><span></span>COMMENTS <b data-comment-count th:text="${commentCount}">0</b></h2>
+            <p id="comment-error" class="post-comment-error" data-comment-error role="alert"
+               th:text="${commentError}" th:hidden="${commentError == null}"></p>
+            <form th:action="@{/posts/{id}/comments(id=${post.id})}" th:object="${commentCreateRequest}" method="post" data-post-interaction="comment">
                 <span class="post-avatar-placeholder" aria-hidden="true"></span>
-                <input type="text" th:field="*{content}" maxlength="500" required placeholder="댓글을 남겨보세요" aria-label="댓글">
+                <input type="text" th:field="*{content}" maxlength="500" required placeholder="댓글을 남겨보세요" aria-label="댓글" aria-describedby="comment-error">
                 <button type="submit">등록</button>
             </form>
-            <div class="post-comment-list" th:if="${!comments.isEmpty()}">
-                <article th:each="comment : ${comments}">
+            <div class="post-comment-list" data-comment-list>
+                <article th:each="comment : ${comments}" th:attr="data-comment-id=${comment.id}">
                     <a class="post-author-avatar-link" th:href="@{/dancers/{id}(id=${comment.author.id})}" aria-label="댓글 작성자 프로필 보기">
                         <img th:if="${comment.author.profileImageUrl}" th:src="${comment.author.profileImageUrl}" th:alt="${comment.author.displayName}">
                         <span th:unless="${comment.author.profileImageUrl}" aria-hidden="true"></span>
@@ -152,12 +166,13 @@
                     <form th:if="${deletableCommentIds.contains(comment.id)}"
                           th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}"
                           method="post"
+                          data-post-interaction="delete-comment"
                           th:attr="data-confirm-message='댓글을 삭제할까요?'">
                         <button type="submit">삭제</button>
                     </form>
                 </article>
             </div>
-            <p class="post-comment-empty" th:if="${comments.isEmpty()}">첫 댓글을 남겨보세요.</p>
+            <p class="post-comment-empty" data-comment-empty th:hidden="${!comments.isEmpty()}">첫 댓글을 남겨보세요.</p>
         </section>
     </article>
 
@@ -232,6 +247,7 @@
 </footer>
 
 <script th:src="@{/js/theme.js}"></script>
+<script th:src="@{/js/post-interactions.js}" defer></script>
 <script>
     const copyPostLink = async () => {
         await navigator.clipboard.writeText(window.location.href);
@@ -247,13 +263,18 @@
     const shareButton = document.querySelector("[data-share-post]");
     if (shareButton) {
         shareButton.addEventListener("click", async () => {
-            const shareUrl = window.location.href;
-            if (navigator.share) {
-                await navigator.share({title: document.title, url: shareUrl});
-                return;
+            try {
+                const shareUrl = window.location.href;
+                if (navigator.share) {
+                    await navigator.share({title: document.title, url: shareUrl});
+                    return;
+                }
+                await copyPostLink();
+                showTemporaryLabel(shareButton, "COPIED", "↗");
+                window.showPostToast?.("게시글 링크를 복사했습니다.");
+            } catch (error) {
+                if (error.name !== "AbortError") window.showPostToast?.("링크를 공유할 수 없습니다.", true);
             }
-            await copyPostLink();
-            showTemporaryLabel(shareButton, "COPIED", "↗");
         });
     }
 
@@ -281,18 +302,23 @@
 
     if (copyPostLinkButton) {
         copyPostLinkButton.addEventListener("click", async () => {
-            await copyPostLink();
-            showTemporaryLabel(copyPostLinkButton, "복사 완료", "링크 복사");
-            if (moreToggle && moreMenu) {
-                moreToggle.setAttribute("aria-expanded", "false");
-                moreMenu.hidden = true;
+            try {
+                await copyPostLink();
+                showTemporaryLabel(copyPostLinkButton, "복사 완료", "링크 복사");
+                window.showPostToast?.("게시글 링크를 복사했습니다.");
+                if (moreToggle && moreMenu) {
+                    moreToggle.setAttribute("aria-expanded", "false");
+                    moreMenu.hidden = true;
+                }
+            } catch (error) {
+                window.showPostToast?.("링크를 복사할 수 없습니다.", true);
             }
         });
     }
 
     document.querySelectorAll("form[data-confirm-message]").forEach((form) => {
         form.addEventListener("submit", (event) => {
-            if (!window.confirm(form.dataset.confirmMessage)) {
+            if (!form.dataset.confirmHandled && !window.confirm(form.dataset.confirmMessage)) {
                 event.preventDefault();
             }
         });

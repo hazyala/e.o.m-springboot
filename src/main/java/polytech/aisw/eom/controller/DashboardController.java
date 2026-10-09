@@ -21,7 +21,6 @@ public class DashboardController {
         BoardType selectedBoard = resolveBoardType(board);
         model.addAttribute("boards", BoardType.values());
         model.addAttribute("selectedBoard", selectedBoard);
-        model.addAttribute("todayPick", dashboardService.findTodayPick());
         model.addAttribute("showRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.SHOW));
         model.addAttribute("castRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.CAST));
         model.addAttribute("hypeRecentPosts", dashboardService.findRecentPostsByBoard(BoardType.HYPE));
