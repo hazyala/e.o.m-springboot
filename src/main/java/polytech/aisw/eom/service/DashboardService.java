@@ -25,37 +25,22 @@ public class DashboardService {
         this.userRepository = userRepository;
     }
 
-    public Post findTodayPick() {
-        return postRepository.findTop6ByBoardTypeAndMediaTypeInOrderByLikeCountDescCreatedAtDesc(
-                        BoardType.SHOW,
-                        List.of(MediaType.INSTAGRAM, MediaType.YOUTUBE, MediaType.VIDEO_LINK)
-                )
-                .stream()
-                .filter(Post::isVisibleInCommunity)
-                .findFirst()
-                .orElseGet(() -> postRepository.findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc()
-                        .stream()
-                        .filter(Post::isVisibleInCommunity)
-                        .findFirst()
-                        .orElse(null));
-    }
-
     public List<Post> findRecentPosts() {
-        return visiblePosts(postRepository.findTop6ByOrderByCreatedAtDesc());
+        return postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc();
     }
 
     public List<Post> findPopularPosts() {
-        return visiblePosts(postRepository.findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc());
+        return postRepository.findTop5ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc();
     }
 
     public List<Post> findUpcomingEvents() {
         LocalDate today = LocalDate.now();
         LocalDate monthEnd = today.withDayOfMonth(today.lengthOfMonth());
-        return visiblePosts(postRepository.findTop6ByBoardTypeAndAdminApprovedEventTrueAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+        return postRepository.findTop6ByBoardTypeAndAdminApprovedEventTrueAndHiddenByAdminFalseAndAuthor_BlockedFalseAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
                 BoardType.HYPE,
                 today,
                 monthEnd
-        ));
+        );
     }
 
     public List<AppUser> findRecommendedDancers() {
@@ -63,10 +48,10 @@ public class DashboardService {
     }
 
     public List<Post> findFeaturedMediaPosts() {
-        return visiblePosts(postRepository.findTop6ByBoardTypeAndMediaTypeInOrderByLikeCountDescCreatedAtDesc(
+        return postRepository.findTop6ByBoardTypeAndMediaTypeInAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescCreatedAtDesc(
                 BoardType.SHOW,
                 List.of(MediaType.INSTAGRAM, MediaType.YOUTUBE, MediaType.VIDEO_LINK)
-        ));
+        );
     }
 
     public List<String> findTags() {
@@ -81,12 +66,6 @@ public class DashboardService {
     }
 
     public List<Post> findRecentPostsByBoard(BoardType boardType) {
-        return visiblePosts(postRepository.findTop10ByBoardTypeOrderByCreatedAtDesc(boardType));
-    }
-
-    private List<Post> visiblePosts(List<Post> posts) {
-        return posts.stream()
-                .filter(Post::isVisibleInCommunity)
-                .toList();
+        return postRepository.findTop10ByBoardTypeAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc(boardType);
     }
 }

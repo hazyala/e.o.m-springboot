@@ -27,13 +27,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findById(Long id);
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop6ByOrderByCreatedAtDesc();
+    List<Post> findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc();
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByBoardTypeOrderByCreatedAtDesc(BoardType boardType);
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop10ByBoardTypeOrderByCreatedAtDesc(BoardType boardType);
+    List<Post> findTop10ByBoardTypeAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc(BoardType boardType);
 
     @EntityGraph(attributePaths = "author")
     List<Post> findByBoardTypeOrderByCreatedAtDesc(BoardType boardType);
@@ -45,7 +45,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBoardTypeAndAdminApprovedEventTrue(BoardType boardType, Sort sort);
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc();
+    List<Post> findTop5ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc();
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc();
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop6ByBoardTypeAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
@@ -55,14 +58,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     );
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop6ByBoardTypeAndAdminApprovedEventTrueAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
+    List<Post> findTop6ByBoardTypeAndAdminApprovedEventTrueAndHiddenByAdminFalseAndAuthor_BlockedFalseAndEventDateBetweenOrderByEventDateAscCreatedAtDesc(
             BoardType boardType,
             LocalDate startDate,
             LocalDate endDate
     );
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop12ByOrderByCreatedAtDesc();
+    List<Post> findTop12ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc();
 
     @EntityGraph(attributePaths = "author")
     List<Post> findTop12ByTagsContainingIgnoreCaseOrderByCreatedAtDesc(String tag);
@@ -94,7 +97,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     long countByAuthorUsernameAndBoardTypeAndPortfolioPinnedTrue(String username, BoardType boardType);
 
     @EntityGraph(attributePaths = "author")
-    List<Post> findTop6ByBoardTypeAndMediaTypeInOrderByLikeCountDescCreatedAtDesc(
+    List<Post> findTop6ByBoardTypeAndMediaTypeInAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescCreatedAtDesc(
             BoardType boardType,
             List<MediaType> mediaTypes
     );

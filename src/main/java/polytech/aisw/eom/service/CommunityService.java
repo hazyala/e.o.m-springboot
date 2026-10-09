@@ -286,11 +286,11 @@ public class CommunityService {
     }
 
     public List<Post> findPopularPosts() {
-        return visiblePosts(postRepository.findTop6ByOrderByLikeCountDescViewCountDescCreatedAtDesc());
+        return postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc();
     }
 
     public List<Post> findRecentPostsByBoard(BoardType boardType) {
-        return visiblePosts(postRepository.findTop10ByBoardTypeOrderByCreatedAtDesc(boardType));
+        return postRepository.findTop10ByBoardTypeAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc(boardType);
     }
 
     public List<AppUser> findDancers() {

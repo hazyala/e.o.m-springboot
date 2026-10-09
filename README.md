@@ -10,9 +10,9 @@
 
 **[E.O.M Figma 목업 보기 →](https://www.figma.com/design/pT04v0r3cxUHGXasokgMQW/E.O.M?node-id=0-1&t=yp0hg0gAGQNN4oUJ-1)**
 
-### 대시보드 · 다크 테마
+### 대시보드 · 데스크톱
 
-![다크 테마의 E.O.M 대시보드 — Today’s Pick과 커뮤니티 탐색](docs/images/dashboard.jpg)
+![인기 게시글 캐러셀과 인기 글·태그가 보이는 E.O.M 대시보드](docs/screenshots/dashboard-desktop.jpg)
 
 ## 댄서들의 활동을 한곳에
 
@@ -30,6 +30,38 @@
 ## 주요 화면
 
 대시보드에서 추천 게시글과 보드별 활동을 살펴보고, 게시판에서 정렬·탐색한 뒤 상세 화면으로 이동한다. 작성 화면은 입력한 제목·본문·태그를 오른쪽 Live Preview에 반영한다.
+
+### 랜딩 페이지 · 탭 전환
+
+SHOW·CAST·HYPE·LINK 소개 탭을 선택하면 카드와 설명이 전환된다. 아래 화면은 CAST를 선택한 상태다.
+
+![CAST 탭을 선택해 소개 카드와 진행 표시가 바뀐 랜딩 페이지](docs/screenshots/landing-interaction-desktop.jpg)
+
+### 게시글 상세 · 콘텐츠와 참여
+
+게시글 제목·작성자·미디어, 옆의 작성자 프로필과 추천 글을 함께 볼 수 있다.
+
+![게시글 제목과 미디어, 작성자 프로필 및 추천 글이 보이는 상세 화면](docs/screenshots/post-detail-desktop.jpg)
+
+본문 아래에는 Instagram 링크 카드, 좋아요·저장, 댓글 입력과 목록이 이어진다.
+
+![Instagram 링크 카드와 좋아요·저장·댓글 영역이 보이는 상세 화면](docs/screenshots/post-comments-desktop.jpg)
+
+### 마이페이지 · 포트폴리오
+
+프로필 정보, 활동 수치, 포트폴리오와 최근 활동을 한 화면에서 확인한다.
+
+![프로필과 포트폴리오 및 최근 활동이 보이는 마이페이지](docs/screenshots/my-page-desktop.jpg)
+
+### 모바일 화면 · 390 × 844
+
+같은 페이지를 모바일 너비로 표시한 화면이다. 랜딩, 대시보드, 게시글 상세가 좁은 화면에 맞게 배치된다.
+
+| 랜딩 | 대시보드 | 게시글 상세 |
+|---|---|---|
+| ![모바일 랜딩 화면](docs/screenshots/landing-mobile.jpg) | ![모바일 대시보드 화면](docs/screenshots/dashboard-mobile.jpg) | ![모바일 게시글 상세 화면](docs/screenshots/post-detail-mobile.jpg) |
+
+### 게시판과 글쓰기
 
 | SHOW 게시판 · 다크 테마 | 게시글 작성 · 화이트 테마 · Live Preview |
 |---|---|
@@ -120,7 +152,7 @@ bash gradlew bootRun
 
 기본 local profile은 `http://localhost:8080`에서 메모리 H2를 사용한다. H2 console은 `/h2-console`이며 DB URL은 `application.yml`의 local 값을 사용한다. `DataSeeder`의 샘플 계정은 `admin / admin`, `dancer1 / 1234`다. local `create-drop` 설정이므로 종료 후 데이터가 유지되는 환경이 아니다.
 
-현재 `build.gradle`에 dependency repository 선언이 없다. 전역 Gradle 설정이 없는 깨끗한 환경에서는 의존성 해석에 실패할 수 있다.
+`build.gradle`에 Maven Central이 설정되어 있어 처음 실행하는 컴퓨터에서도 필요한 의존성을 받을 수 있다. 첫 실행에는 인터넷 연결이 필요하다.
 
 ```bash
 bash gradlew test

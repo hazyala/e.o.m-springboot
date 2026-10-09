@@ -19,12 +19,15 @@ import polytech.aisw.eom.repository.UserRepository;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -109,12 +112,51 @@ class EomApplicationTests {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/dashboard"));
 
-        mockMvc.perform(get("/dashboard").with(user("dancer1").roles("USER")))
+        String dashboardHtml = mockMvc.perform(get("/dashboard").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Featured Media")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("릴스 기반 코레오 쇼케이스")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("https://www.instagram.com/reel/C5frLClST0B/")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/assets/source/renee-thompson-VdN2CGmvM88-unsplash.jpg")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("SHADOW_98")))
+                .andReturn().getResponse().getContentAsString();
+
+        assertEquals(5, dashboardHtml.split("data-dashboard-slide", -1).length - 1);
+        assertEquals(5, dashboardHtml.split("class=\"dashboard-popular-item\"", -1).length - 1);
+    }
+
+    @Test
+    void dashboardKeepsFivePopularPostsWhenTopPostIsHidden() throws Exception {
+        jdbcTemplate.update("update posts set hidden_by_admin = true where title = ?", "릴스 기반 코레오 쇼케이스");
+
+        String dashboardHtml = mockMvc.perform(get("/dashboard").with(user("dancer1").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("<h1>릴스 기반 코레오 쇼케이스</h1>"))))
+                .andReturn().getResponse().getContentAsString();
+
+        assertEquals(5, dashboardHtml.split("data-dashboard-slide", -1).length - 1);
+        assertEquals(5, dashboardHtml.split("class=\"dashboard-popular-item\"", -1).length - 1);
+    }
+
+    @Test
+    void limitedPostFeedsFillFromNextVisiblePosts() {
+        Long recentPostId = postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc()
+                .get(0).getId();
+        Long showPostId = postRepository.findTop10ByBoardTypeAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc(BoardType.SHOW)
+                .get(0).getId();
+        Long popularPostId = postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc()
+                .get(0).getId();
+
+        jdbcTemplate.update("update posts set hidden_by_admin = true where id in (?, ?, ?)",
+                recentPostId, showPostId, popularPostId);
+
+        var recentPosts = postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc();
+        var showPosts = postRepository.findTop10ByBoardTypeAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc(BoardType.SHOW);
+        var popularPosts = postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc();
+        var homePosts = postRepository.findTop12ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc();
+
+        org.assertj.core.api.Assertions.assertThat(recentPosts).hasSize(6).allMatch(Post::isVisibleInCommunity);
+        org.assertj.core.api.Assertions.assertThat(showPosts).hasSize(10).allMatch(Post::isVisibleInCommunity);
+        org.assertj.core.api.Assertions.assertThat(popularPosts).hasSize(6).allMatch(Post::isVisibleInCommunity);
+        org.assertj.core.api.Assertions.assertThat(homePosts).hasSize(12).allMatch(Post::isVisibleInCommunity);
     }
 
     @Test
@@ -286,7 +328,7 @@ class EomApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("첫 댓글입니다.")))
                 .andExpect(content().string(containsString("href=\"/dancers/")))
-                .andExpect(content().string(containsString("COMMENTS <b>1</b>")));
+                .andExpect(content().string(containsString("COMMENTS <b data-comment-count>1</b>")));
     }
 
     @Test
@@ -444,6 +486,101 @@ class EomApplicationTests {
         Post unlikedPost = postRepository.findById(post.getId()).orElseThrow();
         org.assertj.core.api.Assertions.assertThat(unlikedPost.getLikeCount()).isZero();
         assertTableCount("post_likes", post.getId(), 0);
+    }
+
+    @Test
+    void ajaxLikeAndSaveReturnCurrentStateWithoutRedirecting() throws Exception {
+        Post post = saveTestPost("ajax reactions target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(true))
+                .andExpect(jsonPath("$.count").value(1));
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(true));
+
+        mockMvc.perform(post("/posts/{id}/like", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(false))
+                .andExpect(jsonPath("$.count").value(0));
+
+        mockMvc.perform(post("/posts/{id}/save", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(false));
+    }
+
+    @Test
+    void ajaxCommentCanBeCreatedValidatedAndDeletedInPlace() throws Exception {
+        Post post = saveTestPost("ajax comment target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON)
+                        .param("content", "   "))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message").exists());
+
+        mockMvc.perform(post("/posts/{id}/comments", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON)
+                        .param("content", "  새 댓글  "))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").value("새 댓글"))
+                .andExpect(jsonPath("$.authorName").exists())
+                .andExpect(jsonPath("$.count").value(1));
+
+        Long commentId = commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId()).get(0).getId();
+        mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId)
+                        .with(user("dancer1").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").exists());
+
+        mockMvc.perform(post("/posts/{postId}/comments/{commentId}/delete", post.getId(), commentId)
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.count").value(0));
+    }
+
+    @Test
+    void ajaxReportReturnsFeedbackWithoutRedirecting() throws Exception {
+        Post post = saveTestPost("ajax report target", "dancer1");
+
+        mockMvc.perform(post("/posts/{id}/report", post.getId())
+                        .with(user("mina.flow").roles("USER"))
+                        .with(csrf())
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .accept(APPLICATION_JSON)
+                        .param("reason", "부적절한 콘텐츠"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("신고가 접수되었습니다. 운영자가 확인합니다."));
     }
 
     @Test

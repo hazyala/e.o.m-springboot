@@ -1,166 +1,273 @@
 <!doctype html>
-<html lang="ko" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko" class="motion-paused" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script th:src="@{/js/theme.js(v='safari-theme-5')}"></script>
     <title>E.O.M | Echo of Movement</title>
+    <script>
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        if (performance.getEntriesByType('navigation')[0]?.type === 'reload' && location.hash) {
+            history.replaceState(null, '', location.pathname + location.search);
+        }
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Irish+Grover&family=Roboto:wght@700&family=Roboto+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-    <link rel="stylesheet" th:href="@{/css/marketing.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Irish+Grover&family=Roboto:wght@700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css(v='safari-theme-5')}">
+    <link rel="stylesheet" th:href="@{/css/marketing.css(v='9c0eecfc6916')}">
+    <link rel="stylesheet" th:href="@{/css/landing-story.css(v='safari-link-2')}">
 </head>
-<body class="marketing-page">
-<header class="header">
-    <a class="logo" href="/" data-scroll-top>Echo of Movement</a>
-    <nav class="navbar">
-        <ul>
-            <li>
-                <a href="#show" data-section-link="show">Show<span class="subtitle">당신을 보여주세요</span></a>
-            </li>
-            <li>
-                <a href="#cast" data-section-link="cast">Cast<span class="subtitle">공연 기회를 만나세요</span></a>
-            </li>
-            <li>
-                <a href="#hype" data-section-link="hype">Hype<span class="subtitle">움직임에 열광을 더하세요</span></a>
-            </li>
-            <li>
-                <a href="#link" data-section-link="link">Link<span class="subtitle">세상과 연결되세요</span></a>
-            </li>
-            <li>
-                <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login<span class="subtitle">가입해보세요</span></a>
-                <a sec:authorize="isAuthenticated()" th:href="@{/my-page}">My Page<span class="subtitle">프로필로 돌아가기</span></a>
-            </li>
-            <li>
-                <button class="theme-toggle-button" type="button" data-theme-toggle aria-label="Toggle theme">☀</button>
-            </li>
-        </ul>
+<body class="marketing-page landing-story">
+<header class="marketing-header" data-marketing-header>
+    <a class="marketing-logo" href="/" data-scroll-top>Echo of Movement</a>
+    <nav class="marketing-nav" aria-label="Main navigation">
+        <a th:href="@{/dashboard}">Dash</a>
+        <a href="#show" data-section-link="show">Show</a>
+        <a href="#cast" data-section-link="cast">Cast</a>
+        <a href="#hype" data-section-link="hype">Hype</a>
+        <a href="#link" data-section-link="link">Link</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
     </nav>
+    <button class="marketing-theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">C</button>
 </header>
 
-<main>
-    <section class="hero-section">
-        <img class="hero-image" th:src="@{/assets/source/hero.jpg}" alt="Hero Background">
-        <div class="label">
-            <div class="typewriter-text" data-typewriter-text="&quot; WE&#10;DON'T&#10;JUST&#10;MOVE,&#10;WE ECHO &quot;"></div>
+<main class="dynamic-index">
+    <section class="opening" aria-labelledby="opening-title" data-opening>
+        <div class="opening-stage">
+            <p class="scene-kicker opening-kicker">E.O.M / A home for every dancer</p>
+            <div class="opening-spotlights" aria-hidden="true"><i></i><i></i></div>
+            <div class="opening-ribbon" aria-hidden="true"><span>ECHO OF MOVEMENT</span><span>ECHO OF MOVEMENT</span></div>
+            <div class="monitor-scene" data-monitor>
+                <div class="monitor-float"><div class="field-monitor">
+                    <div class="monitor-face monitor-front">
+                        <div class="monitor-brand">E.O.M <span>FIELD MONITOR / 01</span></div>
+                        <div class="monitor-screen">
+                            <video th:src="@{/assets/source/mp4/show4.mp4}" muted autoplay loop playsinline preload="metadata" th:poster="@{/assets/source/hype.jpg}"></video>
+                            <div class="monitor-frame"></div><span class="monitor-timecode">00:24:08:16</span><span class="monitor-spec">4K · 60 FPS · ISO 800</span><span class="monitor-rec">● REC</span><span class="monitor-live">LIVE / THE SCENE</span>
+                            <div class="monitor-meters"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                        </div>
+                        <div class="monitor-controls"><i></i><i></i><i></i><span>ECHO OF MOVEMENT</span><b></b></div>
+                    </div>
+                    <div class="monitor-face monitor-back"><strong>E.O.M</strong><span>BUILT FOR THE SCENE</span><div class="monitor-vents"></div></div>
+                    <div class="monitor-face monitor-left"><i></i><i></i><i></i></div>
+                    <div class="monitor-face monitor-right"><span>SDI<br>IN / OUT</span></div>
+                    <div class="monitor-face monitor-top"></div><div class="monitor-face monitor-bottom"></div>
+                    <div class="monitor-handle"><span class="handle-bar handle-grip"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="handle-bar handle-left"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="handle-bar handle-right"><i></i><i></i><i></i><i></i><i></i><i></i></span></div><div class="monitor-shoe"></div>
+                </div></div>
+                <button class="monitor-play" type="button" data-monitor-play aria-label="모니터 영상 재생"><span aria-hidden="true">▶</span><small>Click me</small></button>
+            </div>
+            <h1 id="opening-title">
+                <span class="intro-line" data-intro-line><span><b class="intro-dancer">Dancer</b><span class="intro-korean">를 <span class="intro-word">위한</span>,</span></span></span>
+                <span class="intro-line" data-intro-line><span><b class="intro-dancer">Dancer</b><span class="intro-korean">에 <span class="intro-word">의한</span>,</span></span></span>
+                <span class="intro-line" data-intro-line><span><b class="intro-dancer">Dancer</b><span class="intro-korean">들의 <span class="intro-word">아지트</span></span></span></span>
+            </h1>
+            <p class="opening-note">당신의 움직임이 기회가 되고,<br>우리의 연결이 새로운 씬이 되는 곳.</p>
+            <div class="intro-progress" aria-hidden="true"><span></span></div>
         </div>
     </section>
-
-    <section id="show" class="show-section reveal-section">
-        <div class="show-container">
-            <div class="show-image-wrapper reveal-up">
-                <img th:src="@{/assets/source/show.png}" alt="Show Profile">
+    <section id="movement" class="cinema-section hero-cinema" data-scene="hero" aria-label="01 — Feel the movement">
+        <div class="chapter-marker">01 / FEEL THE MOVEMENT</div>
+        <div class="hero-sticky-stage">
+            <div class="hero-media-stack" aria-hidden="true">
+                <video class="hero-ribbon-video" th:src="@{/assets/source/mp4/herostart.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
             </div>
-            <div class="show-content reveal-right">
-                <h2 class="show-title">Show Your Profile</h2>
-                <p class="show-description">
-                    지금, 당신을 보여주세요.<br>
-                    누군가가 기다리고 있어요.
-                </p>
-                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">SHOW</a>
-                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/SHOW}">SHOW</a>
-            </div>
-        </div>
-    </section>
 
-    <section id="cast" class="cast-section reveal-section">
-        <div class="cast-carousel-wrapper">
-            <div class="cast-track">
-                <div class="cast-card"><img th:src="@{/assets/source/cast1.jpg}" alt="Cast 1"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast2.jpg}" alt="Cast 2"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast3.jpg}" alt="Cast 3"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast4.jpg}" alt="Cast 4"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast1.jpg}" alt="Cast 1"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast2.jpg}" alt="Cast 2"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast3.jpg}" alt="Cast 3"></div>
-                <div class="cast-card"><img th:src="@{/assets/source/cast4.jpg}" alt="Cast 4"></div>
-            </div>
-        </div>
-        <div class="cast-content-wrapper reveal-up">
-            <h2 class="cast-title">Post it. Fill the Stage.</h2>
-            <p class="cast-desc">댄서를 찾고 계신가요?&nbsp;&nbsp;공고를 등록해 연결을 시작하세요.</p>
-            <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">CAST</a>
-            <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/CAST}">CAST</a>
-        </div>
-    </section>
-
-    <section id="hype" class="hype-section reveal-section">
-        <div class="hype-container">
-            <div class="hype-text reveal-left">
-                <h2 class="headline">
-                    Events. <br>
-                    Battles. <br>
-                    Everything <br>
-                    Hype.
+            <div class="hero-reference-copy">
+                <h2 aria-label="We don’t just move. We echo.">
+                    <span class="hero-type-line hero-type-line-dont" data-hero-line>
+                        <span style="--n:1">"</span><span class="hero-type-gap hero-type-gap-small" aria-hidden="true"></span><span style="--n:2">W</span><span style="--n:3">e</span><span class="hero-type-gap" aria-hidden="true"></span><span style="--n:4">D</span><span style="--n:5">o</span><span style="--n:6">n</span><span style="--n:7">'</span><span style="--n:8">t</span>
+                    </span>
+                    <span class="hero-type-line hero-type-line-move" data-hero-line>
+                        <span style="--n:9">J</span><span style="--n:10">u</span><span style="--n:11">s</span><span style="--n:12">t</span><span class="hero-type-gap" aria-hidden="true"></span><span style="--n:13">M</span><span style="--n:14">o</span><span style="--n:15">v</span><span style="--n:16">e</span>
+                    </span>
+                    <span class="hero-type-line hero-type-line-echo" data-hero-line>
+                        <span style="--n:17">W</span><span class="hero-letter-e" style="--n:18">e</span><span class="hero-type-gap" aria-hidden="true"></span><span style="--n:19">E</span><span style="--n:20">c</span><span style="--n:21">h</span><span style="--n:22">o</span><span class="hero-type-gap hero-type-gap-small" aria-hidden="true"></span><span style="--n:23">"</span>
+                    </span>
                 </h2>
-                <p class="desc">
-                    배틀, 행사, 이벤트.<br>
-                    이 씬의 모든 하입은 여기에.
+            </div>
+
+            <div class="hero-cube-stage" aria-label="E.O.M hero media cube">
+                <div class="media-cube hero-media-cube" data-hero-cube>
+                    <div class="cube-face cube-front">
+                        <video th:src="@{/assets/source/mp4/herostart.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                    </div>
+                    <div class="cube-face cube-back">
+                        <video th:src="@{/assets/source/mp4/cube1.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                    </div>
+                    <div class="cube-face cube-right">
+                        <img th:src="@{/assets/source/hype.jpg}" alt="Dance hype still">
+                    </div>
+                    <div class="cube-face cube-left">
+                        <video th:src="@{/assets/source/mp4/cube3.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                    </div>
+                    <div class="cube-face cube-top">
+                        <img th:src="@{/assets/source/hero.jpg}" alt="Dance hero still">
+                    </div>
+                    <div class="cube-face cube-bottom">
+                        <video th:src="@{/assets/source/mp4/cube2.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="why" class="why-orbit" aria-labelledby="why-title" data-orbit>
+        <div class="orbit-stage">
+            <p class="scene-kicker orbit-kicker">02 / WHY WE MOVE TOGETHER</p>
+            <h2 id="why-title" class="orbit-title" aria-label="Move together"><span>MOVE</span><span class="outline">TOGETHER</span></h2>
+            <p class="orbit-caption">기회는 더 넓게<br>부담은 더 가볍게<br><strong>춤은 더 가까이</strong></p>
+            <div class="orbit-guide" aria-label="서비스를 만든 네 가지 이유">
+                <span class="orbit-guide-line" aria-hidden="true"></span>
+                <button type="button" data-orbit-step="0"><span>01</span> SHOW / 나를 보여주다</button>
+                <button type="button" data-orbit-step="1"><span>02</span> CAST / 기회를 열다</button>
+                <button type="button" data-orbit-step="2"><span>03</span> HYPE / 현장을 만나다</button>
+                <button type="button" data-orbit-step="3"><span>04</span> LINK / 함께 이어가다</button>
+            </div>
+            <div class="orbit-deck">
+                <article id="show" class="orbit-card" data-orbit-card>
+                    <div class="orbit-card-top"><span>E.O.M / WHY SHOW</span><span>01 — 04</span></div>
+                    <h3>SHOW<span>YOUR MOVEMENT</span></h3>
+                    <img th:src="@{/assets/source/show.png}" alt="나만의 움직임을 보여주는 댄서" loading="lazy">
+                    <h4>당신의 춤이,<br>한 번의 피드로 끝나지 않도록</h4>
+                    <p><span class="copy-phrase">흩어진 움직임을 나만의 기록으로.</span> <span class="copy-phrase">프로필과 작품을 발견하고,</span> <span class="copy-phrase">좋아요와 댓글로 보내는</span> <span class="copy-phrase">응원까지 이어져요.</span></p>
+                    <p class="orbit-uses">포트폴리오 · 공연 기록 · 연습 영상 · 안무 쉐어</p>
+                    <a th:href="@{/boards/SHOW}">SHOW 둘러보기 <span aria-hidden="true">↗</span></a>
+                </article>
+                <article id="cast" class="orbit-card" data-orbit-card>
+                    <div class="orbit-card-top"><span>E.O.M / WHY CAST</span><span>02 — 04</span></div>
+                    <h3>CAST<span>YOUR NEXT STAGE</span></h3>
+                    <img th:src="@{/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg}" alt="함께 무대에 오른 댄서들" loading="lazy">
+                    <h4>인맥의 바깥에도,<br>무대는 있어야 하니까</h4>
+                    <p><span class="copy-phrase">아는 사람의 연락을 기다리던 기회.</span> <span class="copy-phrase">나를 필요로 하는 무대를 직접 찾고,</span> <span class="copy-phrase">함께할 사람에게</span> <span class="copy-phrase">모집 소식을 열어요.</span></p>
+                    <p class="orbit-uses">강사 · 백업댄서 · 크루 · 팀원 · 오디션 모집</p>
+                    <a th:href="@{/boards/CAST}">CAST 둘러보기 <span aria-hidden="true">↗</span></a>
+                </article>
+                <article id="hype" class="orbit-card" data-orbit-card>
+                    <div class="orbit-card-top"><span>E.O.M / WHY HYPE</span><span>03 — 04</span></div>
+                    <h3>HYPE<span>THE NEXT SCENE</span></h3>
+                    <img th:src="@{/assets/source/hype.jpg}" alt="함께 즐기는 댄스 행사" loading="lazy">
+                    <h4>흩어진 소식은 한곳에<br>현장의 열기는 더 가까이</h4>
+                    <p><span class="copy-phrase">보고 싶던 무대,</span> <span class="copy-phrase">배우고 싶던 움직임.</span> <span class="copy-phrase">행사와 일정을 알리고 발견하며,</span> <span class="copy-phrase">댄서와 관객이</span> <span class="copy-phrase">같은 현장에서 만나요.</span></p>
+                    <p class="orbit-uses">배틀 · 워크숍 · 공연 · 쇼케이스 · 파티 · 스트릿 행사</p>
+                    <a th:href="@{/boards/HYPE}">HYPE 둘러보기 <span aria-hidden="true">↗</span></a>
+                </article>
+                <article id="link" class="orbit-card" data-orbit-card>
+                    <div class="orbit-card-top"><span>E.O.M / WHY LINK</span><span>04 — 04</span></div>
+                    <h3>LINK<span>OUR NEXT MOVE</span></h3>
+                    <img th:src="@{/assets/source/samuel-regan-asante-jRM3E-MG9sg-unsplash.jpg}" alt="함께 움직이는 댄서" loading="lazy">
+                    <h4>혼자 하던 춤을,<br>함께하는 문화로</h4>
+                    <p><span class="copy-phrase">연습실 대여 부담은 나누고,</span> <span class="copy-phrase">서로의 춤에서 배워요.</span> <span class="copy-phrase">같이 연습하고, 찍어주고,</span> <span class="copy-phrase">피드백하며 춤으로</span> <span class="copy-phrase">인사하는 사이가 돼요.</span></p>
+                    <p class="orbit-uses">연습 파트너 · 연습실 공유 · 촬영 메이트<br>피드백 모임 · 네트워킹 · 정보 공유</p>
+                    <a th:href="@{/boards/LINK}">LINK 둘러보기 <span aria-hidden="true">↗</span></a>
+                </article>
+            </div>
+            <span class="orbit-counter" aria-hidden="true"><b data-orbit-count>01</b> / 04</span>
+        </div>
+    </section>
+
+<div id="features" class="closing-section">
+    <section id="next-move" class="cinema-section show-cinema" data-scene="show">
+        <div class="show-sticky-stage">
+            <div class="show-title-stack" data-show-title aria-hidden="true">
+                <span><strong>FIND</strong> <em class="show-title-fade">YOUR</em></span>
+                <span><em class="show-title-fade">NEXT</em> <b class="show-title-fade">MOVE</b></span>
+            </div>
+
+            <div class="show-message">
+                <div class="closing-heading">
+                <p class="scene-kicker">03 / FIND YOUR NEXT MOVE</p>
+                <h2>춤을 좋아한다면,<br>이미 우리 편</h2>
+                <div class="closing-actions"><a class="closing-enter" th:href="@{/dashboard}">아지트 들어가기 ↗</a><nav aria-label="서비스 바로가기"><a th:href="@{/boards/SHOW}">SHOW</a><a th:href="@{/boards/CAST}">CAST</a><a th:href="@{/boards/HYPE}">HYPE</a><a th:href="@{/boards/LINK}">LINK</a></nav></div>
+                </div>
+                <div class="closing-description">
+                <p>
+                    <span class="closing-sentence">무대에 서지 않아도, 이 씬의 일부가 될 수 있어요.</span>
+                    <span class="closing-sentence"><span class="copy-phrase">다양한 댄서의 프로필과 춤,</span> <span class="copy-phrase">공연과 행사 소식을</span> <span class="copy-phrase">한곳에서 즐겨보세요.</span></span>
+                    <span class="closing-sentence"><span class="copy-phrase">좋아요 하나, 댓글 한 줄이</span> <span class="copy-phrase">댄서에게는 다음 무대를 향한</span> <span class="copy-phrase">응원이 됩니다.</span></span>
+                    <span class="closing-sentence"><span class="copy-phrase">더 많은 사람이 춤을 만나고,</span> <span class="copy-phrase">더 많은 댄서가 빛나도록.</span></span>
+                    <span class="closing-sentence"><span class="copy-phrase">함께 보고 나누는 관심이</span> <span class="copy-phrase">댄서 씬을 더 넓고</span> <span class="copy-phrase">활기차게 만듭니다.</span></span>
                 </p>
-                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">HYPE</a>
-                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/HYPE}">HYPE</a>
+                </div>
             </div>
-            <div class="hype-image-wrapper reveal-right">
-                <img th:src="@{/assets/source/hype.jpg}" alt="Hype Image">
+
+            <div class="show-rail-viewport" tabindex="0" role="region" aria-label="댄서 콘텐츠 예시">
+                <div class="show-reel-rail" data-show-rail>
+                    <article class="show-reel-card show-reel-card-video" style="--i:0">
+                        <video th:src="@{/assets/source/mp4/show1.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <div class="show-caption">오늘 연습실 원테이크. 마지막 팔 라인까지 꼭 봐주세요.</div>
+                        <div class="show-meta"><span>Daily Practice</span><strong>@mina.flow</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:1">
+                        <img th:src="@{/assets/source/dwayne-joe-_Haw_PsHa5E-unsplash.jpg}" alt="Breakdance performance record">
+                        <div class="show-caption">배틀 예선 컷. 프리즈 타이밍 저장해둡니다.</div>
+                        <div class="show-meta"><span>Battle Log</span><strong>@zero.spin</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:2">
+                        <video th:src="@{/assets/source/mp4/show2.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <div class="show-caption">새 안무 공유. 카운트는 5-6-7-8부터 들어가요.</div>
+                        <div class="show-meta"><span>Choreo Share</span><strong>@yeon.archive</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:3">
+                        <img th:src="@{/assets/source/ben-iwara-XoZ3P4Vl0LY-unsplash.jpg}" alt="Crew stage portfolio">
+                        <div class="show-caption">팀 쇼케이스 포트폴리오용 베스트 컷.</div>
+                        <div class="show-meta"><span>Portfolio</span><strong>@crew.noise</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:4">
+                        <video th:src="@{/assets/source/mp4/show3.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <div class="show-caption">하우스 루틴 수정본. 발 리듬만 따로 체크.</div>
+                        <div class="show-meta"><span>Routine Check</span><strong>@rio.step</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:5">
+                        <img th:src="@{/assets/source/samuel-regan-asante-jRM3E-MG9sg-unsplash.jpg}" alt="Freestyle floor record">
+                        <div class="show-caption">즉흥으로 나온 플로어 연결, 다음 공연에 넣을 예정.</div>
+                        <div class="show-meta"><span>Freestyle</span><strong>@kai.room</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:6">
+                        <video th:src="@{/assets/source/mp4/show4.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <div class="show-caption">월말 평가 영상. 표정과 시선 처리 피드백 환영.</div>
+                        <div class="show-meta"><span>Review Clip</span><strong>@nari.motion</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:7">
+                        <img th:src="@{/assets/source/fethi-benattallah-Pf7DdhpYk88-unsplash.jpg}" alt="Street dancer vertical portfolio">
+                        <div class="show-caption">길 위에서 찍은 컨셉 컷. 무드가 좋아서 업로드.</div>
+                        <div class="show-meta"><span>Street Cut</span><strong>@jay.wave</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:8">
+                        <video th:src="@{/assets/source/mp4/show5.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <div class="show-caption">공연 리허설 기록. 동선 바뀐 부분 표시해두기.</div>
+                        <div class="show-meta"><span>Rehearsal</span><strong>@seoul.stage</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:9">
+                        <img th:src="@{/assets/source/daniel-oKJ2n8HiDr0-unsplash.jpg}" alt="Solo dancer under spotlight">
+                        <div class="show-caption">솔로 파트 조명 테스트. 실루엣이 마음에 들어요.</div>
+                        <div class="show-meta"><span>Solo Part</span><strong>@lumi.kr</strong></div>
+                    </article>
+                    <article class="show-reel-card show-reel-card-video" style="--i:10">
+                        <video th:src="@{/assets/source/mp4/show6.mp4}" muted loop playsinline preload="none" th:poster="@{/assets/source/hero.jpg}"></video>
+                        <div class="show-caption">오늘의 락킹 콤보. 손끝 디테일 다시 연습.</div>
+                        <div class="show-meta"><span>Combo Note</span><strong>@doha.lock</strong></div>
+                    </article>
+                    <article class="show-reel-card" style="--i:11">
+                        <img th:src="@{/assets/source/shimo-yann-4vaZN5xBMEo-unsplash.jpg}" alt="Vertical dance motion portrait">
+                        <div class="show-caption">새 프로필에 넣을 모션 포트레이트 후보.</div>
+                        <div class="show-meta"><span>Profile Pick</span><strong>@haneul.pop</strong></div>
+                    </article>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="link" class="link-section reveal-section">
-        <div class="link-background">
-            <img th:src="@{/assets/source/link.png}" alt="Link Background Image">
-        </div>
-        <div class="link-content">
-            <div class="link-left reveal-left">
-                <div class="title">Practice,<br>Together</div>
-                <div class="desc">함께 연습할 사람, 지금 찾기.</div>
-            </div>
-            <div class="button-wrapper reveal-up">
-                <a sec:authorize="!isAuthenticated()" class="show-button" th:href="@{/login}">LINK</a>
-                <a sec:authorize="isAuthenticated()" class="show-button" th:href="@{/boards/LINK}">LINK</a>
-            </div>
-            <div class="link-right reveal-right">
-                <div class="title">Drop It</div>
-                <div class="desc">당신의 말이 씬을 만듭니다.</div>
-            </div>
-        </div>
-    </section>
+</div>
 </main>
-
-<footer class="footer reveal-section">
-    <div class="footer-left">
-        <div class="footer-logo">Echo of Movement</div>
-        <div class="footer-slogan">We don't just move we echo</div>
-        <div class="footer-icons" aria-hidden="true">
-            <span>◎</span>
-            <span>◇</span>
-            <span>✦</span>
-        </div>
-    </div>
-    <div class="footer-columns">
-        <div class="footer-column">
-            <div class="footer-column-title">MOVE</div>
-            <a href="#show" data-section-link="show">Show</a>
-            <a href="#cast" data-section-link="cast">Cast</a>
-            <a href="#hype" data-section-link="hype">Hype</a>
-        </div>
-        <div class="footer-column">
-            <div class="footer-column-title">CONNECT</div>
-            <a href="#link" data-section-link="link">Link</a>
-            <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/my-page}">My Page</a>
-            <a th:href="@{/dashboard}">Dashboard</a>
-        </div>
-        <div class="footer-column">
-            <div class="footer-column-title">E.O.M</div>
-            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram</a>
-            <a href="https://github.com/hazyala/e.o.m-springboot" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="/" data-scroll-top>Back to top</a>
-        </div>
-    </div>
+<button type="button" class="scroll-status" data-scroll-status aria-label="다음 화면으로 스크롤">Start Scroll</button>
+<footer class="marketing-footer">
+    <div><strong>Echo of Movement</strong><span>춤을 좋아한다면, 이미 우리 편</span></div>
+    <nav aria-label="Footer navigation"><a th:href="@{/boards/SHOW}">Show</a><a th:href="@{/boards/CAST}">Cast</a><a th:href="@{/boards/HYPE}">Hype</a><a th:href="@{/boards/LINK}">Link</a><a th:href="@{/dashboard}">Dashboard</a></nav>
 </footer>
-
-<script th:src="@{/js/theme.js}"></script>
-<script th:src="@{/js/marketing.js}"></script>
+<script th:src="@{/js/marketing.js(v='4d7595db4c95')}"></script>
+<script th:src="@{/js/landing-story.js(v='152ced654efd')}"></script>
 </body>
 </html>
