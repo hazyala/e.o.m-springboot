@@ -1,4 +1,5 @@
 :root {
+    background-color: #ffffff;
     --bg-color: #ffffff;
     --main-bg-color: #f0f0f5;
     --section-bg-color: #f5f5f5;
@@ -20,6 +21,7 @@
 }
 
 html[data-theme="dark"] {
+    background-color: #121212;
     --bg-color: #201e1e;
     --main-bg-color: #121212;
     --section-bg-color: #1a1a1a;
@@ -787,10 +789,9 @@ html[data-theme="light"] .dashboard-dancer-grid article {
 }
 
 body.dashboard-page {
-    background: #ffffff;
+    background: transparent;
     color: #050505;
     overflow-x: hidden;
-    transition: background-color 0.5s, color 0.5s;
 }
 
 .dashboard-page a {
@@ -820,12 +821,10 @@ body.dashboard-page::before {
     width: 100%;
     height: 72px;
     padding: 0 32px;
-    background: rgba(255, 255, 255, 0.72);
+    background: #ffffff;
+    color: #050505;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     overflow: visible;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .dashboard-logo {
@@ -865,12 +864,12 @@ body.dashboard-page::before {
     border: 0;
     outline: 0;
     background: transparent;
-    color: #111111;
+    color: var(--text-color);
     font: inherit;
 }
 
 .dashboard-search input::placeholder {
-    color: #666666;
+    color: var(--sub-text-color);
 }
 
 .dashboard-add-button,
@@ -884,7 +883,7 @@ body.dashboard-page::before {
     border: 1px solid rgba(211, 15, 70, 0.34);
     border-radius: 20px;
     background: transparent;
-    color: #111111;
+    color: var(--text-color);
     font: inherit;
     font-weight: 600;
     white-space: nowrap;
@@ -914,7 +913,7 @@ body.dashboard-page::before {
     border: 0;
     border-radius: 20px;
     background: transparent;
-    color: #111111;
+    color: var(--text-color);
     font: inherit;
     font-weight: 600;
     white-space: nowrap;
@@ -953,7 +952,7 @@ body.dashboard-page::before {
 
 .dashboard-nav a:hover {
     background-color: var(--text-color);
-    color: var(--bg-color);
+    color: var(--bg-color) !important;
 }
 
 .dashboard-header .subtitle {
@@ -985,7 +984,7 @@ body.dashboard-page::before {
 .dashboard-logout:hover {
     background: #d30f46;
     border-color: #d30f46;
-    color: #ffffff;
+    color: #ffffff !important;
     box-shadow: 0 12px 28px rgba(211, 15, 70, 0.2);
     transform: translateY(-1px);
 }
@@ -1010,7 +1009,7 @@ body.dashboard-page::before {
     height: 32px;
     border: 0;
     background: transparent;
-    color: #111111;
+    color: var(--text-color);
     cursor: pointer;
     font-size: 22px;
     line-height: 1;
@@ -1920,7 +1919,6 @@ body.dashboard-page::before {
 }
 
 html[data-theme="dark"] body.dashboard-page {
-    background: #121212;
     color: #ffffff;
 }
 
@@ -1929,7 +1927,8 @@ html[data-theme="dark"] body.dashboard-page::before {
 }
 
 html[data-theme="dark"] .dashboard-header {
-    background: rgba(0, 0, 0, 0.34);
+    background: #0b0b0b;
+    color: #ffffff;
     border-color: rgba(255, 255, 255, 0.14);
 }
 

@@ -137,6 +137,29 @@ class EomApplicationTests {
     }
 
     @Test
+    void limitedPostFeedsFillFromNextVisiblePosts() {
+        Long recentPostId = postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc()
+                .get(0).getId();
+        Long showPostId = postRepository.findTop10ByBoardTypeAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc(BoardType.SHOW)
+                .get(0).getId();
+        Long popularPostId = postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc()
+                .get(0).getId();
+
+        jdbcTemplate.update("update posts set hidden_by_admin = true where id in (?, ?, ?)",
+                recentPostId, showPostId, popularPostId);
+
+        var recentPosts = postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc();
+        var showPosts = postRepository.findTop10ByBoardTypeAndHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc(BoardType.SHOW);
+        var popularPosts = postRepository.findTop6ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByLikeCountDescViewCountDescCreatedAtDesc();
+        var homePosts = postRepository.findTop12ByHiddenByAdminFalseAndAuthor_BlockedFalseOrderByCreatedAtDesc();
+
+        org.assertj.core.api.Assertions.assertThat(recentPosts).hasSize(6).allMatch(Post::isVisibleInCommunity);
+        org.assertj.core.api.Assertions.assertThat(showPosts).hasSize(10).allMatch(Post::isVisibleInCommunity);
+        org.assertj.core.api.Assertions.assertThat(popularPosts).hasSize(6).allMatch(Post::isVisibleInCommunity);
+        org.assertj.core.api.Assertions.assertThat(homePosts).hasSize(12).allMatch(Post::isVisibleInCommunity);
+    }
+
+    @Test
     void dashboardBoardTabsAndLinkedPagesRender() throws Exception {
         mockMvc.perform(get("/dashboard?board=CAST").with(user("dancer1").roles("USER")))
                 .andExpect(status().isOk())

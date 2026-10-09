@@ -336,10 +336,12 @@ html[data-theme="light"] body.landing-story { --scene-bg: #f0f0ef; --scene-fg: #
 
 
 /* Explicit inherited colors avoid native visited-link/button appearance in WebKit. */
-.landing-story .marketing-nav a,.landing-story .marketing-logo,.landing-story .marketing-theme-toggle { color: var(--scene-fg); }
-.landing-story .marketing-header.is-over-film a,.landing-story .marketing-header.is-over-film .marketing-theme-toggle { color: #fff; }
-.landing-story .marketing-header.is-over-feature a,.landing-story .marketing-header.is-over-feature .marketing-theme-toggle { color: var(--feature-fg); }
-.landing-story .marketing-nav a:hover { color: var(--brand-pink); }
+.landing-story .marketing-nav a,.landing-story .marketing-logo,.landing-story .marketing-theme-toggle { color: var(--scene-fg) !important; }
+html[data-theme="light"] .landing-story .marketing-nav a,html[data-theme="light"] .landing-story .marketing-theme-toggle { color: #171717 !important; }
+html[data-theme="dark"] .landing-story .marketing-nav a,html[data-theme="dark"] .landing-story .marketing-theme-toggle { color: #ffffff !important; }
+html[data-theme] .landing-story .marketing-header.is-over-film a,html[data-theme] .landing-story .marketing-header.is-over-film .marketing-theme-toggle { color: #fff !important; }
+html[data-theme] .landing-story .marketing-header.is-over-feature a,html[data-theme] .landing-story .marketing-header.is-over-feature .marketing-theme-toggle { color: var(--feature-fg) !important; }
+.landing-story .marketing-nav a:hover { color: var(--brand-pink) !important; }
 .landing-story .marketing-theme-toggle { -webkit-appearance: none; appearance: none; background: transparent; border: 0; }
 /* Readable phrase boundaries and a title/description split. */
 .copy-phrase { display: inline-block; max-width: 100%; vertical-align: top; }
