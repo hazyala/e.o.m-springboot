@@ -10,9 +10,9 @@
 
 **[E.O.M Figma 목업 보기 →](https://www.figma.com/design/pT04v0r3cxUHGXasokgMQW/E.O.M?node-id=0-1&t=yp0hg0gAGQNN4oUJ-1)**
 
-### 대시보드 · 데스크톱
+### 랜딩 · 움직임을 보여주는 레일
 
-![인기 게시글 캐러셀과 인기 글·태그가 보이는 E.O.M 대시보드](docs/screenshots/dashboard-desktop.jpg)
+![댄서들의 영상과 공연 기록이 카드 레일로 흐르는 랜딩 화면](docs/screenshots/landing-reel-desktop.png)
 
 ## 댄서들의 활동을 한곳에
 
@@ -29,43 +29,53 @@
 
 ## 주요 화면
 
-대시보드에서 추천 게시글과 보드별 활동을 살펴보고, 게시판에서 정렬·탐색한 뒤 상세 화면으로 이동한다. 작성 화면은 입력한 제목·본문·태그를 오른쪽 Live Preview에 반영한다.
+데스크톱에서는 콘텐츠가 보이는 구간을, 모바일에서는 좁은 화면에 맞춰 쌓인 목록과 게시글을 캡처했다.
 
 ### 랜딩 페이지 · 탭 전환
 
-SHOW·CAST·HYPE·LINK 소개 탭을 선택하면 카드와 설명이 전환된다. 아래 화면은 CAST를 선택한 상태다.
+SHOW·CAST·HYPE·LINK 탭을 선택하면 소개 카드와 설명이 전환된다. 아래는 SHOW 카드와 스크롤 영상 연출이다.
 
-![CAST 탭을 선택해 소개 카드와 진행 표시가 바뀐 랜딩 페이지](docs/screenshots/landing-interaction-desktop.jpg)
+![SHOW 소개 카드와 선택 상태가 보이는 랜딩 인터랙션](docs/screenshots/landing-show-desktop.png)
+
+![영상 위의 문구와 회전 미디어 큐브가 보이는 랜딩 인터랙션](docs/screenshots/landing-cube-desktop.png)
+
+### 대시보드 · 인기 글과 최근 활동
+
+인기 게시글, 태그, 활동, 행사와 최근 글을 한 화면에서 탐색한다.
+
+![인기 게시글 목록과 태그·활동·행사가 보이는 대시보드](docs/screenshots/dashboard-feed-desktop.png)
 
 ### 게시글 상세 · 콘텐츠와 참여
 
-게시글 제목·작성자·미디어, 옆의 작성자 프로필과 추천 글을 함께 볼 수 있다.
+게시글 미디어와 본문, 관련 글을 함께 볼 수 있다.
 
-![게시글 제목과 미디어, 작성자 프로필 및 추천 글이 보이는 상세 화면](docs/screenshots/post-detail-desktop.jpg)
+![게시글 미디어와 본문·Instagram 링크 카드가 보이는 상세 화면](docs/screenshots/post-detail-content.jpg)
 
-본문 아래에는 Instagram 링크 카드, 좋아요·저장, 댓글 입력과 목록이 이어진다.
+본문 아래에는 Instagram 링크 카드, 좋아요·저장과 댓글 입력이 이어진다.
 
-![Instagram 링크 카드와 좋아요·저장·댓글 영역이 보이는 상세 화면](docs/screenshots/post-comments-desktop.jpg)
+![Instagram 링크 카드와 좋아요·저장·댓글 영역이 보이는 상세 화면](docs/screenshots/post-detail-actions.jpg)
 
 ### 마이페이지 · 포트폴리오
 
-프로필 정보, 활동 수치, 포트폴리오와 최근 활동을 한 화면에서 확인한다.
+선택한 작품과 최근 활동을 한 화면에서 확인한다.
 
-![프로필과 포트폴리오 및 최근 활동이 보이는 마이페이지](docs/screenshots/my-page-desktop.jpg)
-
-### 모바일 화면 · 390 × 844
-
-같은 페이지를 모바일 너비로 표시한 화면이다. 랜딩, 대시보드, 게시글 상세가 좁은 화면에 맞게 배치된다.
-
-| 랜딩 | 대시보드 | 게시글 상세 |
-|---|---|---|
-| ![모바일 랜딩 화면](docs/screenshots/landing-mobile.jpg) | ![모바일 대시보드 화면](docs/screenshots/dashboard-mobile.jpg) | ![모바일 게시글 상세 화면](docs/screenshots/post-detail-mobile.jpg) |
+![포트폴리오 카드와 최근 활동이 보이는 마이페이지](docs/screenshots/portfolio-desktop.png)
 
 ### 게시판과 글쓰기
 
-| SHOW 게시판 · 다크 테마 | 게시글 작성 · 화이트 테마 · Live Preview |
-|---|---|
-| ![다크 테마의 SHOW 게시판과 보드 필터·정렬](docs/images/show-board.jpg) | ![화이트 테마의 게시글 입력 폼과 실시간 미리보기](docs/images/post-create.jpg) |
+게시판은 정렬과 보드별 탐색을 지원하고, 작성 폼은 입력한 내용을 오른쪽 미리보기에 반영한다.
+
+![SHOW 게시판의 정렬 탭과 게시글 카드가 보이는 화면](docs/screenshots/show-board-desktop.png)
+
+![게시글 작성 폼과 실시간 미리보기에 입력 내용이 반영된 화면](docs/screenshots/post-create-preview-desktop.png)
+
+### 모바일 화면 · 430 × 932
+
+게시판 카드, 대시보드의 인기 글, 게시글 본문이 모바일 너비에서 한 열로 배치된다.
+
+| SHOW 게시판 | 대시보드 | 게시글 상세 |
+|---|---|---|
+| ![모바일 SHOW 게시판 카드](docs/screenshots/board-mobile.jpg) | ![모바일 대시보드 인기 글 목록](docs/screenshots/dashboard-mobile.jpg) | ![모바일 게시글 제목·미디어·본문](docs/screenshots/post-detail-mobile.jpg) |
 
 ### 관리자 대시보드 · 화이트 테마
 
